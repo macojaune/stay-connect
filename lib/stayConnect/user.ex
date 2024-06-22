@@ -1,4 +1,5 @@
 defmodule StayConnect.User do
+  alias StayConnect.Vote
   use Ecto.Schema
   import Ecto.Changeset
 
@@ -6,6 +7,7 @@ defmodule StayConnect.User do
     field :username, :string
     field :email, :string
     field :isLoxymore, :boolean, default: false
+    has_many :votes, Vote
 
     timestamps(type: :utc_datetime)
   end
