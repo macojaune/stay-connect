@@ -49,5 +49,6 @@ defmodule StayConnect.Repo.Migrations.GlobalSchema do
 
     unique_index(:users, [:email, :username])
     unique_index(:artists, :name)
+    unique_index(:categories, :title)
   end
 end

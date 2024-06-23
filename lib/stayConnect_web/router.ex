@@ -20,8 +20,7 @@ defmodule StayConnectWeb.Router do
   scope "/", StayConnectWeb do
     pipe_through :browser
 
-    get "/", PageController, :home
-    get "/hello", HelloController, :index
+    live "/", HomeLive
   end
 
   # Other scopes may use custom stacks.
