@@ -1,5 +1,4 @@
 defmodule StayConnectWeb.HomeLive do
-  require Logger
   alias StayConnectWeb.ReleaseListComponent
   use StayConnectWeb, :live_view
 

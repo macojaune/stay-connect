@@ -26,9 +26,9 @@ defmodule StayConnect.Release do
   end
 
   @doc false
-  def changeset(release, attrs) do
+  def changeset(%Release{} = release, attrs\\ %{}) do
     release
-    |> cast(attrs, [:title, :description, :date, :type, :categories, :artist])
+    |> cast(attrs, [:title, :description, :date, :type])
     |> validate_required([:title, :description, :date, :type, :categories, :artist])
   end
 
@@ -53,5 +53,11 @@ defmodule StayConnect.Release do
       group_by: fragment("strftime('%Y-%W', ?)", r.date)
     )
     |> Repo.all()
+  end
+  
+  def create(attrs) do
+    %Release{}
+    |> Release.changeset(attrs)
+    |> Repo.insert()
   end
 end

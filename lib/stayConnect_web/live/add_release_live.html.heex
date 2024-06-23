@@ -1,0 +1,46 @@
+<.header class="text-center">
+  Ajouter une Sortie
+  <:subtitle>Présente ta prochaine sortie à la communauté #StayConnect</:subtitle>
+</.header>
+<div class="space-y-12 divide-y">
+  <div>
+    <.simple_form
+      for={@release_form}
+      id="release_form"
+      phx-submit="add_release"
+      phx-trigger-action={@trigger_submit}
+      phx-change="validate_release"
+    >
+      <.input
+        field={@release_form[:title]}
+        id="release_title"
+        placeholder="Le titre de ta sortie"
+        label="Titre"
+      />
+      <.live_component
+        module={AutoCompleteComponent}
+        id="search-artist-input"
+        on_cancel={%JS{}}
+        placeholder="Tape le nom d'un artiste et sélectionne le dans la liste"
+      />
+      <.input
+        name={@release_form[:type].name}
+        type="select"
+        prompt="Précise le type de sortie"
+        options={@release_types}
+        label="Type de sortie"
+        value={@release_form[:type].value}
+      />
+      <.input
+        name={@release_form[:description].name}
+        type="textarea"
+        label="Description"
+        value="Décris nous cette sortie. Laisse bien le blabla de ton kit presse de côté, on est entre nous. Parle-nous clairement. On veut tout savoir !"
+      />
+
+      <:actions>
+        <.button phx-disable-with="Patiente...">Ajouter</.button>
+      </:actions>
+    </.simple_form>
+  </div>
+</div>

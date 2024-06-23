@@ -1,10 +1,14 @@
 defmodule StayConnect.Artist do
+  require Logger
+  alias StayConnect.Repo
+  alias StayConnect.Artist
   alias StayConnect.ArtistCategory
   alias StayConnect.Category
   alias StayConnect.Feature
   alias StayConnect.Release
   use Ecto.Schema
   import Ecto.Changeset
+  import Ecto.Query
 
   schema "artists" do
     field :name, :string
@@ -23,5 +27,13 @@ defmodule StayConnect.Artist do
     artist
     |> cast(attrs, [:name])
     |> validate_required([:name])
+  end
+
+  def searchByName(query) do
+    from(a in Artist,
+      where: like(a.name, ^"#{query}%"),
+      order_by: [asc: :name]
+    )
+    |> Repo.all()
   end
 end
