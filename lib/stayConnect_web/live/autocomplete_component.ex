@@ -24,6 +24,7 @@ defmodule StayConnectWeb.AutoCompleteComponent do
 
   attr :placeholder, :string, default: "Rechercher un artiste"
   attr :rest, :global
+
   def search_input(assigns) do
     ~H"""
     <input
@@ -82,6 +83,7 @@ defmodule StayConnectWeb.AutoCompleteComponent do
   attr :show, :boolean, default: false
   attr :on_cancel, JS, default: %JS{}
   slot :inner_block, required: true
+
   def search_modal(assigns) do
     ~H"""
     <%!--  <div
@@ -100,22 +102,22 @@ defmodule StayConnectWeb.AutoCompleteComponent do
         aria-modal="true"
         tabindex="0"
       >--%>
-        <div class="flex min-h-full justify-center">
-          <div class="w-full min-h-12  p-2 sm:p-4 lg:pb-6 lg:pt-0">
-            <.focus_wrap
-              id={"#{@id}-container"}
-              phx-mounted={@show && show_modal(@id)}
-              phx-window-keydown={hide_modal(@on_cancel, @id)}
-              phx-key="escape"
-              class="relative rounded-b-2xl bg-white p-2 shadow-lg shadow-zinc-700/10 ring-1 ring-zinc-700/10 transition min-h-[30vh] max-h-[50vh] overflow-y-scroll"
-            >
-              <div id={"#{@id}-content"}>
-                <%= render_slot(@inner_block) %>
-              </div>
-            </.focus_wrap>
+    <div class="flex min-h-full justify-center">
+      <div class="w-full min-h-12  p-2 sm:p-4 lg:pb-6 lg:pt-0">
+        <.focus_wrap
+          id={"#{@id}-container"}
+          phx-mounted={@show && show_modal(@id)}
+          phx-window-keydown={hide_modal(@on_cancel, @id)}
+          phx-key="escape"
+          class="relative rounded-b-2xl bg-white p-2 shadow-lg shadow-zinc-700/10 ring-1 ring-zinc-700/10 transition min-h-[30vh] max-h-[50vh] overflow-y-scroll"
+        >
+          <div id={"#{@id}-content"}>
+            <%= render_slot(@inner_block) %>
           </div>
-        </div>
-      <%!-- </div> --%>
+        </.focus_wrap>
+      </div>
+    </div>
+    <%!-- </div> --%>
     <%!-- </div> --%>
     """
   end
@@ -133,7 +135,11 @@ defmodule StayConnectWeb.AutoCompleteComponent do
 
   @impl true
   def mount(socket) do
-    socket = socket |> assign(:show, false)
+    socket =
+      socket
+      |> assign(:show, false)
+      |> assign(:query, "")
+
     {:ok, socket, temporary_assigns: [artists: []]}
   end
 
@@ -152,8 +158,6 @@ defmodule StayConnectWeb.AutoCompleteComponent do
      socket
      |> assign(:query, value)
      |> assign(:artists, search_artists(value, socket.assigns.artists))
-     |> assign(:show, true)
-    }
-
+     |> assign(:show, true)}
   end
 end

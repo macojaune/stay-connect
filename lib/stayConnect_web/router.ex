@@ -20,7 +20,10 @@ defmodule StayConnectWeb.Router do
   scope "/", StayConnectWeb do
     pipe_through :browser
 
-    live "/", HomeLive
+    live_session :home,
+      on_mount: [{StayConnectWeb.UserAuth, :mount_current_user}] do
+      live "/", HomeLive
+    end
   end
 
   # Other scopes may use custom stacks.

@@ -99,7 +99,14 @@
       <h2 class="text-2xl font-semibold leading-10 text-balance mb-5 text-zinc-900">
         Sorties par semaine
       </h2>
-      <.live_component module={ReleaseListComponent} items={@weekly} id="weekly_releases" />
+      <%= for {week_start, releases} <- @weekly do %>
+        <h3>Semaine du <%= Calendar.strftime(Date.from_erl!(week_start), "%d %B") %></h3>
+        <.live_component
+          module={ReleaseListComponent}
+          items={releases}
+          id={"weekly_releases-#{Date.to_iso8601(Date.from_erl!(week_start), :basic)}"}
+        />
+      <% end %>
     </div>
     <div>
       <div class="mt-10 grid grid-cols-1 justify-between content-evenly grid-flow-row-dense gap-4 text-sm leading-6 text-zinc-700 sm:grid-cols-2">

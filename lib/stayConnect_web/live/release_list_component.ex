@@ -1,15 +1,20 @@
 defmodule StayConnectWeb.ReleaseListComponent do
+  require Logger
+  alias StayConnect.Vote
   use StayConnectWeb, :live_component
-  alias StayConnectWeb.CoreComponents
 
   def render(assigns) do
     ~H"""
     <ul class="space-y-3">
       <%= for item <- @items do %>
         <li class="flex flex-row group hover:bg-brand/10 rounded-md px-4 py-2 justify-between transition-colors ease-linear gap-4">
-          <CoreComponents.button class="aspect-square h-full">
-            Upvote
-          </CoreComponents.button>
+          <div class="aspect-square h-full flex flex-col">
+            <.button type="button" phx-click="upvote" phx-value-id={item.id}>up</.button>
+            <span><%= get_vote(item.id) %></span>
+            <.button phx-click="downvote" phx-value-id={item.id}>
+              down
+            </.button>
+          </div>
           <div class="flex flex-col justify-between grow">
             <div class="flex flex-row gap-x-5 items-center">
               <p class="text-lg">
@@ -39,5 +44,9 @@ defmodule StayConnectWeb.ReleaseListComponent do
       <% end %>
     </ul>
     """
+  end
+
+  def get_vote(release_id) do
+    Vote.get_release_score(release_id)
   end
 end

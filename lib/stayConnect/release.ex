@@ -1,13 +1,7 @@
 defmodule StayConnect.Release do
-  alias StayConnect.Release
-  alias StayConnect.Repo
-  alias StayConnect.Vote
-  alias StayConnect.Feature
-  alias StayConnect.Category
-  alias StayConnect.Artist
+  alias StayConnect.{Repo, Release, Vote, Feature, Category, Artist}
   use Ecto.Schema
-  import Ecto.Changeset
-  import Ecto.Query
+  import Ecto.{Changeset, Query}
 
   schema "releases" do
     field :description, :string
@@ -26,7 +20,7 @@ defmodule StayConnect.Release do
   end
 
   @doc false
-  def changeset(%Release{} = release, attrs\\ %{}) do
+  def changeset(%Release{} = release, attrs \\ %{}) do
     release
     |> cast(attrs, [:title, :description, :date, :type])
     |> validate_required([:title, :description, :date, :type, :categories, :artist])
@@ -50,14 +44,28 @@ defmodule StayConnect.Release do
   def list_weekly() do
     from(r in Release,
       preload: [:artist, :categories, :featuring],
-      group_by: fragment("strftime('%Y-%W', ?)", r.date)
+      order_by: [desc: r.date]
     )
     |> Repo.all()
+    |> Enum.group_by(&week_start_date/1)
+
+    # todo limit / pagination ?
   end
-  
+
   def create(attrs) do
     %Release{}
     |> Release.changeset(attrs)
     |> Repo.insert()
+  end
+
+  # Utils 
+  defp week_start_date(%{date: date}) do
+    {year, week} = :calendar.iso_week_number({date.year, date.month, date.day})
+
+    first_day_of_week =
+      :calendar.date_to_gregorian_days({year, 1, 4}) + (week - 1) * 7 -
+        :calendar.day_of_the_week({year, 1, 4}) + 1
+
+    :calendar.gregorian_days_to_date(first_day_of_week)
   end
 end
