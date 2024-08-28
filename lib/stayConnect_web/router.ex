@@ -23,6 +23,7 @@ defmodule StayConnectWeb.Router do
     live_session :home,
       on_mount: [{StayConnectWeb.UserAuth, :mount_current_user}] do
       live "/", HomeLive
+      live "/sorties/:release_id", ReleaseDetailsLive
     end
   end
 

@@ -13,25 +13,33 @@ defmodule StayConnectWeb.HomeLive do
     {:ok, socket}
   end
 
-  def handle_event("upvote", %{"id" => release_id}, socket) do
+  def handle_event("upvote", %{"id" => release_id, "list_type" => list_type}, socket) do
     user = socket.assigns.current_user
 
     case Vote.upvote_release(user.id, release_id) do
       {:ok, _vote} ->
-        {:noreply, socket}
+        if list_type == "weekly" do
+          {:noreply, assign(socket, :weekly, Release.list_weekly())}
+        else
+          {:noreply, assign(socket, :daily, Release.list_today())}
+        end
 
-      {:error, changeset} ->
+      {:error, _changeset} ->
         Logger.error("error upvote")
         {:noreply, socket}
     end
   end
 
-  def handle_event("downvote", %{"id" => release_id}, socket) do
+  def handle_event("downvote", %{"id" => release_id, "list_type" => list_type}, socket) do
     user = socket.assigns.current_user
 
     case Vote.downvote_release(user.id, release_id) do
       {:ok, _vote} ->
-        {:noreply, socket}
+        if list_type == "weekly" do
+          {:noreply, assign(socket, :weekly, Release.list_weekly())}
+        else
+          {:noreply, assign(socket, :daily, Release.list_today())}
+        end
 
       {:error, _changeset} ->
         Logger.error("error downvote")

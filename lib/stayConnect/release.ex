@@ -27,6 +27,14 @@ defmodule StayConnect.Release do
   end
 
   @doc """
+  Get Release by id
+  """
+  def by_id!(id) do
+    Repo.get!(Release, id)
+    |> Repo.preload([:artist, :categories, :featuring, :votes])
+  end
+
+  @doc """
   Get today's releases
   """
   def list_today() do
@@ -36,14 +44,14 @@ defmodule StayConnect.Release do
 
     from(r in Release,
       where: r.date >= ^start_of_day and r.date <= ^end_of_day,
-      preload: [:artist, :categories, :featuring]
+      preload: [:artist, :categories, :featuring, :votes]
     )
     |> Repo.all()
   end
 
   def list_weekly() do
     from(r in Release,
-      preload: [:artist, :categories, :featuring],
+      preload: [:artist, :categories, :featuring, :votes],
       order_by: [desc: r.date]
     )
     |> Repo.all()
@@ -58,7 +66,7 @@ defmodule StayConnect.Release do
     |> Repo.insert()
   end
 
-  # Utils 
+  # Utils
   defp week_start_date(%{date: date}) do
     {year, week} = :calendar.iso_week_number({date.year, date.month, date.day})
 
