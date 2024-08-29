@@ -59,7 +59,7 @@ defmodule StayConnectWeb.ReleaseListComponent do
               </div>
               <div class="flex flex-col justify-between grow">
                 <div class="flex flex-row gap-x-5 items-center">
-                  <a href={"/sorties/#{item.id}"}>
+                  <.link navigate={~p"/sorties/#{item.id}"}>
                     <p class="text-lg">
                       <strong class="font-semibold text-xl">
                         <%= item.artist.name %> − <%= item.title %>
@@ -71,7 +71,7 @@ defmodule StayConnectWeb.ReleaseListComponent do
                         <% end %>
                       <% end %>
                     </p>
-                  </a>
+                  </.link>
                   <div>
                     <span class="text-sm"><%= item.type %></span>
                   </div>

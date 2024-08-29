@@ -13,8 +13,8 @@
     <p class="mt-4 text-base leading-7 text-zinc-600">
       Je sais pas pour toi, mais j’en avais marre, chaque vendredi, de chercher les sorties 97 ou de louper les nouvelles pépites dès leurs débuts.
       <br /> Et puis, j’ai grandi avec <b>KalottLyrikal</b>
-      moi… 
-      <br/>Du coup, j'ai décidé de créer ce site pour répertorier tout ça et aider les artistes à promouvoir leurs sorties.
+      moi…
+      <br />Du coup, j'ai décidé de créer ce site pour répertorier tout ça et aider les artistes à promouvoir leurs sorties.
     </p>
     <div class="flex flex-col justify-center">
       <div class="w-full sm:w-auto">
@@ -46,18 +46,24 @@
             <span class="absolute inset-0 rounded-2xl bg-brand transition group-hover:bg-white group-hover:border group-hover:border-brand sm:group-hover:scale-105">
             </span>
             <span class="relative flex items-center gap-4 sm:flex-col">
-              <svg viewBox="0 0 24 24" aria-hidden="true" class="h-6 w-6">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="size-9"
+              >
                 <path
-                  fill-rule="evenodd"
-                  clip-rule="evenodd"
-                  d="M12 0C5.37 0 0 5.506 0 12.303c0 5.445 3.435 10.043 8.205 11.674.6.107.825-.262.825-.585 0-.292-.015-1.261-.015-2.291C6 21.67 5.22 20.346 4.98 19.654c-.135-.354-.72-1.446-1.23-1.738-.42-.23-1.02-.8-.015-.815.945-.015 1.62.892 1.845 1.261 1.08 1.86 2.805 1.338 3.495 1.015.105-.8.42-1.338.765-1.645-2.67-.308-5.46-1.37-5.46-6.075 0-1.338.465-2.446 1.23-3.307-.12-.308-.54-1.569.12-3.26 0 0 1.005-.323 3.3 1.26.96-.276 1.98-.415 3-.415s2.04.139 3 .416c2.295-1.6 3.3-1.261 3.3-1.261.66 1.691.24 2.952.12 3.26.765.861 1.23 1.953 1.23 3.307 0 4.721-2.805 5.767-5.475 6.075.435.384.81 1.122.81 2.276 0 1.645-.015 2.968-.015 3.383 0 .323.225.707.825.585a12.047 12.047 0 0 0 5.919-4.489A12.536 12.536 0 0 0 24 12.304C24 5.505 18.63 0 12 0Z"
-                  fill="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
                 />
               </svg>
               Artiste ? Balance tes news
             </span>
           </a>
-        <%!--   <a
+          <%!--   <a
             href={"https://github.com/phoenixframework/phoenix/blob/v#{Application.spec(:phoenix, :vsn)}/CHANGELOG.md"}
             class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900 sm:py-6"
           >
@@ -94,7 +100,12 @@
       <h2 class="text-2xl font-semibold leading-10 text-balance mb-5 text-zinc-900">
         Sorties du jour
       </h2>
-      <.live_component module={ReleaseListComponent} items={@daily} list_type="daily" id="daily_releases" />
+      <.live_component
+        module={ReleaseListComponent}
+        items={@daily}
+        list_type="daily"
+        id="daily_releases"
+      />
     </div>
     <div class="w-full px-4 my-10">
       <h2 class="text-2xl font-semibold leading-10 text-balance mb-5 text-zinc-900">
@@ -126,7 +137,9 @@
             </svg>
             Parles-en sur Twitter
           </a>
-        </div>    <div>
+        </div>
+
+        <div>
           <a
             href="https://twitter.com/"
             class="group -mx-2 -my-0.5 inline-flex items-center gap-3 rounded-lg px-2 py-0.5 hover:bg-zinc-50 hover:text-zinc-900"
@@ -156,11 +169,17 @@
             Des idées ?
           </a>
         </div>
-        
       </div>
       <p class="text-center">
-          Composé en do majeur par <a href="https://marvinl.com" target="_blank" class="text-brand font-semibold underline underline-offset-4 hover:no-underline ">MarvinL.com</a>
-        </p>
+        Composé en do majeur par
+        <a
+          href="https://marvinl.com"
+          target="_blank"
+          class="text-brand font-semibold underline underline-offset-4 hover:no-underline "
+        >
+          MarvinL.com
+        </a>
+      </p>
     </div>
   </div>
 </div>

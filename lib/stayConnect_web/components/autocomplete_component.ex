@@ -8,20 +8,22 @@ defmodule StayConnectWeb.AutoCompleteComponent do
   def render(assigns) do
     ~H"""
     <div class="relative">
+      <.label><%= @label %></.label>
       <.search_input
-        value={@query}
         phx-keyup="do-search"
         phx-target={@myself}
         phx-debounce="200"
         placeholder={@placeholder}
+        value={@query}
       />
-      <.search_modal id="search-modal" show={@show} on_cancel={@on_cancel}>
+      <.search_modal id="featurings-modal" show={@show} on_cancel={@on_cancel}>
         <.results artists={@artists} />
       </.search_modal>
     </div>
     """
   end
 
+  attr :value, :any
   attr :placeholder, :string, default: "Rechercher un artiste"
   attr :rest, :global
 
@@ -86,23 +88,28 @@ defmodule StayConnectWeb.AutoCompleteComponent do
 
   def search_modal(assigns) do
     ~H"""
-    <%!--  <div
+    <%!-- <div
       id={@id}
       phx-mounted={@show && show_modal(@id)}
       phx-remove={hide_modal(@id)}
       class="relative z-50 hidden"
-    >
-      <div id={"#{@id}-bg"} class="bg-zinc-50/90 fixed inset-0 transition-opacity" aria-hidden="true" />
+    > --%>
+    <%!-- <div id={"#{@id}-bg"} class="bg-zinc-50/90 fixed inset-0 transition-opacity" aria-hidden="true" /> --%>
 
-      <div
+    <%!-- <div
         class="absolute inset-0 overflow-y-auto"
         aria-labelledby={"#{@id}-title"}
         aria-describedby={"#{@id}-description"}
         role="dialog"
         aria-modal="true"
         tabindex="0"
-      >--%>
-    <div class="flex min-h-full justify-center">
+      > --%>
+    <div
+      id={@id}
+      phx-mounted={@show && show_modal(@id)}
+      phx-remove={hide_modal(@id)}
+      class="flex min-h-full justify-center"
+    >
       <div class="w-full min-h-12  p-2 sm:p-4 lg:pb-6 lg:pt-0">
         <.focus_wrap
           id={"#{@id}-container"}

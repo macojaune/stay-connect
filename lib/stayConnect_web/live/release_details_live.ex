@@ -18,6 +18,7 @@ defmodule StayConnectWeb.ReleaseDetailsLive do
   def render(assigns) do
     ~H"""
     <div>
+    <.back navigate={~p"/"}>Retour</.back>
       <span class="text-sm"><%= @release.type %></span>
       <.header>
         <%= @release.artist.name %>
