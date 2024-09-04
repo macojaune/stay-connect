@@ -11,6 +11,9 @@ defmodule StayConnect.Release do
     field :type, :string
     field :urls, {:array, :string}
     field :cover, :string
+
+    field :is_secret, :boolean, default: false
+    field :is_automated, :boolean, default: false
     has_many :votes, Vote
     many_to_many :categories, Category, join_through: "releases_categories"
     belongs_to :artist, Artist
@@ -28,6 +31,7 @@ defmodule StayConnect.Release do
 
   @doc """
   Get Release by id
+  
   """
   def by_id!(id) do
     Repo.get!(Release, id)

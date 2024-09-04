@@ -177,7 +177,12 @@ defmodule StayConnectWeb.AutoCompleteComponent do
 
     {:noreply, socket}
   end
-
+ @impl true
+  def handle_event("remove-artist", %{"id" => artist_id}, socket) do
+    updated_selected =
+      Enum.reject(socket.assigns.selected, fn artist -> artist.id == String.to_integer(artist_id) end)
+    {:noreply, assign(socket, :selected, updated_selected)}
+  end
   defp find_or_fetch_artist(artist_id, artists) do
     case Enum.find(artists, &(&1.id == artist_id)) do
       # Assuming you have an Artist.get/1 function
@@ -186,12 +191,7 @@ defmodule StayConnectWeb.AutoCompleteComponent do
     end
   end
 
-  @impl true
-  def handle_event("remove-artist", %{"id" => artist_id}, socket) do
-    updated_selected =
-      Enum.reject(socket.assigns.selected, fn artist -> artist.id == String.to_integer(artist_id) end)
-    {:noreply, assign(socket, :selected, updated_selected)}
-  end
+
 
   def show_results(js \\ %JS{}, id) when is_binary(id) do
     js

@@ -9,20 +9,12 @@
       <.input field={@release_form[:title]} id="release_title" placeholder="Le titre de ta sortie" label="Titre" />
       <.live_component module={AutoCompleteComponent} id="search-artist-input" label="Featurings"
         placeholder="Tape le nom d'un artiste et sélectionne le dans la liste pour ajouter un feat" />
-      <%!-- <div phx-update="ignore" id={"#{@release_form[:featurings].id}-domspace"}>
-
-        <.input field={@release_form[:featurings]} type="text"
-          placeholder="Tape le nom d'un artiste et sélectionne le dans la liste pour ajouter un feat" />
-
-        <.autocomplete forField={@release_form[:featurings]} list="" prepop="true" minChars="1" filter="filterContains"
-          value="artistName" />
-
-  </div> --%>
   <.input name={@release_form[:type].name} type="select" prompt="Précise le type de sortie" options={@release_types}
     label="Type de sortie" value={@release_form[:type].value} />
   <.input name={@release_form[:description].name} type="textarea" label="Description"
     value="Décris nous cette sortie. Laisse bien le blabla de ton kit presse de côté, on est entre nous. Parle-nous clairement. On veut tout savoir !" />
-
+    <.input name={@release_form[:date].name} type="date" label="Date" value={@release_form[:date].value} />
+    <.input name={@release_form[:is_secret].name} type="checkbox" value={@release_form[:is_secret].value} label="Garder la sortie secrète jusqu'à la date de sortie"/>
   <:actions>
     <.button phx-disable-with="Patiente...">Ajouter</.button>
   </:actions>

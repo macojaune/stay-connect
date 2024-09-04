@@ -21,48 +21,6 @@ import "phoenix_html";
 import { Socket } from "phoenix";
 import { LiveSocket } from "phoenix_live_view";
 import topbar from "../vendor/topbar";
-import {
-  AwesompleteUtil,
-  attachAwesomplete,
-  copyValueToId,
-} from "phoenix_form_awesomplete";
-
-const AU = AwesompleteUtil,
-  customAwesompleteContext = {
-    // These functions and objects can be referenced by name in the autocomplete function components.
-    // This list can be customized.
-
-    filterContains: AU.filterContains,
-    filterStartsWith: AU.filterStartsWith,
-    filterWords: AU.filterWords,
-    filterOff: AU.filterOff,
-
-    item: AU.item, // does NOT mark matching text
-    // , itemContains:     AU.itemContains  // this is the default, no need to specify it.
-    itemStartsWith: AU.itemStartsWith,
-    itemMarkAll: AU.itemMarkAll, // also mark matching text inside the description
-    itemWords: AU.itemWords, // mark matching words
-
-    // add your custom functions and/or lists here
-  };
-
-let Hooks = {};
-
-Hooks.Autocomplete = {
-  mounted() {
-    attachAwesomplete(
-      this.el,
-      customAwesompleteContext,
-      {} /* defaultSettings */,
-    );
-  },
-};
-
-Hooks.AutocompleteCopyValueToId = {
-  mounted() {
-    copyValueToId(this.el);
-  },
-};
 
 let csrfToken = document
   .querySelector("meta[name='csrf-token']")
@@ -70,7 +28,6 @@ let csrfToken = document
 let liveSocket = new LiveSocket("/live", Socket, {
   longPollFallbackMs: 2500,
   params: { _csrf_token: csrfToken },
-  hooks: Hooks,
 });
 
 // Show progress bar on live navigation and form submits

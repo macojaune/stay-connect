@@ -19,7 +19,6 @@ defmodule StayConnectWeb.CoreComponents do
   alias Phoenix.LiveView.JS
   import StayConnectWeb.Gettext
   import StayConnectWeb.ClassHelper
-  @awesomplete StayConnectWeb.AwesompleteComponents
 
   @doc """
   Renders a modal.
@@ -677,9 +676,4 @@ defmodule StayConnectWeb.CoreComponents do
   def translate_errors(errors, field) when is_list(errors) do
     for {^field, {msg, opts}} <- errors, do: translate_error({msg, opts})
   end
-  
-  
-  defdelegate autocomplete(assigns), to: @awesomplete
-  defdelegate copy_value_to_id(assigns), to: @awesomplete
-  defdelegate copy_value_to_field(assigns), to: @awesomplete
 end
