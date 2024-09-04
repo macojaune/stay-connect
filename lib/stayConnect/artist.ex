@@ -29,6 +29,23 @@ defmodule StayConnect.Artist do
     |> validate_required([:name])
   end
 
+  @doc """
+  Retrieves an artist by their ID.
+
+  ## Parameters
+
+    * `id` - The ID of the artist to retrieve.
+
+  ## Returns
+
+    * The `Artist` struct if found.
+    * `nil` if no artist with the given ID exists.
+
+  """
+  def get(id) do
+    Repo.get(Artist, id)
+  end
+
   def searchByName(query) do
     from(a in Artist,
       where: like(a.name, ^"#{query}%"),

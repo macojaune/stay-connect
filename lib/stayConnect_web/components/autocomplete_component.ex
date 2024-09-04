@@ -4,6 +4,9 @@ defmodule StayConnectWeb.AutoCompleteComponent do
   use StayConnectWeb, :live_component
   require Logger
 
+  attr :show, :boolean, default: false
+  attr :on_cancel, JS, default: %JS{}
+
   @impl true
   def render(assigns) do
     ~H"""
@@ -16,9 +19,17 @@ defmodule StayConnectWeb.AutoCompleteComponent do
         placeholder={@placeholder}
         value={@query}
       />
-      <.search_modal id="featurings-modal" show={@show} on_cancel={@on_cancel}>
+      <.search_modal id="featurings-modal" show={@show} on_cancel={JS.push("cancel", target: @myself)}>
         <.results artists={@artists} />
       </.search_modal>
+      <div class="flex flex-row gap-4 mt-3" id="selected-artists">
+        <span :for={artist <- @selected} id={"selected-artist-#{artist.id}"} class="border px-3 py-2 rounded-md">
+          <%= artist.name %>
+          <button id={"remove-artist-#{artist.id}"} phx-click="remove-artist" phx-target={@myself} phx-value-id={artist.id}>
+            <.icon name="hero-x-mark-solid" class="w-4 h-4" />
+          </button>
+        </span>
+      </div>
     </div>
     """
   end
@@ -37,6 +48,7 @@ defmodule StayConnectWeb.AutoCompleteComponent do
       role="combobox"
       aria-expanded="false"
       aria-controls="options"
+      autocomplete="off"
     />
     """
   end
@@ -63,7 +75,7 @@ defmodule StayConnectWeb.AutoCompleteComponent do
     """
   end
 
-  attr :artist, :map, required: true
+  attr :artist, Artist, required: true
 
   def result_item(assigns) do
     ~H"""
@@ -72,6 +84,9 @@ defmodule StayConnectWeb.AutoCompleteComponent do
       id={"option-#{@artist.id}"}
       role="option"
       tabindex="-1"
+      phx-click="select-artist"
+      phx-target="#selected-artists"
+      phx-value-id={@artist.id}
     >
       <div>
         <%!-- todo image --%>
@@ -88,34 +103,10 @@ defmodule StayConnectWeb.AutoCompleteComponent do
 
   def search_modal(assigns) do
     ~H"""
-    <%!-- <div
-      id={@id}
-      phx-mounted={@show && show_modal(@id)}
-      phx-remove={hide_modal(@id)}
-      class="relative z-50 hidden"
-    > --%>
-    <%!-- <div id={"#{@id}-bg"} class="bg-zinc-50/90 fixed inset-0 transition-opacity" aria-hidden="true" /> --%>
-
-    <%!-- <div
-        class="absolute inset-0 overflow-y-auto"
-        aria-labelledby={"#{@id}-title"}
-        aria-describedby={"#{@id}-description"}
-        role="dialog"
-        aria-modal="true"
-        tabindex="0"
-      > --%>
-    <div
-      id={@id}
-      phx-mounted={@show && show_modal(@id)}
-      phx-remove={hide_modal(@id)}
-      class="flex min-h-full justify-center"
-    >
-      <div class="w-full min-h-12  p-2 sm:p-4 lg:pb-6 lg:pt-0">
+    <div id={@id} class={["flex min-h-full justify-center", @show || "hidden"]}>
+      <div class="w-full min-h-12 p-2 sm:p-4 lg:pb-6 lg:pt-0">
         <.focus_wrap
           id={"#{@id}-container"}
-          phx-mounted={@show && show_modal(@id)}
-          phx-window-keydown={hide_modal(@on_cancel, @id)}
-          phx-key="escape"
           class="relative rounded-b-2xl bg-white p-2 shadow-lg shadow-zinc-700/10 ring-1 ring-zinc-700/10 transition min-h-[30vh] max-h-[50vh] overflow-y-scroll"
         >
           <div id={"#{@id}-content"}>
@@ -124,8 +115,6 @@ defmodule StayConnectWeb.AutoCompleteComponent do
         </.focus_wrap>
       </div>
     </div>
-    <%!-- </div> --%>
-    <%!-- </div> --%>
     """
   end
 
@@ -146,8 +135,9 @@ defmodule StayConnectWeb.AutoCompleteComponent do
       socket
       |> assign(:show, false)
       |> assign(:query, "")
+      |> assign(:selected, [])
 
-    {:ok, socket, temporary_assigns: [artists: []]}
+    {:ok, socket}
   end
 
   @impl true
@@ -161,10 +151,70 @@ defmodule StayConnectWeb.AutoCompleteComponent do
 
   @impl true
   def handle_event("do-search", %{"value" => value}, socket) do
+    artists = search_artists(value, socket.assigns.artists)
+    show = length(artists) > 0
+    Logger.info("Search query: #{value}, Artists found: #{length(artists)}, Show modal: #{show}")
+
     {:noreply,
      socket
      |> assign(:query, value)
-     |> assign(:artists, search_artists(value, socket.assigns.artists))
-     |> assign(:show, true)}
+     |> assign(:artists, artists)
+     |> assign(:show, show)}
+  end
+
+  @impl true
+  def handle_event("select-artist", %{"id" => artist_id}, socket) do
+    artist = find_or_fetch_artist(artist_id, socket.assigns.artists)
+
+    socket =
+      if artist do
+        socket
+        |> update(:selected, &(&1 ++ [artist]))
+        |> assign(query: "", show: false, artists: [])
+      else
+        socket
+      end
+
+    {:noreply, socket}
+  end
+
+  defp find_or_fetch_artist(artist_id, artists) do
+    case Enum.find(artists, &(&1.id == artist_id)) do
+      # Assuming you have an Artist.get/1 function
+      nil -> Artist.get(artist_id)
+      artist -> artist
+    end
+  end
+
+  @impl true
+  def handle_event("remove-artist", %{"id" => artist_id}, socket) do
+    updated_selected =
+      Enum.reject(socket.assigns.selected, fn artist -> artist.id == String.to_integer(artist_id) end)
+    {:noreply, assign(socket, :selected, updated_selected)}
+  end
+
+  def show_results(js \\ %JS{}, id) when is_binary(id) do
+    js
+    |> JS.show(to: "##{id}")
+    |> JS.show(
+      to: "##{id}",
+      time: 300,
+      transition: {"transition-all transform ease-out duration-300", "opacity-0", "opacity-100"}
+    )
+    |> show("##{id}-container")
+    # |> JS.add_class("overflow-hidden", to: "body")
+    |> JS.focus_first(to: "##{id}-content")
+  end
+
+  def hide_results(js \\ %JS{}, id) do
+    js
+    |> JS.hide(
+      to: "##{id}-container",
+      transition: {"transition-all transform ease-in duration-200", "opacity-100", "opacity-0"}
+    )
+    # |> hide("##{id}-container")
+    |> JS.hide(to: "##{id}", transition: {"block", "block", "hidden"})
+    # |> JS.remove_class("overflow-hidden", to: "body")
+    |> JS.pop_focus()
   end
 end

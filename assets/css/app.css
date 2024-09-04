@@ -1,5 +1,5 @@
 @import "tailwindcss/base";
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
-
+@import "../../deps/phoenix_form_awesomplete/priv/static/awesomplete_bundle.css";
 /* This file is for your main application CSS */

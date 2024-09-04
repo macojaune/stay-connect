@@ -16,29 +16,73 @@
 //
 
 // Include phoenix_html to handle method=PUT/DELETE in forms and buttons.
-import "phoenix_html"
+import "phoenix_html";
 // Establish Phoenix Socket and LiveView configuration.
-import {Socket} from "phoenix"
-import {LiveSocket} from "phoenix_live_view"
-import topbar from "../vendor/topbar"
+import { Socket } from "phoenix";
+import { LiveSocket } from "phoenix_live_view";
+import topbar from "../vendor/topbar";
+import {
+  AwesompleteUtil,
+  attachAwesomplete,
+  copyValueToId,
+} from "phoenix_form_awesomplete";
 
-let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
+const AU = AwesompleteUtil,
+  customAwesompleteContext = {
+    // These functions and objects can be referenced by name in the autocomplete function components.
+    // This list can be customized.
+
+    filterContains: AU.filterContains,
+    filterStartsWith: AU.filterStartsWith,
+    filterWords: AU.filterWords,
+    filterOff: AU.filterOff,
+
+    item: AU.item, // does NOT mark matching text
+    // , itemContains:     AU.itemContains  // this is the default, no need to specify it.
+    itemStartsWith: AU.itemStartsWith,
+    itemMarkAll: AU.itemMarkAll, // also mark matching text inside the description
+    itemWords: AU.itemWords, // mark matching words
+
+    // add your custom functions and/or lists here
+  };
+
+let Hooks = {};
+
+Hooks.Autocomplete = {
+  mounted() {
+    attachAwesomplete(
+      this.el,
+      customAwesompleteContext,
+      {} /* defaultSettings */,
+    );
+  },
+};
+
+Hooks.AutocompleteCopyValueToId = {
+  mounted() {
+    copyValueToId(this.el);
+  },
+};
+
+let csrfToken = document
+  .querySelector("meta[name='csrf-token']")
+  .getAttribute("content");
 let liveSocket = new LiveSocket("/live", Socket, {
   longPollFallbackMs: 2500,
-  params: {_csrf_token: csrfToken}
-})
+  params: { _csrf_token: csrfToken },
+  hooks: Hooks,
+});
 
 // Show progress bar on live navigation and form submits
-topbar.config({barColors: {0: "#29d"}, shadowColor: "rgba(0, 0, 0, .3)"})
-window.addEventListener("phx:page-loading-start", _info => topbar.show(300))
-window.addEventListener("phx:page-loading-stop", _info => topbar.hide())
+topbar.config({ barColors: { 0: "#29d" }, shadowColor: "rgba(0, 0, 0, .3)" });
+window.addEventListener("phx:page-loading-start", (_info) => topbar.show(300));
+window.addEventListener("phx:page-loading-stop", (_info) => topbar.hide());
 
 // connect if there are any LiveViews on the page
-liveSocket.connect()
+liveSocket.connect();
 
 // expose liveSocket on window for web console debug logs and latency simulation:
 // >> liveSocket.enableDebug()
 // >> liveSocket.enableLatencySim(1000)  // enabled for duration of browser session
 // >> liveSocket.disableLatencySim()
-window.liveSocket = liveSocket
-
+window.liveSocket = liveSocket;
