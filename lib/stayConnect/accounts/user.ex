@@ -1,15 +1,19 @@
 defmodule StayConnect.Accounts.User do
-  alias StayConnect.Vote
+  alias StayConnect.{Artist, Vote, Repo}
   use Ecto.Schema
   import Ecto.Changeset
 
   schema "users" do
     field :email, :string
+    field :username, :string
     field :password, :string, virtual: true, redact: true
     field :hashed_password, :string, redact: true
     field :current_password, :string, virtual: true, redact: true
     field :confirmed_at, :utc_datetime
     field :isLoxymore, :boolean, default: false
+    field :is_artist, :boolean, virtual: true
+
+    has_one :artist, Artist
     has_many :votes, Vote
 
     timestamps(type: :utc_datetime)
@@ -84,7 +88,7 @@ defmodule StayConnect.Accounts.User do
   defp maybe_validate_unique_email(changeset, opts) do
     if Keyword.get(opts, :validate_email, true) do
       changeset
-      |> unsafe_validate_unique(:email, StayConnect.Repo)
+      |> unsafe_validate_unique(:email, Repo)
       |> unique_constraint(:email)
     else
       changeset
@@ -160,5 +164,17 @@ defmodule StayConnect.Accounts.User do
     else
       add_error(changeset, :current_password, "is not valid")
     end
+  end
+
+  def is_artist(user) do
+    %{user | is_artist: user.artist != nil}
+  end
+
+  # def is_artist(users) when is_list(users) do
+  #   Enum.map(users, &is_artist/1)
+  # end
+
+  def get_artist(user) do
+    Repo.preload(user, :artist).artist
   end
 end

@@ -1,11 +1,15 @@
 defmodule StayConnectWeb.AutoCompleteComponent do
-  alias StayConnect.Artist
-
   use StayConnectWeb, :live_component
   require Logger
 
   attr :show, :boolean, default: false
   attr :on_cancel, JS, default: %JS{}
+  attr :type, :string, default: "featurings"
+  attr :list, :list, default: []
+  attr :selected, :list, default: []
+  attr :search_item, :any, required: true
+  attr :label, :string, default: "Rechercher"
+  attr :placeholder, :string, default: "Rechercher un artiste"
 
   @impl true
   def render(assigns) do
@@ -19,13 +23,22 @@ defmodule StayConnectWeb.AutoCompleteComponent do
         placeholder={@placeholder}
         value={@query}
       />
-      <.search_modal id="featurings-modal" show={@show} on_cancel={JS.push("cancel", target: @myself)}>
-        <.results artists={@artists} />
+      <.search_modal id={"#{@type}-modal"} show={@show} on_cancel={JS.push("cancel", target: @myself)}>
+        <.results list={@list} type={@type} />
       </.search_modal>
-      <div class="flex flex-row gap-4 mt-3" id="selected-artists">
-        <span :for={artist <- @selected} id={"selected-artist-#{artist.id}"} class="border px-3 py-2 rounded-md">
-          <%= artist.name %>
-          <button id={"remove-artist-#{artist.id}"} phx-click="remove-artist" phx-target={@myself} phx-value-id={artist.id}>
+      <div class="flex flex-row gap-4 mt-3" id={"selected-#{@type}"}>
+        <span
+          :for={item <- @selected}
+          id={"selected-#{@type}-#{item.id}"}
+          class="border px-3 py-2 rounded-md"
+        >
+          <%= item.name %>
+          <button
+            id={"remove-#{@type}-#{item.id}"}
+            phx-click="remove-item"
+            phx-target={@myself}
+            phx-value-id={item.id}
+          >
             <.icon name="hero-x-mark-solid" class="w-4 h-4" />
           </button>
         </span>
@@ -53,14 +66,14 @@ defmodule StayConnectWeb.AutoCompleteComponent do
     """
   end
 
-  attr :artists, :list, required: true
+  attr :list, :list, required: true
+  attr :type, :string, required: true
 
   def results(assigns) do
     ~H"""
     <ul class="-mb-2 py-2 text-sm text-gray-800 flex space-y-2 flex-col" id="options" role="listbox">
       <li
-        :if={@artists == []}
-        id="option-none"
+        :if={@list == []}
         role="option"
         tabindex="-1"
         class="cursor-default select-none rounded-md px-4 py-2 text-xl"
@@ -68,29 +81,30 @@ defmodule StayConnectWeb.AutoCompleteComponent do
         No Results
       </li>
 
-      <button :for={artist <- @artists} id={"artist-#{artist.id}"}>
-        <.result_item artist={artist} />
+      <button :for={item <- @list} id={"item-#{@type}-#{item.id}"}>
+        <.result_item item={item} type={@type} />
       </button>
     </ul>
     """
   end
 
-  attr :artist, Artist, required: true
+  attr :item, :any, required: true
+  attr :type, :string, required: true
 
   def result_item(assigns) do
     ~H"""
     <li
       class="cursor-default select-none rounded-md px-4 py-2 text-xl bg-zinc-100 hover:bg-zinc-800 hover:text-white hover:cursor-pointer flex flex-row space-x-2 items-center"
-      id={"option-#{@artist.id}"}
+      id={"option-#{@type}-#{@item.id}"}
       role="option"
       tabindex="-1"
-      phx-click="select-artist"
-      phx-target="#selected-artists"
-      phx-value-id={@artist.id}
+      phx-click="select-item"
+      phx-target={"#selected-#{@type}"}
+      phx-value-id={@item.id}
     >
       <div>
         <%!-- todo image --%>
-        <%= @artist.name %>
+        <%= @item.name %>
       </div>
     </li>
     """
@@ -118,17 +132,6 @@ defmodule StayConnectWeb.AutoCompleteComponent do
     """
   end
 
-  defp search_artists(query, default) when is_binary(query) do
-    try do
-      Artist.searchByName(query)
-    rescue
-      Exqlite.Error ->
-        default
-    end
-  end
-
-  defp search_artists(_, default), do: default
-
   @impl true
   def mount(socket) do
     socket =
@@ -143,55 +146,48 @@ defmodule StayConnectWeb.AutoCompleteComponent do
   @impl true
   def update(assigns, socket) do
     {:ok,
-     socket
-     |> assign(assigns)
-     |> assign(:artists, [])
-     |> assign(:query, "")}
+      socket
+      |> assign(assigns)
+      |> assign(:list, [])
+      |> assign(:query, "")
+    }
   end
 
   @impl true
   def handle_event("do-search", %{"value" => value}, socket) do
-    artists = search_artists(value, socket.assigns.artists)
-    show = length(artists) > 0
-    Logger.info("Search query: #{value}, Artists found: #{length(artists)}, Show modal: #{show}")
+    items = socket.assigns.search_item.(value)
+    show = length(items) > 0
+    Logger.info("Search query: #{value}, items found: #{length(items)}, Show modal: #{show}")
 
     {:noreply,
-     socket
-     |> assign(:query, value)
-     |> assign(:artists, artists)
-     |> assign(:show, show)}
+      socket
+      |> assign(:query, value)
+      |> assign(:list, items)
+      |> assign(:show, show)
+    }
   end
 
   @impl true
-  def handle_event("select-artist", %{"id" => artist_id}, socket) do
-    artist = find_or_fetch_artist(artist_id, socket.assigns.artists)
+  def handle_event("select-item", %{"id" => item_id}, socket) do
+    item = Enum.find(socket.assigns.list, fn item -> item.id == String.to_integer(item_id) end)
 
-    socket =
-      if artist do
-        socket
-        |> update(:selected, &(&1 ++ [artist]))
-        |> assign(query: "", show: false, artists: [])
-      else
-        socket
-      end
-
-    {:noreply, socket}
-  end
- @impl true
-  def handle_event("remove-artist", %{"id" => artist_id}, socket) do
-    updated_selected =
-      Enum.reject(socket.assigns.selected, fn artist -> artist.id == String.to_integer(artist_id) end)
-    {:noreply, assign(socket, :selected, updated_selected)}
-  end
-  defp find_or_fetch_artist(artist_id, artists) do
-    case Enum.find(artists, &(&1.id == artist_id)) do
-      # Assuming you have an Artist.get/1 function
-      nil -> Artist.get(artist_id)
-      artist -> artist
+    if item do
+      send(self(), {:selected_item, socket.assigns.id, item})
+      {:noreply,socket
+      |> update(:selected, &(&1 ++ [item]))
+      |> assign(query: "", show: false, items: [])}
+    else
+      {:noreply, socket}
     end
   end
 
+  @impl true
+  def handle_event("remove-item", %{"id" => item_id}, socket) do
+    updated_selected =
+      Enum.reject(socket.assigns.selected, fn item -> item.id == String.to_integer(item_id) end)
 
+    {:noreply, assign(socket, :selected, updated_selected)}
+  end
 
   def show_results(js \\ %JS{}, id) when is_binary(id) do
     js

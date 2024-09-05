@@ -55,6 +55,6 @@ categories =
       releases: [Enum.at(releases, 0), Enum.at(releases, 2)]
     }
   ]
-  |> Enum.each(&Repo.insert!(&1))
+  # |> Enum.each(&Repo.insert!(&1))
 
 IO.puts("Seeding completed successfully!")

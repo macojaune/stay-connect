@@ -25,7 +25,7 @@ defmodule StayConnectWeb.ReleaseDetailsLive do
         <%= if @release.featuring, do: "ft. " <> get_featurings(@release), else: "" %> - <%= @release.title %>
         <:actions>
         <%= for cat <- @release.categories do %>
-          <a class="text-slate-300 text-sm"><%= cat.title %></a>
+          <a class="text-slate-300 text-sm"><%= cat.name %></a>
         <% end %>
         </:actions>
       </.header>
