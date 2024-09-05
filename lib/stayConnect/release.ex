@@ -1,5 +1,5 @@
 defmodule StayConnect.Release do
-  alias StayConnect.{Repo, Release, Vote, Feature, Category, Artist}
+  alias StayConnect.{Repo, Release, Vote, Feature, Category, Artist, ReleaseCategory}
   use Ecto.Schema
   import Ecto.{Changeset, Query}
 
@@ -15,9 +15,9 @@ defmodule StayConnect.Release do
     field :is_secret, :boolean, default: false
     field :is_automated, :boolean, default: false
     has_many :votes, Vote
-    many_to_many :categories, Category, join_through: "releases_categories"
+    many_to_many :categories, Category, join_through: ReleaseCategory, on_replace: :delete
     belongs_to :artist, Artist
-    many_to_many :featuring, Artist, join_through: Feature
+    many_to_many :featurings, Artist, join_through: Feature
 
     timestamps(type: :utc_datetime)
   end
@@ -25,17 +25,20 @@ defmodule StayConnect.Release do
   @doc false
   def changeset(%Release{} = release, attrs \\ %{}) do
     release
-    |> cast(attrs, [:title, :description, :date, :type])
-    |> validate_required([:title, :description, :date, :type, :categories, :artist])
+    |> cast(attrs, [:title, :description, :date, :type, :urls, :artist_id, :is_secret, :is_automated])
+    |> validate_required([:title, :description, :date, :type, :urls, :artist_id, :is_secret, :is_automated])
+    |> put_assoc(:categories, attrs["categories"])
+    |> put_assoc(:featurings, attrs["featurings"])
+    |> assoc_constraint(:artist)
   end
 
   @doc """
   Get Release by id
-  
+
   """
   def by_id!(id) do
     Repo.get!(Release, id)
-    |> Repo.preload([:artist, :categories, :featuring, :votes])
+    |> Repo.preload([:artist, :categories, :featurings, :votes])
   end
 
   @doc """
@@ -48,26 +51,39 @@ defmodule StayConnect.Release do
 
     from(r in Release,
       where: r.date >= ^start_of_day and r.date <= ^end_of_day,
-      preload: [:artist, :categories, :featuring, :votes]
+      preload: [:artist, :categories, :featurings, :votes]
     )
     |> Repo.all()
+   |> Repo.preload([:artist, :categories, :featurings, :votes])
+
   end
 
   def list_weekly() do
     from(r in Release,
-      preload: [:artist, :categories, :featuring, :votes],
+      where: r.is_secret == false or r.date <= fragment("strftime('%Y-%m-%d %H:%M:%S', 'now')"),
+      preload: [:artist, :categories, :featurings, :votes],
       order_by: [desc: r.date]
     )
     |> Repo.all()
+    |> Repo.preload([:artist, :categories, :featurings, :votes])
     |> Enum.group_by(&week_start_date/1)
 
     # todo limit / pagination ?
   end
 
-  def create(attrs) do
-    %Release{}
-    |> Release.changeset(attrs)
-    |> Repo.insert()
+  def create(attrs \\ %{}) do
+    IO.inspect(attrs, label: "Attributes passed to Release.create")
+    result = %Release{}
+             |> changeset(attrs)
+             |> Repo.insert()
+    IO.inspect(result, label: "Result of Repo.insert in Release.create")
+    case result do
+      {:ok, release} ->
+        release = Repo.preload(release, [:categories, :featurings])
+        {:ok, release}
+      error ->
+        error
+    end
   end
 
   # Utils

@@ -63,36 +63,6 @@
               Artiste ? Balance tes news
             </span>
           </a>
-          <%!--   <a
-            href={"https://github.com/phoenixframework/phoenix/blob/v#{Application.spec(:phoenix, :vsn)}/CHANGELOG.md"}
-            class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900 sm:py-6"
-          >
-            <span class="absolute inset-0 rounded-2xl bg-zinc-50 transition group-hover:bg-zinc-100 sm:group-hover:scale-105">
-            </span>
-            <span class="relative flex items-center gap-4 sm:flex-col">
-              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" class="h-6 w-6">
-                <path
-                  d="M12 1v6M12 17v6"
-                  stroke="#18181B"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-                <circle
-                  cx="12"
-                  cy="12"
-                  r="4"
-                  fill="#18181B"
-                  fill-opacity=".15"
-                  stroke="#18181B"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
-              Changelog
-            </span>
-          </a> --%>
         </div>
       </div>
     </div>
@@ -112,7 +82,7 @@
         Sorties par semaine
       </h2>
       <%= for {week_start, releases} <- @weekly do %>
-        <h3>Semaine du <%= Calendar.strftime(Date.from_erl!(week_start), "%d %B") %></h3>
+        <h3>Semaine du <%= format_date(Date.from_erl!(week_start)) %></h3>
         <.live_component
           module={ReleaseListComponent}
           items={releases}

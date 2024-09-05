@@ -64,9 +64,9 @@ defmodule StayConnectWeb.ReleaseListComponent do
                       <strong class="font-semibold text-xl">
                         <%= item.artist.name %> − <%= item.title %>
                       </strong>
-                      <%= if length(item.featuring)>0 do %>
+                      <%= if length(item.featurings)>0 do %>
                         ft.
-                        <%= for feat <- item.featuring do %>
+                        <%= for feat <- item.featurings do %>
                           <a href=""><%= feat.name %></a>
                         <% end %>
                       <% end %>
@@ -79,7 +79,7 @@ defmodule StayConnectWeb.ReleaseListComponent do
                 <div class="flex flex-row gap-x-3">
                   <%!-- <span class="text-slate-300 text-sm"><%= length(item.reviews) %> avis</span> --%>
                   <%= for cat <- item.categories do %>
-                    <a class="text-slate-300 text-sm"><%= cat.title %></a>
+                    <a class="text-slate-300 text-sm"><%= cat.name %></a>
                   <% end %>
                 </div>
               </div>

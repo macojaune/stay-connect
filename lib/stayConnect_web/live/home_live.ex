@@ -3,6 +3,7 @@ defmodule StayConnectWeb.HomeLive do
   alias StayConnect.{Vote, Release}
   alias StayConnectWeb.{ReleaseListComponent}
   use StayConnectWeb, :live_view
+  use Timex
 
   def mount(_params, _session, socket) do
     socket =
@@ -47,6 +48,10 @@ defmodule StayConnectWeb.HomeLive do
     end
   end
 
+  defp format_date(date) do
+    {:ok, formatted} = Timex.lformat(date, "%d %B", "fr", :strftime)
+    formatted
+  end
   # def assign_daily(socket) do
   #   Logger.info("Socket: #{inspect(socket.assigns.daily)}")
   #   socket |> assign(socket, :daily)
