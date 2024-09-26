@@ -12,6 +12,12 @@
       <%!-- <a href="https://twitter.com/elixirphoenix" class="hover:text-zinc-700">
         @elixirphoenix
       </a> --%>
+      <.link
+        navigate={~p"/ajouter-une-sortie"}
+        class="rounded-lg bg-zinc-100 px-2 py-1 hover:bg-zinc-200/80"
+      >
+        Ajoute une sortie <span aria-hidden="true">&rarr;</span>
+      </.link>
       <a
         target="_blank"
         href="https://github.com/macojaune/stayConnect"
@@ -26,12 +32,6 @@
           />
         </svg>
       </a>
-      <.link
-        navigate={~p"/ajouter-une-sortie"}
-        class="rounded-lg bg-zinc-100 px-2 py-1 hover:bg-zinc-200/80"
-      >
-        Ajoute une sortie <span aria-hidden="true">&rarr;</span>
-      </.link>
     </div>
   </div>
 </header>

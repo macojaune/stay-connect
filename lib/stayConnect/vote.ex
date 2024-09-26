@@ -39,23 +39,7 @@ defmodule StayConnect.Vote do
 
       vote ->
         Logger.info("update vote")
-
-        vote
-        |> Vote.changeset(%{
-          user_id: user_id,
-          release_id: release_id,
-          vote:
-            if vote.vote + vote_value < -1 do
-              -1
-            else
-              if vote.vote + vote_value > 1 do
-                1
-              else
-                vote.vote + vote_value
-              end
-            end
-        })
-        |> Repo.update()
+        Repo.delete(vote)
     end
   end
 

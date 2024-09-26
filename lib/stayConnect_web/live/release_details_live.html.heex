@@ -1,0 +1,19 @@
+<div class="w-full">
+  <.back navigate={~p"/"} class="">Retour</.back>
+  <div class="w-full sm:max-w-screen-lg mx-auto">
+    <div class="py-2 flex flex-col sm:flex-row gap-2 sm:gap-4">
+      <span class="text-sm font-light rounded-md border border-brand px-2 py-1 text-brand"><%= @release.type %></span>
+    </div>
+    <.header>
+      <%= @release.artist.name %>
+      <%= if @release.featurings, do: "ft. " <> get_featurings(@release), else: "" %> - <%= @release.title %>
+      <:actions>
+        <a :for={cat <- @release.categories} class="text-zinc-400 text-sm"><%= cat.name %></a>
+      </:actions>
+    </.header>
+    <p class="font-normal text-basetext-justify my-5"><%= @release.description %></p>
+    <%!-- Votes --%>
+    <%!-- Links --%>
+    <%!-- TODO: Avis --%>
+  </div>
+</div>

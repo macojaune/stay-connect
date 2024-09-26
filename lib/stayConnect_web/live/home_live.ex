@@ -16,7 +16,10 @@ defmodule StayConnectWeb.HomeLive do
 
   def handle_event("upvote", %{"id" => release_id, "list_type" => list_type}, socket) do
     user = socket.assigns.current_user
-
+    if user == nil do
+      {:noreply,  socket |> put_flash(:info, "Connecte-toi pour voter.")}
+    end
+    
     case Vote.upvote_release(user.id, release_id) do
       {:ok, _vote} ->
         if list_type == "weekly" do

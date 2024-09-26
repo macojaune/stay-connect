@@ -1,4 +1,3 @@
-<.flash_group flash={@flash} />
 <div class="w-full">
   <div class="flex flex-col items-center">
     <h1 class="text-brand mt-10 flex items-center text-4xl font-semibold leading-6">
@@ -66,7 +65,7 @@
         </div>
       </div>
     </div>
-    <div class="w-full px-4 my-10">
+    <div class="w-full px-4 my-10 sm:max-w-screen-lg mx-auto">
       <h2 class="text-2xl font-semibold leading-10 text-balance mb-5 text-zinc-900">
         Sorties du jour
       </h2>
@@ -77,19 +76,23 @@
         id="daily_releases"
       />
     </div>
-    <div class="w-full px-4 my-10">
+    <div class="w-full px-4 mb-10 sm:max-w-screen-lg mx-auto">
       <h2 class="text-2xl font-semibold leading-10 text-balance mb-5 text-zinc-900">
         Sorties par semaine
       </h2>
+      <div class="flex flex-col gap-4">
       <%= for {week_start, releases} <- @weekly do %>
-        <h3>Semaine du <%= format_date(Date.from_erl!(week_start)) %></h3>
-        <.live_component
-          module={ReleaseListComponent}
-          items={releases}
-          list_type="weekly"
-          id={"weekly_releases-#{Date.to_iso8601(Date.from_erl!(week_start), :basic)}"}
-        />
+        <div class="flex flex-col gap-3">
+          <h3 class="text-xl font-semibold">Semaine du <%= format_date(Date.from_erl!(week_start)) %></h3>
+          <.live_component
+            module={ReleaseListComponent}
+            items={releases}
+            list_type="weekly"
+            id={"weekly_releases-#{Date.to_iso8601(Date.from_erl!(week_start), :basic)}"}
+          />
+        </div>
       <% end %>
+    </div>
     </div>
     <div class="flex flex-col items-center gap-4">
       <div class="mt-10 grid grid-cols-1 justify-between content-evenly grid-flow-row-dense gap-4 text-sm leading-6 text-zinc-700 sm:grid-cols-4">
