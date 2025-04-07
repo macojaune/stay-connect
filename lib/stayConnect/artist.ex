@@ -11,6 +11,8 @@ defmodule StayConnect.Artist do
     field :name, :string
     field :description, :string
     field :socials, {:array, :string}
+    field :profile_picture, :string
+    field :followers, :map
 
     belongs_to :user, StayConnect.Accounts.User
     many_to_many :categories, Category, join_through: ArtistCategory
@@ -73,6 +75,4 @@ defmodule StayConnect.Artist do
     )
     |> Repo.all()
   end
-
-
 end

@@ -2,6 +2,7 @@ defmodule StayConnect.Release do
   alias StayConnect.{Repo, Release, Vote, Feature, Category, Artist, ReleaseCategory}
   use Ecto.Schema
   import Ecto.{Changeset, Query}
+  require Logger
 
   schema "releases" do
     field :description, :string
@@ -25,8 +26,26 @@ defmodule StayConnect.Release do
   @doc false
   def changeset(%Release{} = release, attrs \\ %{}) do
     release
-    |> cast(attrs, [:title, :description, :date, :type, :urls, :artist_id, :is_secret, :is_automated])
-    |> validate_required([:title, :description, :date, :type, :urls, :artist_id, :is_secret, :is_automated])
+    |> cast(attrs, [
+      :title,
+      :description,
+      :date,
+      :type,
+      :urls,
+      :artist_id,
+      :is_secret,
+      :is_automated
+    ])
+    |> validate_required([
+      :title,
+      :description,
+      :date,
+      :type,
+      :urls,
+      :artist_id,
+      :is_secret,
+      :is_automated
+    ])
     |> put_assoc(:categories, attrs["categories"])
     |> put_assoc(:featurings, attrs["featurings"])
     |> assoc_constraint(:artist)
@@ -54,8 +73,7 @@ defmodule StayConnect.Release do
       preload: [:artist, :categories, :featurings, :votes]
     )
     |> Repo.all()
-   |> Repo.preload([:artist, :categories, :featurings, :votes])
-
+    |> Repo.preload([:artist, :categories, :featurings, :votes])
   end
 
   def list_weekly() do
@@ -73,14 +91,19 @@ defmodule StayConnect.Release do
 
   def create(attrs \\ %{}) do
     IO.inspect(attrs, label: "Attributes passed to Release.create")
-    result = %Release{}
-             |> changeset(attrs)
-             |> Repo.insert()
+
+    result =
+      %Release{}
+      |> changeset(attrs)
+      |> Repo.insert()
+
     IO.inspect(result, label: "Result of Repo.insert in Release.create")
+
     case result do
       {:ok, release} ->
         release = Repo.preload(release, [:categories, :featurings])
         {:ok, release}
+
       error ->
         error
     end
@@ -95,5 +118,16 @@ defmodule StayConnect.Release do
         :calendar.day_of_the_week({year, 1, 4}) + 1
 
     :calendar.gregorian_days_to_date(first_day_of_week)
+  end
+
+  def platform_from_url(url) do
+    case url do
+      "https://open.spotify.com/" <> _ -> "spotify"
+      "https://music.apple.com/" <> _ -> "apple-music"
+      "https://deezer.com/" <> _ -> "deezer"
+      "https://soundcloud.com/" <> _ -> "soundcloud"
+      "https://www.youtube.com/" <> _ -> "youtube"
+      _ -> "unknown"
+    end
   end
 end

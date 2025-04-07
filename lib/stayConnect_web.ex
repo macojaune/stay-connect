@@ -85,6 +85,7 @@ defmodule StayConnectWeb do
       import Phoenix.HTML
       # Core UI components and translation
       import StayConnectWeb.CoreComponents
+
       import StayConnectWeb.Gettext
       # Shortcut for generating JS commands
       alias Phoenix.LiveView.JS
