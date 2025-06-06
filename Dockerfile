@@ -1,48 +1,54 @@
-FROM elixir:1.17.2-alpine as build
+# Multi-stage build for AdonisJS application
+FROM node:20-alpine AS base
 
-# install build dependencies
-RUN apk add --update git build-base npm python3
-
-# prepare build dir
-RUN mkdir /app
+# Install dependencies only when needed
+FROM base AS deps
+RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
-# install hex + rebar
-RUN mix local.hex --force && \
-    mix local.rebar --force
+# Copy package files
+COPY package*.json ./
+RUN npm ci --only=production && npm cache clean --force
 
-# set build ENV
-ENV MIX_ENV=prod
+# Build the application
+FROM base AS builder
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci
 
-# install dependencies
-COPY mix.exs mix.lock ./
-COPY config config
-RUN mix do deps.get, deps.compile
+# Copy source code
+COPY . .
 
-# build assets
-COPY assets assets
-RUN npm --prefix ./assets ci --progress=false --no-audit --loglevel=error && \
-    npm --prefix ./assets run deploy && \
-    mix phx.digest
+# Build the application
+RUN npm run build
 
-# compile app
-COPY lib lib
-RUN mix compile
-
-# build release
-RUN mix release
-
-# prepare release image
-FROM alpine:3.14.2 AS app
-
-RUN apk add --no-cache openssl ncurses-libs bash
-
+# Production image
+FROM base AS runner
 WORKDIR /app
 
-RUN chown nobody:nobody /app
+# Create a non-root user
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 adonisjs
 
-USER nobody:nobody
+# Copy built application
+COPY --from=builder --chown=adonisjs:nodejs /app/build ./
+COPY --from=deps --chown=adonisjs:nodejs /app/node_modules ./node_modules
+COPY --from=builder --chown=adonisjs:nodejs /app/package*.json ./
 
-COPY --from=build --chown=nobody:nobody /app/_build/prod/rel/my_app ./
+# Switch to non-root user
+USER adonisjs
 
-CMD ["bin/my_app", "start"]
+# Expose port
+EXPOSE 3333
+
+# Set environment to production
+ENV NODE_ENV=production
+ENV HOST=0.0.0.0
+ENV PORT=3333
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD node ace healthcheck || exit 1
+
+# Start the application
+CMD ["node", "bin/server.js"]
