@@ -1,0 +1,166 @@
+# Product Requirements Document: StayConnect
+
+<context>
+# Overview
+StayConnect is a web platform, envisioned as the "Product Hunt for Caribbean Music." It's designed for musical artists primarily from the French Caribbean departments (Guadeloupe, Martinique, Guyane) to start, with plans to expand. The platform provides a centralized place for artists to post their releases (singles, albums), and events, enabling fans and new audiences to discover their work and stay updated on a weekly basis. While the initial focus is on French-speaking regions, the platform will be built with internationalization in mind for future expansion, though immediate implementation of full multi-language support will depend on development effort versus MVP goals. The platform aims to bridge the gap between Caribbean artists and their audience, fostering a vibrant musical community.
+
+# Core Features
+
+1.  **Artist Release Posting**
+    *   **What it does:** Allows registered artists to create and publish information about their new musical releases, including singles, EPs, and albums. This includes details like title, cover art, featured artists, and release type.
+    *   **Why it's important:** Provides artists with a direct channel to announce their new music to a dedicated audience.
+    *   **How it works:** Artists will have a dashboard where they can fill out a form with release details, upload a cover image, and publish it to the platform.
+
+2.  **Event Posting & Management**
+    *   **What it does:** Enables artists to announce and manage their upcoming events (concerts, showcases, live streams, etc.).
+    *   **Why it's important:** Helps artists promote their live performances and engage with fans in real-time.
+    *   **How it works:** Similar to release posting, artists can create event listings with details such as date, time, venue, description, and ticket links.
+
+3.  **Fan Discovery & Weekly Updates (Product Hunt Style)**
+    *   **What it does:** Allows fans and music enthusiasts to discover new Caribbean artists and music in a format similar to Product Hunt, with daily/weekly highlights of new releases and events. Provides a system for users to stay updated, potentially through a weekly digest or personalized feed.
+    *   **Why it's important:** Facilitates music discovery and keeps the audience engaged with the latest from the Caribbean music scene, creating a go-to platform for new finds.
+    *   **How it works:** The platform will feature a browsable and searchable directory of releases and events, with an emphasis on new and trending content. Users might be able to follow artists or genres for tailored updates.
+
+4.  **Artist Profiles**
+    *   **What it does:** Each registered artist will have a dedicated profile page showcasing their bio, discography, upcoming events, and links to their social media/streaming platforms.
+    *   **Why it's important:** Offers a comprehensive view of an artist's work and presence.
+    *   **How it works:** Artists can customize their profiles after registration. Profile pages will aggregate all their posted content.
+
+5.  **Categorization, Search & Filtering**
+    *   **What it does:** Organizes releases and events by categories (e.g., genre, type of release, origin) and allows users to search and filter content.
+    *   **Why it's important:** Enhances content discoverability and user experience.
+    *   **How it works:** Releases and events will be tagged with relevant categories. A search bar and filter options will be available on listing pages.
+
+# User Experience
+
+*   **User Personas:**
+    *   **Caribbean Musical Artists & their Teams (initially from Guadeloupe, Martinique, Guyane):** Seeking to expand their reach, promote their music/events, and connect with fans.
+    *   **Music Fans (Local & Diaspora):** Eager to discover new music from the Caribbean and follow their favorite artists.
+    *   **Music Heads/Curators/Industry Professionals:** Looking for emerging talents and trends in the Caribbean music scene.
+*   **Key User Flows:**
+    *   **Artist Onboarding & Content Posting:** Sign Up -> Create/Edit Profile -> Post New Release -> Post New Event -> Manage Existing Content.
+    *   **Fan Discovery & Engagement:** Browse Homepage (New/Trending Releases/Events) -> Search/Filter for Music/Artists -> View Artist Profile -> View Release/Event Details -> (Future: Follow Artist, Save Event, Vote/Comment).
+*   **UI/UX Considerations:**
+    *   **Language:** Primarily French interface for MVP. Internationalization (i18n) using Gettext (already partially set up in Phoenix) should be considered from the start for easier future expansion to English and other relevant languages. This means structuring templates and code to support translations, even if only French translations are provided initially.
+    *   **Visuals:** Clean, modern, and visually appealing, potentially incorporating elements that resonate with Caribbean culture. Design should feel dynamic and exciting, like Product Hunt.
+    *   **Navigation:** Intuitive and easy for both artists managing content and fans discovering it.
+    *   **Responsiveness:** Fully responsive design for seamless access on desktop, tablet, and mobile devices.
+    *   **Accessibility:** Adherence to web accessibility standards.
+</context>
+
+<PRD>
+# Technical Architecture
+
+*   **System Components:**
+    *   **Backend Framework:** Elixir with Phoenix Framework.
+        *   **Elixir:** A dynamic, functional language designed for building scalable and maintainable applications. Runs on the Erlang VM (BEAM), known for its low-latency, distributed, and fault-tolerant systems.
+        *   **Phoenix Framework:** A productive web framework that leverages Elixir's strengths. Emphasizes developer happiness and high performance. Key features include:
+            *   **Phoenix LiveView:** For building rich, real-time user experiences with server-rendered HTML, minimizing the need for complex client-side JavaScript.
+            *   **Phoenix PubSub:** For real-time messaging and broadcasting events across the system (e.g., for notifications, live updates).
+            *   **Ecto:** A powerful database wrapper and query language for Elixir.
+    *   **Database:** PostgreSQL (managed via Ecto).
+    *   **Frontend Styling:** Tailwind CSS.
+    *   **Web Server:** Cowboy (default with Phoenix).
+    *   **Background Jobs:** (Potentially, for notifications or data processing - to be determined, e.g., Oban).
+*   **Data Models (Primary Entities):**
+    *   `User` (for both artists and fans, with role differentiation - leveraging `Accounts` context).
+    *   `Artist` (profile information, linked to a User account, potentially region/department).
+    *   `Release` (title, type, cover_url, release_date, artist_id, featurings).
+    *   `Event` (name, date, location, description, artist_id - to be defined, could be a type of Release initially).
+    *   `Category` (for releases/events, e.g., Zouk, Kompa, Dancehall, Album, Single).
+    *   `Vote` (user_id, release_id, value - as seen in `upvote` functionality).
+    *   (Potentially `Featuring`, `ArtistCategory`, `ReleaseCategory` as join tables).
+*   **APIs and Integrations:**
+    *   **Internal APIs:** Phoenix routes for serving LiveView and potentially JSON for future mobile app/external services.
+    *   **External APIs (Potential):**
+        *   Spotify API (`spotify.ex` exists): For fetching artist data, embedding players, or linking to Spotify tracks.
+        *   Social Media APIs: For sharing releases/events.
+        *   Payment Gateway: If merchandise or ticket sales are introduced later.
+*   **Infrastructure Requirements:**
+    *   Hosting platform capable of running Elixir/Phoenix applications (e.g., Gigalixir, Fly.io, Render, or self-hosted VPS).
+    *   PostgreSQL database instance.
+    *   CDN for static assets and user-uploaded media (e.g., cover art) to improve performance and reduce server load.
+    *   Email service for notifications and account management (e.g., SendGrid, Mailgun - `StayConnect.Mailer` exists).
+
+# Development Roadmap
+
+*   **MVP Requirements (Phase 1 - Core Functionality for French Departments):**
+    1.  **User Authentication:** Secure registration and login for artists and fans.
+    2.  **Artist Profiles:** Basic profile creation and display (name, bio, image, department/region).
+    3.  **Release Management (CRUD):** Artists can create, view, update, and delete their music releases.
+    4.  **Public Release Listings (Product Hunt Style):** Homepage displaying recent/trending releases, page for all releases with basic filtering.
+    5.  **Release Detail Pages:** Individual pages for each release.
+    6.  **Categorization (Basic):** Ability to assign a type/category to a release.
+    7.  **Voting System:** Basic upvote functionality for releases.
+    8.  **Initial French Language Support:** All UI text in French, using Gettext for future i18n.
+
+*   **Future Enhancements (Phase 2 & Beyond - Iterative Improvements & Expansion):**
+    1.  **Event Management (CRUD).**
+    2.  **Advanced Artist Profiles.**
+    3.  **Fan Following System.**
+    4.  **Notifications.**
+    5.  **Advanced Search & Filtering (including by department/region).**
+    6.  **User Interaction (Comments, Reviews).**
+    7.  **Spotify Integration.**
+    8.  **Admin Panel.**
+    9.  **Weekly Digest/Newsletter.**
+    10. **Full Internationalization (i18n):** Adding English and other languages based on demand.
+    11. **Expansion to other Caribbean regions/countries.**
+    12. **Mobile Optimization & PWA.**
+
+# Logical Dependency Chain
+
+1.  **Foundation (Core Backend & Auth):**
+    *   Setup Phoenix project, database schema for `User`, `Artist`, `Release`, `Category`, `Vote`.
+    *   Implement user authentication (`phx.gen.auth`).
+    *   Define relationships between models.
+    *   Setup Gettext for French as the default language.
+
+2.  **Artist Content Creation (MVP Frontend/Backend):**
+    *   Develop forms and LiveViews for artists to create/edit their profiles.
+    *   Develop forms and LiveViews for artists to submit/manage releases.
+
+3.  **Public Content Display (MVP Frontend):**
+    *   Create LiveViews for displaying lists of releases (homepage, all releases page) with a Product Hunt-like feel.
+    *   Create LiveView for the release detail page.
+    *   Implement basic filtering and display of categories.
+    *   Integrate the voting mechanism.
+
+4.  **Iterative Expansion (Post-MVP):**
+    *   Build out Event management features.
+    *   Implement Fan Following system.
+    *   Develop Notification system.
+    *   Add advanced search and filtering.
+    *   Begin phased rollout of additional languages if prioritized.
+
+# Risks and Mitigations
+
+*   **Technical Challenges:**
+    *   **Scalability:** Handling a growing number of users, releases, and media files.
+        *   **Mitigation:** Design for scalability from the start. Elixir/Phoenix are well-suited for this. Monitor performance.
+    *   **Internationalization Complexity:** Managing translations and locale-specific content if expanded too quickly.
+        *   **Mitigation:** Start with a solid Gettext setup for French. Introduce new languages methodically. Prioritize based on user demand and strategic goals.
+*   **Figuring out the MVP that we can build upon:**
+    *   **Scope Creep:** Tendency to add too many features to the initial version, especially with i18n.
+        *   **Mitigation:** Strictly adhere to MVP for French departments. Defer full i18n if it delays MVP significantly.
+    *   **User Adoption (Artists in initial departments):**
+        *   **Mitigation:** Clear value proposition, easy onboarding, direct outreach to artists in Guadeloupe, Martinique, Guyane.
+*   **Resource Constraints:**
+    *   **Development Time:**
+        *   **Mitigation:** Focus on core MVP. Leverage Phoenix's productivity.
+    *   **Content Moderation:**
+        *   **Mitigation (Post-MVP):** Implement reporting. Plan for admin interface.
+
+# Appendix
+
+*   **Research Findings:**
+    *   **Inspiration:** ProductHunt.com (for discovery model and community engagement).
+    *   [User can fill this in - e.g., market analysis for French Caribbean music, competitor review, artist/fan surveys]
+*   **Technical Specifications:**
+    *   **Elixir Version:** (Specify current stable or project target, e.g., 1.15+)
+    *   **Phoenix Version:** (Specify current stable or project target, e.g., 1.7+)
+    *   **Database:** PostgreSQL (Specify version, e.g., 14+)
+    *   **Key Libraries:** Phoenix LiveView, Ecto, Tailwind CSS, Gettext.
+    *   [User can fill this in - e.g., detailed API specs if any, deployment architecture diagrams]
+
+</PRD>

@@ -1,0 +1,62 @@
+<div class="w-full">
+  <.back navigate={~p"/"} class="">Retour</.back>
+  <div class="w-full sm:max-w-screen-lg mx-auto">
+    <div class="py-2 flex flex-col sm:flex-row gap-2 sm:gap-4">
+      <span class="text-sm font-light rounded-md border border-brand px-2 py-1 text-brand"><%= @release.type %></span>
+    </div>
+    <.header>
+      <%= @release.artist.name %>
+      <%= if @release.featurings |> Enum.count() >0, do: "ft. " <> get_featurings(@release), else: "" %> - <%= @release.title %>
+      <:subtitle>
+      <a :for={cat <- @release.categories} class="text-zinc-400 text-sm"><%= cat.name %></a>
+      </:subtitle>
+      <:actions>
+        <div class="flex flex-row gap-2">
+        <.button
+          type="button"
+          phx-click="upvote"
+          id={"upvote-#{@release.id}"}
+          class="py-3 px-4 bg-brand border-transparent text-white hover:bg-white hover:border-brand border flex flex-row items-center gap-2 group"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+            class="size-5 text-white group-hover:text-brand"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M9.47 6.47a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 1 1-1.06 1.06L10 8.06l-3.72 3.72a.75.75 0 0 1-1.06-1.06l4.25-4.25Z"
+              clip-rule="evenodd"
+            />
+          </svg>
+          <span class="text-center text-white group-hover:text-black uppercase">vote 
+            <b :if={@release.votes|> Enum.count()>0} class="text-lg font-bold ml-2"><%= @release.votes|> Enum.count() %></b>
+          </span>
+        </.button>
+        </div>
+      </:actions>
+    </.header>
+    <div class="flex flex-row justify-between gap-4 mt-4">
+    <%!-- Content --%>
+      <div class="flex flex-col">
+        <p class="font-normal text-basetext-justify my-5"><%= @release.description %></p>
+        <%!-- Links --%>
+        <div class="flex flex-row  justify-center gap-4 my-4 flex-wrap">
+          <.link :for={link <- @release.urls} href={link} target="_blank" class="flex flex-col gap-2 items-center">
+            <img src={~p"/images/icon-#{get_platform(link)<>".svg"}"} alt={get_platform(link)} class="w-10" />
+            <span class="font-bold text-sm capitalize"><%= get_platform(link) %></span>
+          </.link>
+        </div>
+        <%!-- TODO: Avis --%>
+      </div>
+      <%!-- Sidebar --%>
+      <div class="flex sm:flex-col gap-2 sm:gap-4 sm:w-1/12">
+        <div :for={artist <- [@release.artist | @release.featurings]} class="flex sm:flex-col gap-2 justify-end items-center">
+          <img class="w-full aspect-square rounded-lg" src={artist.profile_picture} alt={artist.name} />
+            <span class="font-bold text-sm"><%= artist.name %></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
