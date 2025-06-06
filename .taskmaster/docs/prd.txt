@@ -1,0 +1,3 @@
+# StayConnect AdonisJS Migration
+
+This document outlines the tasks for migrating StayConnect to AdonisJS.

@@ -1,0 +1,38 @@
+# Development Dockerfile for AdonisJS with hot reloading
+FROM node:20-alpine AS development
+
+# Install dependencies for development
+RUN apk add --no-cache \
+    git \
+    python3 \
+    make \
+    g++ \
+    libc6-compat
+
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+
+# Install all dependencies (including dev dependencies)
+RUN npm ci
+
+# Copy source code
+COPY . .
+
+# Create uploads directory
+RUN mkdir -p uploads && chown -R node:node uploads
+
+# Switch to node user for security
+USER node
+
+# Expose ports
+EXPOSE 3333 9229
+
+# Set environment variables
+ENV NODE_ENV=development
+ENV HOST=0.0.0.0
+ENV PORT=3333
+
+# Start development server with hot reloading
+CMD ["npm", "run", "dev"]
