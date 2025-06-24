@@ -32,7 +32,7 @@ export function Footer() {
           {/* Brand */}
           <div className="col-span-1">
             <Link href="/" className="flex items-center">
-              <h2 className="text-2xl font-bold text-blue-400">StayConnect</h2>
+              <h2 className="text-2xl font-bold text-brand">StayConnect</h2>
             </Link>
             <p className="mt-4 text-gray-400 text-sm">
               Connecting music lovers with their favorite artists and discovering new releases.

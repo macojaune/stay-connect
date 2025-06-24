@@ -11,7 +11,10 @@ import router from '@adonisjs/core/services/router'
 import { middleware } from './kernel.js'
 
 // Web routes
-router.on('/').renderInertia('home')
+router.get('/', '#controllers/home_controller.index')
+
+// Newsletter routes
+router.post('/newsletter', '#controllers/home_controller.subscribe')
 
 // API routes group
 router

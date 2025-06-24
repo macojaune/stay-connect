@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Link, usePage } from '@inertiajs/react';
 import { Button } from '~/components/ui/Button';
-import { cn } from '~/utils/cn';
 
 interface User {
   id: number;
@@ -15,7 +14,11 @@ interface PageProps {
   };
 }
 
-export function Navigation() {
+interface NavigationProps {
+  isLandingPage?: boolean;
+}
+
+export function Navigation({ isLandingPage }: NavigationProps) {
   const { auth } = usePage<PageProps>().props;
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -26,6 +29,10 @@ export function Navigation() {
     { name: 'Discover', href: '/discover' },
   ];
 
+  if (isLandingPage) {
+    return null;
+  }
+
   return (
     <nav className="bg-white shadow-sm border-b border-gray-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -33,7 +40,7 @@ export function Navigation() {
           {/* Logo */}
           <div className="flex items-center">
             <Link href="/" className="flex-shrink-0">
-              <h1 className="text-2xl font-bold text-blue-600">StayConnect</h1>
+              <h1 className="text-2xl font-bold text-brand">StayConnect</h1>
             </Link>
           </div>
 
@@ -43,7 +50,7 @@ export function Navigation() {
               <Link
                 key={item.name}
                 href={item.href}
-                className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                className="text-gray-700 hover:text-brand px-3 py-2 rounded-md text-sm font-medium transition-colors"
               >
                 {item.name}
               </Link>
@@ -88,7 +95,7 @@ export function Navigation() {
           <div className="md:hidden flex items-center">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="text-gray-700 hover:text-blue-600 focus:outline-none focus:text-blue-600"
+              className="text-gray-700 hover:text-brand focus:outline-none focus:text-brand"
             >
               <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 {isMenuOpen ? (
@@ -110,7 +117,7 @@ export function Navigation() {
               <Link
                 key={item.name}
                 href={item.href}
-                className="text-gray-700 hover:text-blue-600 block px-3 py-2 rounded-md text-base font-medium"
+                className="text-gray-700 hover:text-brand block px-3 py-2 rounded-md text-base font-medium"
                 onClick={() => setIsMenuOpen(false)}
               >
                 {item.name}
@@ -127,7 +134,7 @@ export function Navigation() {
                   </div>
                   <Link
                     href="/profile"
-                    className="block px-3 py-2 text-gray-700 hover:text-blue-600"
+                    className="block px-3 py-2 text-gray-700 hover:text-brand"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     Profile
@@ -135,7 +142,7 @@ export function Navigation() {
                   <Link
                     href="/logout"
                     method="post"
-                    className="block px-3 py-2 text-gray-700 hover:text-blue-600"
+                    className="block px-3 py-2 text-gray-700 hover:text-brand"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     Logout
@@ -145,14 +152,14 @@ export function Navigation() {
                 <div className="space-y-2">
                   <Link
                     href="/login"
-                    className="block px-3 py-2 text-gray-700 hover:text-blue-600"
+                    className="block px-3 py-2 text-gray-700 hover:text-brand"
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    Login
+                    Connexion
                   </Link>
                   <Link
                     href="/register"
-                    className="block px-3 py-2 text-gray-700 hover:text-blue-600"
+                    className="block px-3 py-2 text-gray-700 hover:text-brand"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     Sign Up
@@ -164,5 +171,5 @@ export function Navigation() {
         </div>
       )}
     </nav>
-  );
+  )
 }
