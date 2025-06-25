@@ -1,0 +1,5020 @@
+{
+  "href": "https://api.spotify.com/v1/search?query=genre%3Arap-antillais&type=artist&locale=en-US%2Cen%3Bq%3D0.9%2Cfr-FR%3Bq%3D0.8%2Cfr%3Bq%3D0.7&offset=0&limit=50",
+  "items": [
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/4fDZJCQwLDf7xD4bn3hmoH"
+      },
+      "followers": {
+        "href": null,
+        "total": 24365
+      },
+      "genres": [
+        "rap antillais",
+        "trap antillais",
+        "zouk riddim"
+      ],
+      "href": "https://api.spotify.com/v1/artists/4fDZJCQwLDf7xD4bn3hmoH",
+      "id": "4fDZJCQwLDf7xD4bn3hmoH",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab6761610000e5eb509ab34423cf9b4bd0f6dde6",
+          "width": 640
+        },
+        {
+          "height": 320,
+          "url": "https://i.scdn.co/image/ab67616100005174509ab34423cf9b4bd0f6dde6",
+          "width": 320
+        },
+        {
+          "height": 160,
+          "url": "https://i.scdn.co/image/ab6761610000f178509ab34423cf9b4bd0f6dde6",
+          "width": 160
+        }
+      ],
+      "name": "Lyrrix",
+      "popularity": 30,
+      "type": "artist",
+      "uri": "spotify:artist:4fDZJCQwLDf7xD4bn3hmoH"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/5sMW0JQcC3IVmpZ7nr0Wh9"
+      },
+      "followers": {
+        "href": null,
+        "total": 20164
+      },
+      "genres": [
+        "musique guadeloupe",
+        "rap antillais",
+        "zouk riddim"
+      ],
+      "href": "https://api.spotify.com/v1/artists/5sMW0JQcC3IVmpZ7nr0Wh9",
+      "id": "5sMW0JQcC3IVmpZ7nr0Wh9",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab6761610000e5ebda460eec529bb9821806296c",
+          "width": 640
+        },
+        {
+          "height": 320,
+          "url": "https://i.scdn.co/image/ab67616100005174da460eec529bb9821806296c",
+          "width": 320
+        },
+        {
+          "height": 160,
+          "url": "https://i.scdn.co/image/ab6761610000f178da460eec529bb9821806296c",
+          "width": 160
+        }
+      ],
+      "name": "Matieu White",
+      "popularity": 38,
+      "type": "artist",
+      "uri": "spotify:artist:5sMW0JQcC3IVmpZ7nr0Wh9"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/3TA0DO95SXcr3GDsQCHuNU"
+      },
+      "followers": {
+        "href": null,
+        "total": 18244
+      },
+      "genres": [
+        "musique guadeloupe",
+        "rap antillais",
+        "trap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/3TA0DO95SXcr3GDsQCHuNU",
+      "id": "3TA0DO95SXcr3GDsQCHuNU",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab6761610000e5eb7e1447500efb44f9bf91640b",
+          "width": 640
+        },
+        {
+          "height": 320,
+          "url": "https://i.scdn.co/image/ab676161000051747e1447500efb44f9bf91640b",
+          "width": 320
+        },
+        {
+          "height": 160,
+          "url": "https://i.scdn.co/image/ab6761610000f1787e1447500efb44f9bf91640b",
+          "width": 160
+        }
+      ],
+      "name": "Railfé",
+      "popularity": 38,
+      "type": "artist",
+      "uri": "spotify:artist:3TA0DO95SXcr3GDsQCHuNU"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/3kg1W1uC2DqdaDCmYSWQGF"
+      },
+      "followers": {
+        "href": null,
+        "total": 15208
+      },
+      "genres": [
+        "musique guadeloupe",
+        "rap antillais",
+        "trap antillais",
+        "zouk riddim"
+      ],
+      "href": "https://api.spotify.com/v1/artists/3kg1W1uC2DqdaDCmYSWQGF",
+      "id": "3kg1W1uC2DqdaDCmYSWQGF",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab67616d0000b2734c2d226268624d9b3dd1809f",
+          "width": 640
+        },
+        {
+          "height": 300,
+          "url": "https://i.scdn.co/image/ab67616d00001e024c2d226268624d9b3dd1809f",
+          "width": 300
+        },
+        {
+          "height": 64,
+          "url": "https://i.scdn.co/image/ab67616d000048514c2d226268624d9b3dd1809f",
+          "width": 64
+        }
+      ],
+      "name": "Pon2mik",
+      "popularity": 24,
+      "type": "artist",
+      "uri": "spotify:artist:3kg1W1uC2DqdaDCmYSWQGF"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/5suVH4gmaE2awchFnM9PPt"
+      },
+      "followers": {
+        "href": null,
+        "total": 10934
+      },
+      "genres": [
+        "musique guadeloupe",
+        "rap antillais",
+        "zouk riddim"
+      ],
+      "href": "https://api.spotify.com/v1/artists/5suVH4gmaE2awchFnM9PPt",
+      "id": "5suVH4gmaE2awchFnM9PPt",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab6761610000e5eba69be9f40ad8029285aab7e8",
+          "width": 640
+        },
+        {
+          "height": 320,
+          "url": "https://i.scdn.co/image/ab67616100005174a69be9f40ad8029285aab7e8",
+          "width": 320
+        },
+        {
+          "height": 160,
+          "url": "https://i.scdn.co/image/ab6761610000f178a69be9f40ad8029285aab7e8",
+          "width": 160
+        }
+      ],
+      "name": "Debrouya",
+      "popularity": 28,
+      "type": "artist",
+      "uri": "spotify:artist:5suVH4gmaE2awchFnM9PPt"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/4xOmYTM8mDlUiuQJSqvAVV"
+      },
+      "followers": {
+        "href": null,
+        "total": 16083
+      },
+      "genres": [
+        "rap antillais",
+        "trap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/4xOmYTM8mDlUiuQJSqvAVV",
+      "id": "4xOmYTM8mDlUiuQJSqvAVV",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab6761610000e5ebb9bae57623999e12217c81a4",
+          "width": 640
+        },
+        {
+          "height": 320,
+          "url": "https://i.scdn.co/image/ab67616100005174b9bae57623999e12217c81a4",
+          "width": 320
+        },
+        {
+          "height": 160,
+          "url": "https://i.scdn.co/image/ab6761610000f178b9bae57623999e12217c81a4",
+          "width": 160
+        }
+      ],
+      "name": "Don Snoop",
+      "popularity": 32,
+      "type": "artist",
+      "uri": "spotify:artist:4xOmYTM8mDlUiuQJSqvAVV"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/20wnrSKoHIMD30J7JAo4ch"
+      },
+      "followers": {
+        "href": null,
+        "total": 3998
+      },
+      "genres": [
+        "rap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/20wnrSKoHIMD30J7JAo4ch",
+      "id": "20wnrSKoHIMD30J7JAo4ch",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab67616d0000b2734c87e825dc29fa25c7a5a180",
+          "width": 640
+        },
+        {
+          "height": 300,
+          "url": "https://i.scdn.co/image/ab67616d00001e024c87e825dc29fa25c7a5a180",
+          "width": 300
+        },
+        {
+          "height": 64,
+          "url": "https://i.scdn.co/image/ab67616d000048514c87e825dc29fa25c7a5a180",
+          "width": 64
+        }
+      ],
+      "name": "ThugPapg",
+      "popularity": 23,
+      "type": "artist",
+      "uri": "spotify:artist:20wnrSKoHIMD30J7JAo4ch"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/0Y4XPAlixU89K3Z6oRziZ1"
+      },
+      "followers": {
+        "href": null,
+        "total": 31499
+      },
+      "genres": [
+        "musique guadeloupe",
+        "rap antillais",
+        "trap antillais",
+        "zouk riddim"
+      ],
+      "href": "https://api.spotify.com/v1/artists/0Y4XPAlixU89K3Z6oRziZ1",
+      "id": "0Y4XPAlixU89K3Z6oRziZ1",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab6761610000e5ebf91c82503c52baa857299dc8",
+          "width": 640
+        },
+        {
+          "height": 320,
+          "url": "https://i.scdn.co/image/ab67616100005174f91c82503c52baa857299dc8",
+          "width": 320
+        },
+        {
+          "height": 160,
+          "url": "https://i.scdn.co/image/ab6761610000f178f91c82503c52baa857299dc8",
+          "width": 160
+        }
+      ],
+      "name": "Young Chang MC",
+      "popularity": 35,
+      "type": "artist",
+      "uri": "spotify:artist:0Y4XPAlixU89K3Z6oRziZ1"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/3N8BWulSGADw4SvDE2k6Yl"
+      },
+      "followers": {
+        "href": null,
+        "total": 11155
+      },
+      "genres": [
+        "bouyon",
+        "rap antillais",
+        "trap antillais",
+        "zouk riddim"
+      ],
+      "href": "https://api.spotify.com/v1/artists/3N8BWulSGADw4SvDE2k6Yl",
+      "id": "3N8BWulSGADw4SvDE2k6Yl",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab6761610000e5ebefad4a77ceebd464f3d2120b",
+          "width": 640
+        },
+        {
+          "height": 320,
+          "url": "https://i.scdn.co/image/ab67616100005174efad4a77ceebd464f3d2120b",
+          "width": 320
+        },
+        {
+          "height": 160,
+          "url": "https://i.scdn.co/image/ab6761610000f178efad4a77ceebd464f3d2120b",
+          "width": 160
+        }
+      ],
+      "name": "Drexi",
+      "popularity": 23,
+      "type": "artist",
+      "uri": "spotify:artist:3N8BWulSGADw4SvDE2k6Yl"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/3Yd5Myzy2Pc2Elt40LOST5"
+      },
+      "followers": {
+        "href": null,
+        "total": 19005
+      },
+      "genres": [
+        "rap antillais",
+        "zouk riddim"
+      ],
+      "href": "https://api.spotify.com/v1/artists/3Yd5Myzy2Pc2Elt40LOST5",
+      "id": "3Yd5Myzy2Pc2Elt40LOST5",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab67616d0000b27347eff1dff7fe133fc2d2650b",
+          "width": 640
+        },
+        {
+          "height": 300,
+          "url": "https://i.scdn.co/image/ab67616d00001e0247eff1dff7fe133fc2d2650b",
+          "width": 300
+        },
+        {
+          "height": 64,
+          "url": "https://i.scdn.co/image/ab67616d0000485147eff1dff7fe133fc2d2650b",
+          "width": 64
+        }
+      ],
+      "name": "Warped",
+      "popularity": 34,
+      "type": "artist",
+      "uri": "spotify:artist:3Yd5Myzy2Pc2Elt40LOST5"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/1TSdTHidTqbViCJfKSvlEG"
+      },
+      "followers": {
+        "href": null,
+        "total": 18418
+      },
+      "genres": [
+        "rap antillais",
+        "trap antillais",
+        "zouk riddim"
+      ],
+      "href": "https://api.spotify.com/v1/artists/1TSdTHidTqbViCJfKSvlEG",
+      "id": "1TSdTHidTqbViCJfKSvlEG",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab6761610000e5eb95f43b41372585b4fa7385eb",
+          "width": 640
+        },
+        {
+          "height": 320,
+          "url": "https://i.scdn.co/image/ab6761610000517495f43b41372585b4fa7385eb",
+          "width": 320
+        },
+        {
+          "height": 160,
+          "url": "https://i.scdn.co/image/ab6761610000f17895f43b41372585b4fa7385eb",
+          "width": 160
+        }
+      ],
+      "name": "Evil P",
+      "popularity": 34,
+      "type": "artist",
+      "uri": "spotify:artist:1TSdTHidTqbViCJfKSvlEG"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/3WbS1ppPV9QmsO29NG28fG"
+      },
+      "followers": {
+        "href": null,
+        "total": 23152
+      },
+      "genres": [
+        "rap antillais",
+        "trap antillais",
+        "zouk riddim"
+      ],
+      "href": "https://api.spotify.com/v1/artists/3WbS1ppPV9QmsO29NG28fG",
+      "id": "3WbS1ppPV9QmsO29NG28fG",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab6761610000e5ebd8e9f5589b68417b316a4406",
+          "width": 640
+        },
+        {
+          "height": 320,
+          "url": "https://i.scdn.co/image/ab67616100005174d8e9f5589b68417b316a4406",
+          "width": 320
+        },
+        {
+          "height": 160,
+          "url": "https://i.scdn.co/image/ab6761610000f178d8e9f5589b68417b316a4406",
+          "width": 160
+        }
+      ],
+      "name": "Marginal",
+      "popularity": 34,
+      "type": "artist",
+      "uri": "spotify:artist:3WbS1ppPV9QmsO29NG28fG"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/1NxMxZ8dG0JJbg02CXtw2D"
+      },
+      "followers": {
+        "href": null,
+        "total": 53750
+      },
+      "genres": [
+        "musique guadeloupe",
+        "rap antillais",
+        "trap antillais",
+        "zouk riddim"
+      ],
+      "href": "https://api.spotify.com/v1/artists/1NxMxZ8dG0JJbg02CXtw2D",
+      "id": "1NxMxZ8dG0JJbg02CXtw2D",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab6761610000e5eb43e41d570ca99c0a92898f9b",
+          "width": 640
+        },
+        {
+          "height": 320,
+          "url": "https://i.scdn.co/image/ab6761610000517443e41d570ca99c0a92898f9b",
+          "width": 320
+        },
+        {
+          "height": 160,
+          "url": "https://i.scdn.co/image/ab6761610000f17843e41d570ca99c0a92898f9b",
+          "width": 160
+        }
+      ],
+      "name": "T Kimp Gee",
+      "popularity": 40,
+      "type": "artist",
+      "uri": "spotify:artist:1NxMxZ8dG0JJbg02CXtw2D"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/1AT8NKdQOU0EVPu6ehN4NA"
+      },
+      "followers": {
+        "href": null,
+        "total": 72066
+      },
+      "genres": [
+        "rap antillais",
+        "trap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/1AT8NKdQOU0EVPu6ehN4NA",
+      "id": "1AT8NKdQOU0EVPu6ehN4NA",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab6761610000e5eb6ee4cef64f9661e18c69b578",
+          "width": 640
+        },
+        {
+          "height": 320,
+          "url": "https://i.scdn.co/image/ab676161000051746ee4cef64f9661e18c69b578",
+          "width": 320
+        },
+        {
+          "height": 160,
+          "url": "https://i.scdn.co/image/ab6761610000f1786ee4cef64f9661e18c69b578",
+          "width": 160
+        }
+      ],
+      "name": "Meryl",
+      "popularity": 53,
+      "type": "artist",
+      "uri": "spotify:artist:1AT8NKdQOU0EVPu6ehN4NA"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/5DFOYJLWzBdNifHaXGuRQc"
+      },
+      "followers": {
+        "href": null,
+        "total": 42218
+      },
+      "genres": [
+        "musique guadeloupe",
+        "rap antillais",
+        "trap antillais",
+        "zouk riddim"
+      ],
+      "href": "https://api.spotify.com/v1/artists/5DFOYJLWzBdNifHaXGuRQc",
+      "id": "5DFOYJLWzBdNifHaXGuRQc",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab6761610000e5eb017131256ab1ae63362e45a7",
+          "width": 640
+        },
+        {
+          "height": 320,
+          "url": "https://i.scdn.co/image/ab67616100005174017131256ab1ae63362e45a7",
+          "width": 320
+        },
+        {
+          "height": 160,
+          "url": "https://i.scdn.co/image/ab6761610000f178017131256ab1ae63362e45a7",
+          "width": 160
+        }
+      ],
+      "name": "Keros-N",
+      "popularity": 33,
+      "type": "artist",
+      "uri": "spotify:artist:5DFOYJLWzBdNifHaXGuRQc"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/79oiLTBpm8FkKnqWHmtr1Z"
+      },
+      "followers": {
+        "href": null,
+        "total": 14433
+      },
+      "genres": [
+        "rap antillais",
+        "zouk riddim"
+      ],
+      "href": "https://api.spotify.com/v1/artists/79oiLTBpm8FkKnqWHmtr1Z",
+      "id": "79oiLTBpm8FkKnqWHmtr1Z",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab6761610000e5eb88e1023a19ebea355b7adbd7",
+          "width": 640
+        },
+        {
+          "height": 320,
+          "url": "https://i.scdn.co/image/ab6761610000517488e1023a19ebea355b7adbd7",
+          "width": 320
+        },
+        {
+          "height": 160,
+          "url": "https://i.scdn.co/image/ab6761610000f17888e1023a19ebea355b7adbd7",
+          "width": 160
+        }
+      ],
+      "name": "Saa'Turn",
+      "popularity": 26,
+      "type": "artist",
+      "uri": "spotify:artist:79oiLTBpm8FkKnqWHmtr1Z"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/43iw2eN2eQhF9GaouZCn1Q"
+      },
+      "followers": {
+        "href": null,
+        "total": 6403
+      },
+      "genres": [
+        "rap francais",
+        "trap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/43iw2eN2eQhF9GaouZCn1Q",
+      "id": "43iw2eN2eQhF9GaouZCn1Q",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab67616d0000b27352a884ca446d1f039c03b349",
+          "width": 640
+        },
+        {
+          "height": 300,
+          "url": "https://i.scdn.co/image/ab67616d00001e0252a884ca446d1f039c03b349",
+          "width": 300
+        },
+        {
+          "height": 64,
+          "url": "https://i.scdn.co/image/ab67616d0000485152a884ca446d1f039c03b349",
+          "width": 64
+        }
+      ],
+      "name": "Laskiiz",
+      "popularity": 28,
+      "type": "artist",
+      "uri": "spotify:artist:43iw2eN2eQhF9GaouZCn1Q"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/2fKiJz55OB9rZJLb80o6d4"
+      },
+      "followers": {
+        "href": null,
+        "total": 16124
+      },
+      "genres": [
+        "musique guadeloupe",
+        "rap antillais",
+        "trap antillais",
+        "zouk riddim"
+      ],
+      "href": "https://api.spotify.com/v1/artists/2fKiJz55OB9rZJLb80o6d4",
+      "id": "2fKiJz55OB9rZJLb80o6d4",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab6761610000e5eba63ddeb76f112addff51ebda",
+          "width": 640
+        },
+        {
+          "height": 320,
+          "url": "https://i.scdn.co/image/ab67616100005174a63ddeb76f112addff51ebda",
+          "width": 320
+        },
+        {
+          "height": 160,
+          "url": "https://i.scdn.co/image/ab6761610000f178a63ddeb76f112addff51ebda",
+          "width": 160
+        }
+      ],
+      "name": "Nicy",
+      "popularity": 27,
+      "type": "artist",
+      "uri": "spotify:artist:2fKiJz55OB9rZJLb80o6d4"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/3J7r4VsNmuWixU0nXvyPd8"
+      },
+      "followers": {
+        "href": null,
+        "total": 791676
+      },
+      "genres": [
+        "cloud rap francais",
+        "french hip hop",
+        "pop urbaine",
+        "rap antillais",
+        "trap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/3J7r4VsNmuWixU0nXvyPd8",
+      "id": "3J7r4VsNmuWixU0nXvyPd8",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab6761610000e5ebbeffebd066171f03029a3c2a",
+          "width": 640
+        },
+        {
+          "height": 320,
+          "url": "https://i.scdn.co/image/ab67616100005174beffebd066171f03029a3c2a",
+          "width": 320
+        },
+        {
+          "height": 160,
+          "url": "https://i.scdn.co/image/ab6761610000f178beffebd066171f03029a3c2a",
+          "width": 160
+        }
+      ],
+      "name": "Kalash",
+      "popularity": 64,
+      "type": "artist",
+      "uri": "spotify:artist:3J7r4VsNmuWixU0nXvyPd8"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/3HIHUK30XZ456qOcA9wvTw"
+      },
+      "followers": {
+        "href": null,
+        "total": 5173
+      },
+      "genres": [
+        "rap antillais",
+        "trap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/3HIHUK30XZ456qOcA9wvTw",
+      "id": "3HIHUK30XZ456qOcA9wvTw",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab6761610000e5eb24d026f901f2467f45ac069e",
+          "width": 640
+        },
+        {
+          "height": 320,
+          "url": "https://i.scdn.co/image/ab6761610000517424d026f901f2467f45ac069e",
+          "width": 320
+        },
+        {
+          "height": 160,
+          "url": "https://i.scdn.co/image/ab6761610000f17824d026f901f2467f45ac069e",
+          "width": 160
+        }
+      ],
+      "name": "Jooslyf",
+      "popularity": 25,
+      "type": "artist",
+      "uri": "spotify:artist:3HIHUK30XZ456qOcA9wvTw"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/0lCzbSVa8RZoPsuDM9YBJS"
+      },
+      "followers": {
+        "href": null,
+        "total": 70708
+      },
+      "genres": [
+        "musique guadeloupe",
+        "rap antillais",
+        "rap francais",
+        "trap antillais",
+        "zouk riddim"
+      ],
+      "href": "https://api.spotify.com/v1/artists/0lCzbSVa8RZoPsuDM9YBJS",
+      "id": "0lCzbSVa8RZoPsuDM9YBJS",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab6761610000e5eb08606fbe8547457b04e6f870",
+          "width": 640
+        },
+        {
+          "height": 320,
+          "url": "https://i.scdn.co/image/ab6761610000517408606fbe8547457b04e6f870",
+          "width": 320
+        },
+        {
+          "height": 160,
+          "url": "https://i.scdn.co/image/ab6761610000f17808606fbe8547457b04e6f870",
+          "width": 160
+        }
+      ],
+      "name": "Tiitof",
+      "popularity": 39,
+      "type": "artist",
+      "uri": "spotify:artist:0lCzbSVa8RZoPsuDM9YBJS"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/6wuOpQpXXEcI7kE8J9HIMb"
+      },
+      "followers": {
+        "href": null,
+        "total": 19387
+      },
+      "genres": [
+        "dancehall guyanaise",
+        "rap antillais",
+        "zouk riddim"
+      ],
+      "href": "https://api.spotify.com/v1/artists/6wuOpQpXXEcI7kE8J9HIMb",
+      "id": "6wuOpQpXXEcI7kE8J9HIMb",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab67616d0000b273cf6cc90040787852f3621dff",
+          "width": 640
+        },
+        {
+          "height": 300,
+          "url": "https://i.scdn.co/image/ab67616d00001e02cf6cc90040787852f3621dff",
+          "width": 300
+        },
+        {
+          "height": 64,
+          "url": "https://i.scdn.co/image/ab67616d00004851cf6cc90040787852f3621dff",
+          "width": 64
+        }
+      ],
+      "name": "Gifta",
+      "popularity": 31,
+      "type": "artist",
+      "uri": "spotify:artist:6wuOpQpXXEcI7kE8J9HIMb"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/2gCI025VLFlAHLYBQWAK4M"
+      },
+      "followers": {
+        "href": null,
+        "total": 10631
+      },
+      "genres": [
+        "rap antillais",
+        "trap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/2gCI025VLFlAHLYBQWAK4M",
+      "id": "2gCI025VLFlAHLYBQWAK4M",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab6761610000e5eba408e1ce87d880cfecc3cf9b",
+          "width": 640
+        },
+        {
+          "height": 320,
+          "url": "https://i.scdn.co/image/ab67616100005174a408e1ce87d880cfecc3cf9b",
+          "width": 320
+        },
+        {
+          "height": 160,
+          "url": "https://i.scdn.co/image/ab6761610000f178a408e1ce87d880cfecc3cf9b",
+          "width": 160
+        }
+      ],
+      "name": "Mercenaire",
+      "popularity": 30,
+      "type": "artist",
+      "uri": "spotify:artist:2gCI025VLFlAHLYBQWAK4M"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/2bbQRkTmEgKA1INGHeH7oT"
+      },
+      "followers": {
+        "href": null,
+        "total": 219645
+      },
+      "genres": [
+        "drill francais",
+        "french hip hop",
+        "pop urbaine",
+        "rap antillais",
+        "rap francais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/2bbQRkTmEgKA1INGHeH7oT",
+      "id": "2bbQRkTmEgKA1INGHeH7oT",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab6761610000e5ebb5d71d70dadd38e3a8582d8d",
+          "width": 640
+        },
+        {
+          "height": 320,
+          "url": "https://i.scdn.co/image/ab67616100005174b5d71d70dadd38e3a8582d8d",
+          "width": 320
+        },
+        {
+          "height": 160,
+          "url": "https://i.scdn.co/image/ab6761610000f178b5d71d70dadd38e3a8582d8d",
+          "width": 160
+        }
+      ],
+      "name": "Cheu-B",
+      "popularity": 46,
+      "type": "artist",
+      "uri": "spotify:artist:2bbQRkTmEgKA1INGHeH7oT"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/4VYr2jD1AzhmEyT2L8xTg4"
+      },
+      "followers": {
+        "href": null,
+        "total": 67740
+      },
+      "genres": [
+        "rap antillais",
+        "shatta",
+        "zouk riddim"
+      ],
+      "href": "https://api.spotify.com/v1/artists/4VYr2jD1AzhmEyT2L8xTg4",
+      "id": "4VYr2jD1AzhmEyT2L8xTg4",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab6761610000e5eb20b534097b051adcf87b6551",
+          "width": 640
+        },
+        {
+          "height": 320,
+          "url": "https://i.scdn.co/image/ab6761610000517420b534097b051adcf87b6551",
+          "width": 320
+        },
+        {
+          "height": 160,
+          "url": "https://i.scdn.co/image/ab6761610000f17820b534097b051adcf87b6551",
+          "width": 160
+        }
+      ],
+      "name": "X-Man",
+      "popularity": 48,
+      "type": "artist",
+      "uri": "spotify:artist:4VYr2jD1AzhmEyT2L8xTg4"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/1qyIUGgexI2Qi0NRweEVgf"
+      },
+      "followers": {
+        "href": null,
+        "total": 4710
+      },
+      "genres": [
+        "dancehall guyanaise",
+        "rap antillais",
+        "trap antillais",
+        "zouk riddim"
+      ],
+      "href": "https://api.spotify.com/v1/artists/1qyIUGgexI2Qi0NRweEVgf",
+      "id": "1qyIUGgexI2Qi0NRweEVgf",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab67616d0000b27345637d9a8171583017152e0f",
+          "width": 640
+        },
+        {
+          "height": 300,
+          "url": "https://i.scdn.co/image/ab67616d00001e0245637d9a8171583017152e0f",
+          "width": 300
+        },
+        {
+          "height": 64,
+          "url": "https://i.scdn.co/image/ab67616d0000485145637d9a8171583017152e0f",
+          "width": 64
+        }
+      ],
+      "name": "DJ Ken",
+      "popularity": 22,
+      "type": "artist",
+      "uri": "spotify:artist:1qyIUGgexI2Qi0NRweEVgf"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/1elFE4xKYLW7yEOAYdT2Yr"
+      },
+      "followers": {
+        "href": null,
+        "total": 4046
+      },
+      "genres": [
+        "rap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/1elFE4xKYLW7yEOAYdT2Yr",
+      "id": "1elFE4xKYLW7yEOAYdT2Yr",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab67616d0000b273f85bb31f1a418c3a4c473f20",
+          "width": 640
+        },
+        {
+          "height": 300,
+          "url": "https://i.scdn.co/image/ab67616d00001e02f85bb31f1a418c3a4c473f20",
+          "width": 300
+        },
+        {
+          "height": 64,
+          "url": "https://i.scdn.co/image/ab67616d00004851f85bb31f1a418c3a4c473f20",
+          "width": 64
+        }
+      ],
+      "name": "Ed Style",
+      "popularity": 20,
+      "type": "artist",
+      "uri": "spotify:artist:1elFE4xKYLW7yEOAYdT2Yr"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/01z3xImb6FUG1QSjuOgP7R"
+      },
+      "followers": {
+        "href": null,
+        "total": 7229
+      },
+      "genres": [
+        "rap antillais",
+        "trap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/01z3xImb6FUG1QSjuOgP7R",
+      "id": "01z3xImb6FUG1QSjuOgP7R",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab6761610000e5ebf104c131afc4a89a4624b5d9",
+          "width": 640
+        },
+        {
+          "height": 320,
+          "url": "https://i.scdn.co/image/ab67616100005174f104c131afc4a89a4624b5d9",
+          "width": 320
+        },
+        {
+          "height": 160,
+          "url": "https://i.scdn.co/image/ab6761610000f178f104c131afc4a89a4624b5d9",
+          "width": 160
+        }
+      ],
+      "name": "Shaka Zulu",
+      "popularity": 28,
+      "type": "artist",
+      "uri": "spotify:artist:01z3xImb6FUG1QSjuOgP7R"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/0eomtAhpoAMBnsns4DwGCp"
+      },
+      "followers": {
+        "href": null,
+        "total": 15438
+      },
+      "genres": [
+        "dancehall guyanaise",
+        "rap antillais",
+        "zouk riddim"
+      ],
+      "href": "https://api.spotify.com/v1/artists/0eomtAhpoAMBnsns4DwGCp",
+      "id": "0eomtAhpoAMBnsns4DwGCp",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab6761610000e5eb857cf0b546039319006cea89",
+          "width": 640
+        },
+        {
+          "height": 320,
+          "url": "https://i.scdn.co/image/ab67616100005174857cf0b546039319006cea89",
+          "width": 320
+        },
+        {
+          "height": 160,
+          "url": "https://i.scdn.co/image/ab6761610000f178857cf0b546039319006cea89",
+          "width": 160
+        }
+      ],
+      "name": "Ken Vybz",
+      "popularity": 31,
+      "type": "artist",
+      "uri": "spotify:artist:0eomtAhpoAMBnsns4DwGCp"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/4TEnXYHvYwoMopWqxeAnTE"
+      },
+      "followers": {
+        "href": null,
+        "total": 78898
+      },
+      "genres": [
+        "french reggae",
+        "musique guadeloupe",
+        "rap antillais",
+        "zouk riddim"
+      ],
+      "href": "https://api.spotify.com/v1/artists/4TEnXYHvYwoMopWqxeAnTE",
+      "id": "4TEnXYHvYwoMopWqxeAnTE",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab6761610000e5eb18b43e9f2f1ddffb39f63765",
+          "width": 640
+        },
+        {
+          "height": 320,
+          "url": "https://i.scdn.co/image/ab6761610000517418b43e9f2f1ddffb39f63765",
+          "width": 320
+        },
+        {
+          "height": 160,
+          "url": "https://i.scdn.co/image/ab6761610000f17818b43e9f2f1ddffb39f63765",
+          "width": 160
+        }
+      ],
+      "name": "Admiral T",
+      "popularity": 41,
+      "type": "artist",
+      "uri": "spotify:artist:4TEnXYHvYwoMopWqxeAnTE"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/6d4N9S0QxevupZo0FNXx0D"
+      },
+      "followers": {
+        "href": null,
+        "total": 25219
+      },
+      "genres": [
+        "musique guadeloupe",
+        "rap antillais",
+        "zouk riddim"
+      ],
+      "href": "https://api.spotify.com/v1/artists/6d4N9S0QxevupZo0FNXx0D",
+      "id": "6d4N9S0QxevupZo0FNXx0D",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab6761610000e5eb61d1477f7b4ee5cfa442c840",
+          "width": 640
+        },
+        {
+          "height": 320,
+          "url": "https://i.scdn.co/image/ab6761610000517461d1477f7b4ee5cfa442c840",
+          "width": 320
+        },
+        {
+          "height": 160,
+          "url": "https://i.scdn.co/image/ab6761610000f17861d1477f7b4ee5cfa442c840",
+          "width": 160
+        }
+      ],
+      "name": "Krys",
+      "popularity": 44,
+      "type": "artist",
+      "uri": "spotify:artist:6d4N9S0QxevupZo0FNXx0D"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/7id7DIF9SbgA6nMlnkBMhH"
+      },
+      "followers": {
+        "href": null,
+        "total": 14517
+      },
+      "genres": [
+        "rap antillais",
+        "shatta",
+        "trap antillais",
+        "zouk riddim"
+      ],
+      "href": "https://api.spotify.com/v1/artists/7id7DIF9SbgA6nMlnkBMhH",
+      "id": "7id7DIF9SbgA6nMlnkBMhH",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab6761610000e5eb338c6e615a3f0bc12db6baa2",
+          "width": 640
+        },
+        {
+          "height": 320,
+          "url": "https://i.scdn.co/image/ab67616100005174338c6e615a3f0bc12db6baa2",
+          "width": 320
+        },
+        {
+          "height": 160,
+          "url": "https://i.scdn.co/image/ab6761610000f178338c6e615a3f0bc12db6baa2",
+          "width": 160
+        }
+      ],
+      "name": "MrSM",
+      "popularity": 31,
+      "type": "artist",
+      "uri": "spotify:artist:7id7DIF9SbgA6nMlnkBMhH"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/0KAwYnZbFmMbJ6h5MlnkFM"
+      },
+      "followers": {
+        "href": null,
+        "total": 5625
+      },
+      "genres": [
+        "rap antillais",
+        "trap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/0KAwYnZbFmMbJ6h5MlnkFM",
+      "id": "0KAwYnZbFmMbJ6h5MlnkFM",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab67616d0000b2732646d8ee78008a6cfe604c23",
+          "width": 640
+        },
+        {
+          "height": 300,
+          "url": "https://i.scdn.co/image/ab67616d00001e022646d8ee78008a6cfe604c23",
+          "width": 300
+        },
+        {
+          "height": 64,
+          "url": "https://i.scdn.co/image/ab67616d000048512646d8ee78008a6cfe604c23",
+          "width": 64
+        }
+      ],
+      "name": "Bruce Little",
+      "popularity": 18,
+      "type": "artist",
+      "uri": "spotify:artist:0KAwYnZbFmMbJ6h5MlnkFM"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/5vJlLJktbY9sqOW1ZqT9AK"
+      },
+      "followers": {
+        "href": null,
+        "total": 1243
+      },
+      "genres": [
+        "rap antillais",
+        "trap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/5vJlLJktbY9sqOW1ZqT9AK",
+      "id": "5vJlLJktbY9sqOW1ZqT9AK",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab67616d0000b2734e876ac108034803addad15e",
+          "width": 640
+        },
+        {
+          "height": 300,
+          "url": "https://i.scdn.co/image/ab67616d00001e024e876ac108034803addad15e",
+          "width": 300
+        },
+        {
+          "height": 64,
+          "url": "https://i.scdn.co/image/ab67616d000048514e876ac108034803addad15e",
+          "width": 64
+        }
+      ],
+      "name": "STG",
+      "popularity": 17,
+      "type": "artist",
+      "uri": "spotify:artist:5vJlLJktbY9sqOW1ZqT9AK"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/7j5bh4c168q2ASk7pfHWHh"
+      },
+      "followers": {
+        "href": null,
+        "total": 1312
+      },
+      "genres": [
+        "rap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/7j5bh4c168q2ASk7pfHWHh",
+      "id": "7j5bh4c168q2ASk7pfHWHh",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab6761610000e5eb8ae466e75f106db9be65bf2a",
+          "width": 640
+        },
+        {
+          "height": 320,
+          "url": "https://i.scdn.co/image/ab676161000051748ae466e75f106db9be65bf2a",
+          "width": 320
+        },
+        {
+          "height": 160,
+          "url": "https://i.scdn.co/image/ab6761610000f1788ae466e75f106db9be65bf2a",
+          "width": 160
+        }
+      ],
+      "name": "Yaawdi",
+      "popularity": 19,
+      "type": "artist",
+      "uri": "spotify:artist:7j5bh4c168q2ASk7pfHWHh"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/395spUELWr54gJKYr3EE0I"
+      },
+      "followers": {
+        "href": null,
+        "total": 36090
+      },
+      "genres": [
+        "musique guadeloupe",
+        "rap antillais",
+        "zouk riddim"
+      ],
+      "href": "https://api.spotify.com/v1/artists/395spUELWr54gJKYr3EE0I",
+      "id": "395spUELWr54gJKYr3EE0I",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab6761610000e5ebf45b001386148fe135be95d0",
+          "width": 640
+        },
+        {
+          "height": 320,
+          "url": "https://i.scdn.co/image/ab67616100005174f45b001386148fe135be95d0",
+          "width": 320
+        },
+        {
+          "height": 160,
+          "url": "https://i.scdn.co/image/ab6761610000f178f45b001386148fe135be95d0",
+          "width": 160
+        }
+      ],
+      "name": "SAÏK",
+      "popularity": 32,
+      "type": "artist",
+      "uri": "spotify:artist:395spUELWr54gJKYr3EE0I"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/69YaFzBzK2fexlkY4veJFF"
+      },
+      "followers": {
+        "href": null,
+        "total": 2943
+      },
+      "genres": [
+        "musique guadeloupe",
+        "rap antillais",
+        "trap antillais",
+        "zouk riddim"
+      ],
+      "href": "https://api.spotify.com/v1/artists/69YaFzBzK2fexlkY4veJFF",
+      "id": "69YaFzBzK2fexlkY4veJFF",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab67616d0000b273a6a962265a91dc59efc49e47",
+          "width": 640
+        },
+        {
+          "height": 300,
+          "url": "https://i.scdn.co/image/ab67616d00001e02a6a962265a91dc59efc49e47",
+          "width": 300
+        },
+        {
+          "height": 64,
+          "url": "https://i.scdn.co/image/ab67616d00004851a6a962265a91dc59efc49e47",
+          "width": 64
+        }
+      ],
+      "name": "Gambi G",
+      "popularity": 16,
+      "type": "artist",
+      "uri": "spotify:artist:69YaFzBzK2fexlkY4veJFF"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/6jfmLsvGAmG863C5ejsHOT"
+      },
+      "followers": {
+        "href": null,
+        "total": 411
+      },
+      "genres": [
+        "rap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/6jfmLsvGAmG863C5ejsHOT",
+      "id": "6jfmLsvGAmG863C5ejsHOT",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab67616d0000b273fe86a2c060e61d4cb707ec51",
+          "width": 640
+        },
+        {
+          "height": 300,
+          "url": "https://i.scdn.co/image/ab67616d00001e02fe86a2c060e61d4cb707ec51",
+          "width": 300
+        },
+        {
+          "height": 64,
+          "url": "https://i.scdn.co/image/ab67616d00004851fe86a2c060e61d4cb707ec51",
+          "width": 64
+        }
+      ],
+      "name": "Simsima",
+      "popularity": 17,
+      "type": "artist",
+      "uri": "spotify:artist:6jfmLsvGAmG863C5ejsHOT"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/3wqLkFQme23zzPPDoEpkUC"
+      },
+      "followers": {
+        "href": null,
+        "total": 1471
+      },
+      "genres": [
+        "rap antillais",
+        "trap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/3wqLkFQme23zzPPDoEpkUC",
+      "id": "3wqLkFQme23zzPPDoEpkUC",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab6761610000e5ebe80b7d212fdfeab47bcd769d",
+          "width": 640
+        },
+        {
+          "height": 320,
+          "url": "https://i.scdn.co/image/ab67616100005174e80b7d212fdfeab47bcd769d",
+          "width": 320
+        },
+        {
+          "height": 160,
+          "url": "https://i.scdn.co/image/ab6761610000f178e80b7d212fdfeab47bcd769d",
+          "width": 160
+        }
+      ],
+      "name": "Didgis",
+      "popularity": 17,
+      "type": "artist",
+      "uri": "spotify:artist:3wqLkFQme23zzPPDoEpkUC"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/6RwdeEwhjswv5OxNK5Dq0s"
+      },
+      "followers": {
+        "href": null,
+        "total": 5842
+      },
+      "genres": [
+        "rap antillais",
+        "zouk riddim"
+      ],
+      "href": "https://api.spotify.com/v1/artists/6RwdeEwhjswv5OxNK5Dq0s",
+      "id": "6RwdeEwhjswv5OxNK5Dq0s",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab6761610000e5ebf7e540dd79a45f0dbd4a96cd",
+          "width": 640
+        },
+        {
+          "height": 320,
+          "url": "https://i.scdn.co/image/ab67616100005174f7e540dd79a45f0dbd4a96cd",
+          "width": 320
+        },
+        {
+          "height": 160,
+          "url": "https://i.scdn.co/image/ab6761610000f178f7e540dd79a45f0dbd4a96cd",
+          "width": 160
+        }
+      ],
+      "name": "Elji",
+      "popularity": 39,
+      "type": "artist",
+      "uri": "spotify:artist:6RwdeEwhjswv5OxNK5Dq0s"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/5F25MG0mViLB1aWAAy6IyY"
+      },
+      "followers": {
+        "href": null,
+        "total": 225
+      },
+      "genres": [
+        "rap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/5F25MG0mViLB1aWAAy6IyY",
+      "id": "5F25MG0mViLB1aWAAy6IyY",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab67616d0000b2733d0732f9c54802f7f3947bc2",
+          "width": 640
+        },
+        {
+          "height": 300,
+          "url": "https://i.scdn.co/image/ab67616d00001e023d0732f9c54802f7f3947bc2",
+          "width": 300
+        },
+        {
+          "height": 64,
+          "url": "https://i.scdn.co/image/ab67616d000048513d0732f9c54802f7f3947bc2",
+          "width": 64
+        }
+      ],
+      "name": "Titis",
+      "popularity": 17,
+      "type": "artist",
+      "uri": "spotify:artist:5F25MG0mViLB1aWAAy6IyY"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/36rNoVMRFFoErvvA9lpRAn"
+      },
+      "followers": {
+        "href": null,
+        "total": 6535
+      },
+      "genres": [
+        "bouyon",
+        "rap antillais",
+        "zouk riddim"
+      ],
+      "href": "https://api.spotify.com/v1/artists/36rNoVMRFFoErvvA9lpRAn",
+      "id": "36rNoVMRFFoErvvA9lpRAn",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab67616d0000b273b2a393c297fd1f898c24fd8c",
+          "width": 640
+        },
+        {
+          "height": 300,
+          "url": "https://i.scdn.co/image/ab67616d00001e02b2a393c297fd1f898c24fd8c",
+          "width": 300
+        },
+        {
+          "height": 64,
+          "url": "https://i.scdn.co/image/ab67616d00004851b2a393c297fd1f898c24fd8c",
+          "width": 64
+        }
+      ],
+      "name": "Miky Ding La",
+      "popularity": 23,
+      "type": "artist",
+      "uri": "spotify:artist:36rNoVMRFFoErvvA9lpRAn"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/1lC5XPNScwNaMrPtqaLqgB"
+      },
+      "followers": {
+        "href": null,
+        "total": 11808
+      },
+      "genres": [
+        "musique guadeloupe",
+        "rap antillais",
+        "zouk riddim"
+      ],
+      "href": "https://api.spotify.com/v1/artists/1lC5XPNScwNaMrPtqaLqgB",
+      "id": "1lC5XPNScwNaMrPtqaLqgB",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab67616d0000b273a1c0612d05c20f0f5da8717f",
+          "width": 640
+        },
+        {
+          "height": 300,
+          "url": "https://i.scdn.co/image/ab67616d00001e02a1c0612d05c20f0f5da8717f",
+          "width": 300
+        },
+        {
+          "height": 64,
+          "url": "https://i.scdn.co/image/ab67616d00004851a1c0612d05c20f0f5da8717f",
+          "width": 64
+        }
+      ],
+      "name": "Fuckly",
+      "popularity": 22,
+      "type": "artist",
+      "uri": "spotify:artist:1lC5XPNScwNaMrPtqaLqgB"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/2MR0CohJ0bX97VcvgcIhsl"
+      },
+      "followers": {
+        "href": null,
+        "total": 56936
+      },
+      "genres": [
+        "rap antillais",
+        "zouk",
+        "zouk riddim"
+      ],
+      "href": "https://api.spotify.com/v1/artists/2MR0CohJ0bX97VcvgcIhsl",
+      "id": "2MR0CohJ0bX97VcvgcIhsl",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab67616d0000b273a494413884fbd766ad3783f2",
+          "width": 640
+        },
+        {
+          "height": 300,
+          "url": "https://i.scdn.co/image/ab67616d00001e02a494413884fbd766ad3783f2",
+          "width": 300
+        },
+        {
+          "height": 64,
+          "url": "https://i.scdn.co/image/ab67616d00004851a494413884fbd766ad3783f2",
+          "width": 64
+        }
+      ],
+      "name": "Princess' Lover",
+      "popularity": 40,
+      "type": "artist",
+      "uri": "spotify:artist:2MR0CohJ0bX97VcvgcIhsl"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/7bPsqdhvxdvaQUuf3Itytn"
+      },
+      "followers": {
+        "href": null,
+        "total": 12113
+      },
+      "genres": [
+        "musique guadeloupe",
+        "rap antillais",
+        "zouk riddim"
+      ],
+      "href": "https://api.spotify.com/v1/artists/7bPsqdhvxdvaQUuf3Itytn",
+      "id": "7bPsqdhvxdvaQUuf3Itytn",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab67616d0000b2732a5dbd89852f02af27941c80",
+          "width": 640
+        },
+        {
+          "height": 300,
+          "url": "https://i.scdn.co/image/ab67616d00001e022a5dbd89852f02af27941c80",
+          "width": 300
+        },
+        {
+          "height": 64,
+          "url": "https://i.scdn.co/image/ab67616d000048512a5dbd89852f02af27941c80",
+          "width": 64
+        }
+      ],
+      "name": "Datcha Dollar'z",
+      "popularity": 22,
+      "type": "artist",
+      "uri": "spotify:artist:7bPsqdhvxdvaQUuf3Itytn"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/2kW4SxPYth3gtLs9uKvIjB"
+      },
+      "followers": {
+        "href": null,
+        "total": 11772
+      },
+      "genres": [
+        "rap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/2kW4SxPYth3gtLs9uKvIjB",
+      "id": "2kW4SxPYth3gtLs9uKvIjB",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab67616d0000b273036654a2b9fd26b8baf91311",
+          "width": 640
+        },
+        {
+          "height": 300,
+          "url": "https://i.scdn.co/image/ab67616d00001e02036654a2b9fd26b8baf91311",
+          "width": 300
+        },
+        {
+          "height": 64,
+          "url": "https://i.scdn.co/image/ab67616d00004851036654a2b9fd26b8baf91311",
+          "width": 64
+        }
+      ],
+      "name": "TITIS",
+      "popularity": 26,
+      "type": "artist",
+      "uri": "spotify:artist:2kW4SxPYth3gtLs9uKvIjB"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/646voNWXTE2D12TEw84NtP"
+      },
+      "followers": {
+        "href": null,
+        "total": 3919
+      },
+      "genres": [
+        "bouyon",
+        "rap antillais",
+        "zouk riddim"
+      ],
+      "href": "https://api.spotify.com/v1/artists/646voNWXTE2D12TEw84NtP",
+      "id": "646voNWXTE2D12TEw84NtP",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab6761610000e5eb2efa6305120220ae2002073e",
+          "width": 640
+        },
+        {
+          "height": 320,
+          "url": "https://i.scdn.co/image/ab676161000051742efa6305120220ae2002073e",
+          "width": 320
+        },
+        {
+          "height": 160,
+          "url": "https://i.scdn.co/image/ab6761610000f1782efa6305120220ae2002073e",
+          "width": 160
+        }
+      ],
+      "name": "Alpha",
+      "popularity": 25,
+      "type": "artist",
+      "uri": "spotify:artist:646voNWXTE2D12TEw84NtP"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/3tKR0XXN0pW0Kl7UDAVSHL"
+      },
+      "followers": {
+        "href": null,
+        "total": 34532
+      },
+      "genres": [
+        "french hip hop",
+        "rap antillais",
+        "rap marseille"
+      ],
+      "href": "https://api.spotify.com/v1/artists/3tKR0XXN0pW0Kl7UDAVSHL",
+      "id": "3tKR0XXN0pW0Kl7UDAVSHL",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab6761610000e5eb089993d0435d9b0762610106",
+          "width": 640
+        },
+        {
+          "height": 320,
+          "url": "https://i.scdn.co/image/ab67616100005174089993d0435d9b0762610106",
+          "width": 320
+        },
+        {
+          "height": 160,
+          "url": "https://i.scdn.co/image/ab6761610000f178089993d0435d9b0762610106",
+          "width": 160
+        }
+      ],
+      "name": "Brasco",
+      "popularity": 39,
+      "type": "artist",
+      "uri": "spotify:artist:3tKR0XXN0pW0Kl7UDAVSHL"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/1ntQKIMIgESKpKoNXVBvQg"
+      },
+      "followers": {
+        "href": null,
+        "total": 1906156
+      },
+      "genres": [
+        "drill francais",
+        "french hip hop",
+        "pop urbaine",
+        "rap francais",
+        "trap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/1ntQKIMIgESKpKoNXVBvQg",
+      "id": "1ntQKIMIgESKpKoNXVBvQg",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab6761610000e5ebdb540e90aed8014403605fef",
+          "width": 640
+        },
+        {
+          "height": 320,
+          "url": "https://i.scdn.co/image/ab67616100005174db540e90aed8014403605fef",
+          "width": 320
+        },
+        {
+          "height": 160,
+          "url": "https://i.scdn.co/image/ab6761610000f178db540e90aed8014403605fef",
+          "width": 160
+        }
+      ],
+      "name": "Kaaris",
+      "popularity": 65,
+      "type": "artist",
+      "uri": "spotify:artist:1ntQKIMIgESKpKoNXVBvQg"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/1f1DjtYgH6yBzBSiGteBJl"
+      },
+      "followers": {
+        "href": null,
+        "total": 41673
+      },
+      "genres": [
+        "rap antillais",
+        "zouk riddim"
+      ],
+      "href": "https://api.spotify.com/v1/artists/1f1DjtYgH6yBzBSiGteBJl",
+      "id": "1f1DjtYgH6yBzBSiGteBJl",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab6761610000e5eb03c27325185ce7a635e8536e",
+          "width": 640
+        },
+        {
+          "height": 320,
+          "url": "https://i.scdn.co/image/ab6761610000517403c27325185ce7a635e8536e",
+          "width": 320
+        },
+        {
+          "height": 160,
+          "url": "https://i.scdn.co/image/ab6761610000f17803c27325185ce7a635e8536e",
+          "width": 160
+        }
+      ],
+      "name": "Were-vana",
+      "popularity": 42,
+      "type": "artist",
+      "uri": "spotify:artist:1f1DjtYgH6yBzBSiGteBJl"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/0EJ6q3knWet7VXeq2KAQFu"
+      },
+      "followers": {
+        "href": null,
+        "total": 636
+      },
+      "genres": [
+        "rap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/0EJ6q3knWet7VXeq2KAQFu",
+      "id": "0EJ6q3knWet7VXeq2KAQFu",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab6761610000e5ebb15aac3776bc335ecf18b744",
+          "width": 640
+        },
+        {
+          "height": 320,
+          "url": "https://i.scdn.co/image/ab67616100005174b15aac3776bc335ecf18b744",
+          "width": 320
+        },
+        {
+          "height": 160,
+          "url": "https://i.scdn.co/image/ab6761610000f178b15aac3776bc335ecf18b744",
+          "width": 160
+        }
+      ],
+      "name": "Le Youth",
+      "popularity": 8,
+      "type": "artist",
+      "uri": "spotify:artist:0EJ6q3knWet7VXeq2KAQFu"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/4xOjv6LMIkvvQ0bO1rs9dS"
+      },
+      "followers": {
+        "href": null,
+        "total": 760
+      },
+      "genres": [
+        "rap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/4xOjv6LMIkvvQ0bO1rs9dS",
+      "id": "4xOjv6LMIkvvQ0bO1rs9dS",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab6761610000e5eb1e5e99b72427932d823ec7b9",
+          "width": 640
+        },
+        {
+          "height": 320,
+          "url": "https://i.scdn.co/image/ab676161000051741e5e99b72427932d823ec7b9",
+          "width": 320
+        },
+        {
+          "height": 160,
+          "url": "https://i.scdn.co/image/ab6761610000f1781e5e99b72427932d823ec7b9",
+          "width": 160
+        }
+      ],
+      "name": "Bled Miki",
+      "popularity": 11,
+      "type": "artist",
+      "uri": "spotify:artist:4xOjv6LMIkvvQ0bO1rs9dS"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/372NOwDFoZU0ssBMHLIXnn"
+      },
+      "followers": {
+        "href": null,
+        "total": 1137
+      },
+      "genres": [
+        "rap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/372NOwDFoZU0ssBMHLIXnn",
+      "id": "372NOwDFoZU0ssBMHLIXnn",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab6761610000e5ebd08b89e9e7312c6f55220746",
+          "width": 640
+        },
+        {
+          "height": 320,
+          "url": "https://i.scdn.co/image/ab67616100005174d08b89e9e7312c6f55220746",
+          "width": 320
+        },
+        {
+          "height": 160,
+          "url": "https://i.scdn.co/image/ab6761610000f178d08b89e9e7312c6f55220746",
+          "width": 160
+        }
+      ],
+      "name": "Nerka",
+      "popularity": 11,
+      "type": "artist",
+      "uri": "spotify:artist:372NOwDFoZU0ssBMHLIXnn"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/1MM4JECaONpYzmzYrcNx5D"
+      },
+      "followers": {
+        "href": null,
+        "total": 1573
+      },
+      "genres": [
+        "rap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/1MM4JECaONpYzmzYrcNx5D",
+      "id": "1MM4JECaONpYzmzYrcNx5D",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab67616d0000b2736a43c7dedbd649b9bd9b10a4",
+          "width": 640
+        },
+        {
+          "height": 300,
+          "url": "https://i.scdn.co/image/ab67616d00001e026a43c7dedbd649b9bd9b10a4",
+          "width": 300
+        },
+        {
+          "height": 64,
+          "url": "https://i.scdn.co/image/ab67616d000048516a43c7dedbd649b9bd9b10a4",
+          "width": 64
+        }
+      ],
+      "name": "Yaya MOMM",
+      "popularity": 15,
+      "type": "artist",
+      "uri": "spotify:artist:1MM4JECaONpYzmzYrcNx5D"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/7FdBUp0bX3L1It9z4OyFJs"
+      },
+      "followers": {
+        "href": null,
+        "total": 818
+      },
+      "genres": [
+        "rap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/7FdBUp0bX3L1It9z4OyFJs",
+      "id": "7FdBUp0bX3L1It9z4OyFJs",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab6761610000e5eb7a04f79f6415f206ea4ffd15",
+          "width": 640
+        },
+        {
+          "height": 320,
+          "url": "https://i.scdn.co/image/ab676161000051747a04f79f6415f206ea4ffd15",
+          "width": 320
+        },
+        {
+          "height": 160,
+          "url": "https://i.scdn.co/image/ab6761610000f1787a04f79f6415f206ea4ffd15",
+          "width": 160
+        }
+      ],
+      "name": "Yonn",
+      "popularity": 2,
+      "type": "artist",
+      "uri": "spotify:artist:7FdBUp0bX3L1It9z4OyFJs"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/5t4yYGPB53QNbWb6lDEJYD"
+      },
+      "followers": {
+        "href": null,
+        "total": 4697
+      },
+      "genres": [
+        "musique guadeloupe",
+        "rap antillais",
+        "zouk riddim"
+      ],
+      "href": "https://api.spotify.com/v1/artists/5t4yYGPB53QNbWb6lDEJYD",
+      "id": "5t4yYGPB53QNbWb6lDEJYD",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab6761610000e5eba5cb499107dd56b0e522660f",
+          "width": 640
+        },
+        {
+          "height": 320,
+          "url": "https://i.scdn.co/image/ab67616100005174a5cb499107dd56b0e522660f",
+          "width": 320
+        },
+        {
+          "height": 160,
+          "url": "https://i.scdn.co/image/ab6761610000f178a5cb499107dd56b0e522660f",
+          "width": 160
+        }
+      ],
+      "name": "Kenzy",
+      "popularity": 16,
+      "type": "artist",
+      "uri": "spotify:artist:5t4yYGPB53QNbWb6lDEJYD"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/1Dec3F9TXxgUphePVedGDR"
+      },
+      "followers": {
+        "href": null,
+        "total": 490
+      },
+      "genres": [
+        "rap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/1Dec3F9TXxgUphePVedGDR",
+      "id": "1Dec3F9TXxgUphePVedGDR",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab6761610000e5eba623633dafc2f24245e761a8",
+          "width": 640
+        },
+        {
+          "height": 320,
+          "url": "https://i.scdn.co/image/ab67616100005174a623633dafc2f24245e761a8",
+          "width": 320
+        },
+        {
+          "height": 160,
+          "url": "https://i.scdn.co/image/ab6761610000f178a623633dafc2f24245e761a8",
+          "width": 160
+        }
+      ],
+      "name": "Mynyctis",
+      "popularity": 6,
+      "type": "artist",
+      "uri": "spotify:artist:1Dec3F9TXxgUphePVedGDR"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/49oomd5rhlW1MOhLMojOff"
+      },
+      "followers": {
+        "href": null,
+        "total": 1965
+      },
+      "genres": [
+        "rap antillais",
+        "trap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/49oomd5rhlW1MOhLMojOff",
+      "id": "49oomd5rhlW1MOhLMojOff",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab6761610000e5ebb4b46e3411e7252baac9018b",
+          "width": 640
+        },
+        {
+          "height": 320,
+          "url": "https://i.scdn.co/image/ab67616100005174b4b46e3411e7252baac9018b",
+          "width": 320
+        },
+        {
+          "height": 160,
+          "url": "https://i.scdn.co/image/ab6761610000f178b4b46e3411e7252baac9018b",
+          "width": 160
+        }
+      ],
+      "name": "W.Bricks",
+      "popularity": 7,
+      "type": "artist",
+      "uri": "spotify:artist:49oomd5rhlW1MOhLMojOff"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/6hHUtOrAygVgNZd9zzBQoB"
+      },
+      "followers": {
+        "href": null,
+        "total": 555
+      },
+      "genres": [
+        "rap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/6hHUtOrAygVgNZd9zzBQoB",
+      "id": "6hHUtOrAygVgNZd9zzBQoB",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab6761610000e5eb0f37a7376333eb4bfc54b044",
+          "width": 640
+        },
+        {
+          "height": 320,
+          "url": "https://i.scdn.co/image/ab676161000051740f37a7376333eb4bfc54b044",
+          "width": 320
+        },
+        {
+          "height": 160,
+          "url": "https://i.scdn.co/image/ab6761610000f1780f37a7376333eb4bfc54b044",
+          "width": 160
+        }
+      ],
+      "name": "Mara Di'Jesus",
+      "popularity": 10,
+      "type": "artist",
+      "uri": "spotify:artist:6hHUtOrAygVgNZd9zzBQoB"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/0xwHuttbUmvpKb34rEzqyQ"
+      },
+      "followers": {
+        "href": null,
+        "total": 5115
+      },
+      "genres": [
+        "bouyon",
+        "musique guadeloupe",
+        "rap antillais",
+        "trap antillais",
+        "zouk riddim"
+      ],
+      "href": "https://api.spotify.com/v1/artists/0xwHuttbUmvpKb34rEzqyQ",
+      "id": "0xwHuttbUmvpKb34rEzqyQ",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab67616d0000b27359bd37fe1341a9775ad1c5d6",
+          "width": 640
+        },
+        {
+          "height": 300,
+          "url": "https://i.scdn.co/image/ab67616d00001e0259bd37fe1341a9775ad1c5d6",
+          "width": 300
+        },
+        {
+          "height": 64,
+          "url": "https://i.scdn.co/image/ab67616d0000485159bd37fe1341a9775ad1c5d6",
+          "width": 64
+        }
+      ],
+      "name": "Foxy Myller",
+      "popularity": 13,
+      "type": "artist",
+      "uri": "spotify:artist:0xwHuttbUmvpKb34rEzqyQ"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/79ezUOyMg4ECFDZVq5Io0T"
+      },
+      "followers": {
+        "href": null,
+        "total": 1035
+      },
+      "genres": [
+        "rap antillais",
+        "trap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/79ezUOyMg4ECFDZVq5Io0T",
+      "id": "79ezUOyMg4ECFDZVq5Io0T",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab67616d0000b273f2c36b0f5bbb5ae6ad70cbb3",
+          "width": 640
+        },
+        {
+          "height": 300,
+          "url": "https://i.scdn.co/image/ab67616d00001e02f2c36b0f5bbb5ae6ad70cbb3",
+          "width": 300
+        },
+        {
+          "height": 64,
+          "url": "https://i.scdn.co/image/ab67616d00004851f2c36b0f5bbb5ae6ad70cbb3",
+          "width": 64
+        }
+      ],
+      "name": "Walton",
+      "popularity": 14,
+      "type": "artist",
+      "uri": "spotify:artist:79ezUOyMg4ECFDZVq5Io0T"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/3X2ck9e62V2U94gLgCqrfW"
+      },
+      "followers": {
+        "href": null,
+        "total": 8225
+      },
+      "genres": [
+        "rap antillais",
+        "trap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/3X2ck9e62V2U94gLgCqrfW",
+      "id": "3X2ck9e62V2U94gLgCqrfW",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab67616d0000b2737ff25b2f5a86c759cab4b30b",
+          "width": 640
+        },
+        {
+          "height": 300,
+          "url": "https://i.scdn.co/image/ab67616d00001e027ff25b2f5a86c759cab4b30b",
+          "width": 300
+        },
+        {
+          "height": 64,
+          "url": "https://i.scdn.co/image/ab67616d000048517ff25b2f5a86c759cab4b30b",
+          "width": 64
+        }
+      ],
+      "name": "La Mafia",
+      "popularity": 15,
+      "type": "artist",
+      "uri": "spotify:artist:3X2ck9e62V2U94gLgCqrfW"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/1X5vD2UTatpahQUM0mbHSR"
+      },
+      "followers": {
+        "href": null,
+        "total": 848
+      },
+      "genres": [
+        "rap antillais",
+        "trap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/1X5vD2UTatpahQUM0mbHSR",
+      "id": "1X5vD2UTatpahQUM0mbHSR",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab6761610000e5ebe7bbdf3a2805bd46cc3607b8",
+          "width": 640
+        },
+        {
+          "height": 320,
+          "url": "https://i.scdn.co/image/ab67616100005174e7bbdf3a2805bd46cc3607b8",
+          "width": 320
+        },
+        {
+          "height": 160,
+          "url": "https://i.scdn.co/image/ab6761610000f178e7bbdf3a2805bd46cc3607b8",
+          "width": 160
+        }
+      ],
+      "name": "Mata",
+      "popularity": 15,
+      "type": "artist",
+      "uri": "spotify:artist:1X5vD2UTatpahQUM0mbHSR"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/2Kn5tP2Yo9UUM9QXkuHIhp"
+      },
+      "followers": {
+        "href": null,
+        "total": 372
+      },
+      "genres": [
+        "rap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/2Kn5tP2Yo9UUM9QXkuHIhp",
+      "id": "2Kn5tP2Yo9UUM9QXkuHIhp",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab6761610000e5eb6b7c048f64906de101f201fa",
+          "width": 640
+        },
+        {
+          "height": 320,
+          "url": "https://i.scdn.co/image/ab676161000051746b7c048f64906de101f201fa",
+          "width": 320
+        },
+        {
+          "height": 160,
+          "url": "https://i.scdn.co/image/ab6761610000f1786b7c048f64906de101f201fa",
+          "width": 160
+        }
+      ],
+      "name": "Bad’Deey",
+      "popularity": 16,
+      "type": "artist",
+      "uri": "spotify:artist:2Kn5tP2Yo9UUM9QXkuHIhp"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/3JXIOlFTrZ6iGhc03ql66j"
+      },
+      "followers": {
+        "href": null,
+        "total": 446
+      },
+      "genres": [
+        "rap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/3JXIOlFTrZ6iGhc03ql66j",
+      "id": "3JXIOlFTrZ6iGhc03ql66j",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab67616d0000b2737992317acf349a647ba65b7d",
+          "width": 640
+        },
+        {
+          "height": 300,
+          "url": "https://i.scdn.co/image/ab67616d00001e027992317acf349a647ba65b7d",
+          "width": 300
+        },
+        {
+          "height": 64,
+          "url": "https://i.scdn.co/image/ab67616d000048517992317acf349a647ba65b7d",
+          "width": 64
+        }
+      ],
+      "name": "oblik",
+      "popularity": 3,
+      "type": "artist",
+      "uri": "spotify:artist:3JXIOlFTrZ6iGhc03ql66j"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/0dSw4yQgCxwWUSCxesH2hl"
+      },
+      "followers": {
+        "href": null,
+        "total": 658
+      },
+      "genres": [
+        "rap antillais",
+        "trap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/0dSw4yQgCxwWUSCxesH2hl",
+      "id": "0dSw4yQgCxwWUSCxesH2hl",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab67616d0000b273273006db01dbef06ce3acc71",
+          "width": 640
+        },
+        {
+          "height": 300,
+          "url": "https://i.scdn.co/image/ab67616d00001e02273006db01dbef06ce3acc71",
+          "width": 300
+        },
+        {
+          "height": 64,
+          "url": "https://i.scdn.co/image/ab67616d00004851273006db01dbef06ce3acc71",
+          "width": 64
+        }
+      ],
+      "name": "Bewone",
+      "popularity": 7,
+      "type": "artist",
+      "uri": "spotify:artist:0dSw4yQgCxwWUSCxesH2hl"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/5yop0Hoql5R74UkfqNq9hP"
+      },
+      "followers": {
+        "href": null,
+        "total": 623
+      },
+      "genres": [
+        "rap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/5yop0Hoql5R74UkfqNq9hP",
+      "id": "5yop0Hoql5R74UkfqNq9hP",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab67616d0000b2731b2a95ac39da67d55b072f60",
+          "width": 640
+        },
+        {
+          "height": 300,
+          "url": "https://i.scdn.co/image/ab67616d00001e021b2a95ac39da67d55b072f60",
+          "width": 300
+        },
+        {
+          "height": 64,
+          "url": "https://i.scdn.co/image/ab67616d000048511b2a95ac39da67d55b072f60",
+          "width": 64
+        }
+      ],
+      "name": "Gucci C",
+      "popularity": 6,
+      "type": "artist",
+      "uri": "spotify:artist:5yop0Hoql5R74UkfqNq9hP"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/7jidxV4mMqSXdNX0m1Lx9E"
+      },
+      "followers": {
+        "href": null,
+        "total": 100
+      },
+      "genres": [
+        "rap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/7jidxV4mMqSXdNX0m1Lx9E",
+      "id": "7jidxV4mMqSXdNX0m1Lx9E",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab67616d0000b2734c1703e673924551942d0fbd",
+          "width": 640
+        },
+        {
+          "height": 300,
+          "url": "https://i.scdn.co/image/ab67616d00001e024c1703e673924551942d0fbd",
+          "width": 300
+        },
+        {
+          "height": 64,
+          "url": "https://i.scdn.co/image/ab67616d000048514c1703e673924551942d0fbd",
+          "width": 64
+        }
+      ],
+      "name": "Mob90",
+      "popularity": 0,
+      "type": "artist",
+      "uri": "spotify:artist:7jidxV4mMqSXdNX0m1Lx9E"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/1iP6BPm3f9BFapKjX9CwaV"
+      },
+      "followers": {
+        "href": null,
+        "total": 5075
+      },
+      "genres": [
+        "pop urbaine",
+        "rap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/1iP6BPm3f9BFapKjX9CwaV",
+      "id": "1iP6BPm3f9BFapKjX9CwaV",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab67616d0000b2737c0867b42ed7d319a040d2f0",
+          "width": 640
+        },
+        {
+          "height": 300,
+          "url": "https://i.scdn.co/image/ab67616d00001e027c0867b42ed7d319a040d2f0",
+          "width": 300
+        },
+        {
+          "height": 64,
+          "url": "https://i.scdn.co/image/ab67616d000048517c0867b42ed7d319a040d2f0",
+          "width": 64
+        }
+      ],
+      "name": "Gato Da Bato",
+      "popularity": 14,
+      "type": "artist",
+      "uri": "spotify:artist:1iP6BPm3f9BFapKjX9CwaV"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/4e2GN2pnuOBxNAWxaWeK7j"
+      },
+      "followers": {
+        "href": null,
+        "total": 8523
+      },
+      "genres": [
+        "rap antillais",
+        "zouk riddim"
+      ],
+      "href": "https://api.spotify.com/v1/artists/4e2GN2pnuOBxNAWxaWeK7j",
+      "id": "4e2GN2pnuOBxNAWxaWeK7j",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab67616d0000b2736d76f435ef74ed9750e69de4",
+          "width": 640
+        },
+        {
+          "height": 300,
+          "url": "https://i.scdn.co/image/ab67616d00001e026d76f435ef74ed9750e69de4",
+          "width": 300
+        },
+        {
+          "height": 64,
+          "url": "https://i.scdn.co/image/ab67616d000048516d76f435ef74ed9750e69de4",
+          "width": 64
+        }
+      ],
+      "name": "Politik Nai",
+      "popularity": 15,
+      "type": "artist",
+      "uri": "spotify:artist:4e2GN2pnuOBxNAWxaWeK7j"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/3qDuLj3pWnNHJ6u56bFJIy"
+      },
+      "followers": {
+        "href": null,
+        "total": 262
+      },
+      "genres": [
+        "rap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/3qDuLj3pWnNHJ6u56bFJIy",
+      "id": "3qDuLj3pWnNHJ6u56bFJIy",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab67616d0000b273f2335a79e9060b2320c2894d",
+          "width": 640
+        },
+        {
+          "height": 300,
+          "url": "https://i.scdn.co/image/ab67616d00001e02f2335a79e9060b2320c2894d",
+          "width": 300
+        },
+        {
+          "height": 64,
+          "url": "https://i.scdn.co/image/ab67616d00004851f2335a79e9060b2320c2894d",
+          "width": 64
+        }
+      ],
+      "name": "T Gayo",
+      "popularity": 4,
+      "type": "artist",
+      "uri": "spotify:artist:3qDuLj3pWnNHJ6u56bFJIy"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/08e6nTs0MObLyGaCxDuata"
+      },
+      "followers": {
+        "href": null,
+        "total": 138
+      },
+      "genres": [
+        "rap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/08e6nTs0MObLyGaCxDuata",
+      "id": "08e6nTs0MObLyGaCxDuata",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab6761610000e5ebe26b513bb7c9930e0389eb9a",
+          "width": 640
+        },
+        {
+          "height": 320,
+          "url": "https://i.scdn.co/image/ab67616100005174e26b513bb7c9930e0389eb9a",
+          "width": 320
+        },
+        {
+          "height": 160,
+          "url": "https://i.scdn.co/image/ab6761610000f178e26b513bb7c9930e0389eb9a",
+          "width": 160
+        }
+      ],
+      "name": "Siiky",
+      "popularity": 1,
+      "type": "artist",
+      "uri": "spotify:artist:08e6nTs0MObLyGaCxDuata"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/3uSX1pANsJqinGcMATBasw"
+      },
+      "followers": {
+        "href": null,
+        "total": 79
+      },
+      "genres": [
+        "rap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/3uSX1pANsJqinGcMATBasw",
+      "id": "3uSX1pANsJqinGcMATBasw",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab67616d0000b273513492c57f6f4612e237c58c",
+          "width": 640
+        },
+        {
+          "height": 300,
+          "url": "https://i.scdn.co/image/ab67616d00001e02513492c57f6f4612e237c58c",
+          "width": 300
+        },
+        {
+          "height": 64,
+          "url": "https://i.scdn.co/image/ab67616d00004851513492c57f6f4612e237c58c",
+          "width": 64
+        }
+      ],
+      "name": "VASSY",
+      "popularity": 0,
+      "type": "artist",
+      "uri": "spotify:artist:3uSX1pANsJqinGcMATBasw"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/6C1AfyrX8hGBd33PKR9rul"
+      },
+      "followers": {
+        "href": null,
+        "total": 698
+      },
+      "genres": [
+        "rap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/6C1AfyrX8hGBd33PKR9rul",
+      "id": "6C1AfyrX8hGBd33PKR9rul",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab6761610000e5eb25378fe7243a2790bc228649",
+          "width": 640
+        },
+        {
+          "height": 320,
+          "url": "https://i.scdn.co/image/ab6761610000517425378fe7243a2790bc228649",
+          "width": 320
+        },
+        {
+          "height": 160,
+          "url": "https://i.scdn.co/image/ab6761610000f17825378fe7243a2790bc228649",
+          "width": 160
+        }
+      ],
+      "name": "SAVAGE HOOLI",
+      "popularity": 4,
+      "type": "artist",
+      "uri": "spotify:artist:6C1AfyrX8hGBd33PKR9rul"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/5pxgK0lFg0XRKA8MhdHbiD"
+      },
+      "followers": {
+        "href": null,
+        "total": 450
+      },
+      "genres": [
+        "rap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/5pxgK0lFg0XRKA8MhdHbiD",
+      "id": "5pxgK0lFg0XRKA8MhdHbiD",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab67616d0000b27338c9d54556fb0a163ecd63cd",
+          "width": 640
+        },
+        {
+          "height": 300,
+          "url": "https://i.scdn.co/image/ab67616d00001e0238c9d54556fb0a163ecd63cd",
+          "width": 300
+        },
+        {
+          "height": 64,
+          "url": "https://i.scdn.co/image/ab67616d0000485138c9d54556fb0a163ecd63cd",
+          "width": 64
+        }
+      ],
+      "name": "Piafo",
+      "popularity": 2,
+      "type": "artist",
+      "uri": "spotify:artist:5pxgK0lFg0XRKA8MhdHbiD"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/3fFLQZEoOeHLRG1mSy8k1f"
+      },
+      "followers": {
+        "href": null,
+        "total": 2195
+      },
+      "genres": [
+        "rap antillais",
+        "trap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/3fFLQZEoOeHLRG1mSy8k1f",
+      "id": "3fFLQZEoOeHLRG1mSy8k1f",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab67616d0000b273dbe988934f6a3162174099d7",
+          "width": 640
+        },
+        {
+          "height": 300,
+          "url": "https://i.scdn.co/image/ab67616d00001e02dbe988934f6a3162174099d7",
+          "width": 300
+        },
+        {
+          "height": 64,
+          "url": "https://i.scdn.co/image/ab67616d00004851dbe988934f6a3162174099d7",
+          "width": 64
+        }
+      ],
+      "name": "La Mafia",
+      "popularity": 6,
+      "type": "artist",
+      "uri": "spotify:artist:3fFLQZEoOeHLRG1mSy8k1f"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/4L4lhT0vOwrvmHJkmTHHWM"
+      },
+      "followers": {
+        "href": null,
+        "total": 90
+      },
+      "genres": [
+        "rap antillais",
+        "trap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/4L4lhT0vOwrvmHJkmTHHWM",
+      "id": "4L4lhT0vOwrvmHJkmTHHWM",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab67616d0000b27398cc67f200946345b4289b13",
+          "width": 640
+        },
+        {
+          "height": 300,
+          "url": "https://i.scdn.co/image/ab67616d00001e0298cc67f200946345b4289b13",
+          "width": 300
+        },
+        {
+          "height": 64,
+          "url": "https://i.scdn.co/image/ab67616d0000485198cc67f200946345b4289b13",
+          "width": 64
+        }
+      ],
+      "name": "Walton",
+      "popularity": 5,
+      "type": "artist",
+      "uri": "spotify:artist:4L4lhT0vOwrvmHJkmTHHWM"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/6iFojMiKeB8qOTYnOKEF4H"
+      },
+      "followers": {
+        "href": null,
+        "total": 321
+      },
+      "genres": [
+        "rap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/6iFojMiKeB8qOTYnOKEF4H",
+      "id": "6iFojMiKeB8qOTYnOKEF4H",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab6761610000e5eb71a2a09ed12882230fb7d7e2",
+          "width": 640
+        },
+        {
+          "height": 320,
+          "url": "https://i.scdn.co/image/ab6761610000517471a2a09ed12882230fb7d7e2",
+          "width": 320
+        },
+        {
+          "height": 160,
+          "url": "https://i.scdn.co/image/ab6761610000f17871a2a09ed12882230fb7d7e2",
+          "width": 160
+        }
+      ],
+      "name": "Yung Feez",
+      "popularity": 3,
+      "type": "artist",
+      "uri": "spotify:artist:6iFojMiKeB8qOTYnOKEF4H"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/1pA2OYp1TaZ6B0qZtHqulB"
+      },
+      "followers": {
+        "href": null,
+        "total": 409
+      },
+      "genres": [
+        "rap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/1pA2OYp1TaZ6B0qZtHqulB",
+      "id": "1pA2OYp1TaZ6B0qZtHqulB",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab6761610000e5ebc7c3191e72a0f1a527d261b9",
+          "width": 640
+        },
+        {
+          "height": 320,
+          "url": "https://i.scdn.co/image/ab67616100005174c7c3191e72a0f1a527d261b9",
+          "width": 320
+        },
+        {
+          "height": 160,
+          "url": "https://i.scdn.co/image/ab6761610000f178c7c3191e72a0f1a527d261b9",
+          "width": 160
+        }
+      ],
+      "name": "TheLove",
+      "popularity": 6,
+      "type": "artist",
+      "uri": "spotify:artist:1pA2OYp1TaZ6B0qZtHqulB"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/5ZlyZjnrSIAOHUEfV37hfF"
+      },
+      "followers": {
+        "href": null,
+        "total": 58
+      },
+      "genres": [
+        "rap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/5ZlyZjnrSIAOHUEfV37hfF",
+      "id": "5ZlyZjnrSIAOHUEfV37hfF",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab67616d0000b273422c94188150418df5b0958d",
+          "width": 640
+        },
+        {
+          "height": 300,
+          "url": "https://i.scdn.co/image/ab67616d00001e02422c94188150418df5b0958d",
+          "width": 300
+        },
+        {
+          "height": 64,
+          "url": "https://i.scdn.co/image/ab67616d00004851422c94188150418df5b0958d",
+          "width": 64
+        }
+      ],
+      "name": "SkanMaker",
+      "popularity": 0,
+      "type": "artist",
+      "uri": "spotify:artist:5ZlyZjnrSIAOHUEfV37hfF"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/1hkNGyD92qdos6Rr9zaPxG"
+      },
+      "followers": {
+        "href": null,
+        "total": 237
+      },
+      "genres": [
+        "rap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/1hkNGyD92qdos6Rr9zaPxG",
+      "id": "1hkNGyD92qdos6Rr9zaPxG",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab67616d0000b273c9bab3478c173a90dcb880d3",
+          "width": 640
+        },
+        {
+          "height": 300,
+          "url": "https://i.scdn.co/image/ab67616d00001e02c9bab3478c173a90dcb880d3",
+          "width": 300
+        },
+        {
+          "height": 64,
+          "url": "https://i.scdn.co/image/ab67616d00004851c9bab3478c173a90dcb880d3",
+          "width": 64
+        }
+      ],
+      "name": "Cephora",
+      "popularity": 10,
+      "type": "artist",
+      "uri": "spotify:artist:1hkNGyD92qdos6Rr9zaPxG"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/55hyeryboeuJ8lSVTbwz5I"
+      },
+      "followers": {
+        "href": null,
+        "total": 327
+      },
+      "genres": [
+        "rap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/55hyeryboeuJ8lSVTbwz5I",
+      "id": "55hyeryboeuJ8lSVTbwz5I",
+      "images": [],
+      "name": "TMG",
+      "popularity": 0,
+      "type": "artist",
+      "uri": "spotify:artist:55hyeryboeuJ8lSVTbwz5I"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/64wUy2e5eV2MOwvbUGE7a4"
+      },
+      "followers": {
+        "href": null,
+        "total": 60
+      },
+      "genres": [
+        "rap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/64wUy2e5eV2MOwvbUGE7a4",
+      "id": "64wUy2e5eV2MOwvbUGE7a4",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab67616d0000b273c7c5ecc07d07ed582b5d6336",
+          "width": 640
+        },
+        {
+          "height": 300,
+          "url": "https://i.scdn.co/image/ab67616d00001e02c7c5ecc07d07ed582b5d6336",
+          "width": 300
+        },
+        {
+          "height": 64,
+          "url": "https://i.scdn.co/image/ab67616d00004851c7c5ecc07d07ed582b5d6336",
+          "width": 64
+        }
+      ],
+      "name": "Joz'ue 7",
+      "popularity": 6,
+      "type": "artist",
+      "uri": "spotify:artist:64wUy2e5eV2MOwvbUGE7a4"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/2GpRCHmVwV8GjOr4rioPKK"
+      },
+      "followers": {
+        "href": null,
+        "total": 361
+      },
+      "genres": [
+        "rap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/2GpRCHmVwV8GjOr4rioPKK",
+      "id": "2GpRCHmVwV8GjOr4rioPKK",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab6761610000e5eb965c5e21613366783cb22aba",
+          "width": 640
+        },
+        {
+          "height": 320,
+          "url": "https://i.scdn.co/image/ab67616100005174965c5e21613366783cb22aba",
+          "width": 320
+        },
+        {
+          "height": 160,
+          "url": "https://i.scdn.co/image/ab6761610000f178965c5e21613366783cb22aba",
+          "width": 160
+        }
+      ],
+      "name": "Dezigna",
+      "popularity": 1,
+      "type": "artist",
+      "uri": "spotify:artist:2GpRCHmVwV8GjOr4rioPKK"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/7opkCwM7jbn8ztYcLDNCh7"
+      },
+      "followers": {
+        "href": null,
+        "total": 62
+      },
+      "genres": [
+        "rap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/7opkCwM7jbn8ztYcLDNCh7",
+      "id": "7opkCwM7jbn8ztYcLDNCh7",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab67616d0000b27366da90e6e29c7aabca04c94b",
+          "width": 640
+        },
+        {
+          "height": 300,
+          "url": "https://i.scdn.co/image/ab67616d00001e0266da90e6e29c7aabca04c94b",
+          "width": 300
+        },
+        {
+          "height": 64,
+          "url": "https://i.scdn.co/image/ab67616d0000485166da90e6e29c7aabca04c94b",
+          "width": 64
+        }
+      ],
+      "name": "LE KIING",
+      "popularity": 0,
+      "type": "artist",
+      "uri": "spotify:artist:7opkCwM7jbn8ztYcLDNCh7"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/2CcswDrF4iaJB4e1jYEPqT"
+      },
+      "followers": {
+        "href": null,
+        "total": 12
+      },
+      "genres": [
+        "rap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/2CcswDrF4iaJB4e1jYEPqT",
+      "id": "2CcswDrF4iaJB4e1jYEPqT",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab67616d0000b273897d38041d78c22aaf08c46f",
+          "width": 640
+        },
+        {
+          "height": 300,
+          "url": "https://i.scdn.co/image/ab67616d00001e02897d38041d78c22aaf08c46f",
+          "width": 300
+        },
+        {
+          "height": 64,
+          "url": "https://i.scdn.co/image/ab67616d00004851897d38041d78c22aaf08c46f",
+          "width": 64
+        }
+      ],
+      "name": "Mista Deezy",
+      "popularity": 4,
+      "type": "artist",
+      "uri": "spotify:artist:2CcswDrF4iaJB4e1jYEPqT"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/63BdcTptOqCoYvN3B92a1k"
+      },
+      "followers": {
+        "href": null,
+        "total": 73
+      },
+      "genres": [
+        "rap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/63BdcTptOqCoYvN3B92a1k",
+      "id": "63BdcTptOqCoYvN3B92a1k",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab67616d0000b273518c1b66f87fd11f5a10e9df",
+          "width": 640
+        },
+        {
+          "height": 300,
+          "url": "https://i.scdn.co/image/ab67616d00001e02518c1b66f87fd11f5a10e9df",
+          "width": 300
+        },
+        {
+          "height": 64,
+          "url": "https://i.scdn.co/image/ab67616d00004851518c1b66f87fd11f5a10e9df",
+          "width": 64
+        }
+      ],
+      "name": "N.E.S",
+      "popularity": 5,
+      "type": "artist",
+      "uri": "spotify:artist:63BdcTptOqCoYvN3B92a1k"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/20iYlDJgV9zLL4rVSmvGDo"
+      },
+      "followers": {
+        "href": null,
+        "total": 21
+      },
+      "genres": [
+        "rap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/20iYlDJgV9zLL4rVSmvGDo",
+      "id": "20iYlDJgV9zLL4rVSmvGDo",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab67616d0000b273d01a05060046e1b5c877f21e",
+          "width": 640
+        },
+        {
+          "height": 300,
+          "url": "https://i.scdn.co/image/ab67616d00001e02d01a05060046e1b5c877f21e",
+          "width": 300
+        },
+        {
+          "height": 64,
+          "url": "https://i.scdn.co/image/ab67616d00004851d01a05060046e1b5c877f21e",
+          "width": 64
+        }
+      ],
+      "name": "Djocka",
+      "popularity": 0,
+      "type": "artist",
+      "uri": "spotify:artist:20iYlDJgV9zLL4rVSmvGDo"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/0Gz9rfijRBLp94TZjjlgzE"
+      },
+      "followers": {
+        "href": null,
+        "total": 59
+      },
+      "genres": [
+        "rap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/0Gz9rfijRBLp94TZjjlgzE",
+      "id": "0Gz9rfijRBLp94TZjjlgzE",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab67616d0000b27371b978bba7a577307591b734",
+          "width": 640
+        },
+        {
+          "height": 300,
+          "url": "https://i.scdn.co/image/ab67616d00001e0271b978bba7a577307591b734",
+          "width": 300
+        },
+        {
+          "height": 64,
+          "url": "https://i.scdn.co/image/ab67616d0000485171b978bba7a577307591b734",
+          "width": 64
+        }
+      ],
+      "name": "Loyal T",
+      "popularity": 1,
+      "type": "artist",
+      "uri": "spotify:artist:0Gz9rfijRBLp94TZjjlgzE"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/4fDZJCQwLDf7xD4bn3hmoH"
+      },
+      "followers": {
+        "href": null,
+        "total": 24365
+      },
+      "genres": [
+        "rap antillais",
+        "trap antillais",
+        "zouk riddim"
+      ],
+      "href": "https://api.spotify.com/v1/artists/4fDZJCQwLDf7xD4bn3hmoH",
+      "id": "4fDZJCQwLDf7xD4bn3hmoH",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab6761610000e5eb509ab34423cf9b4bd0f6dde6",
+          "width": 640
+        },
+        {
+          "height": 320,
+          "url": "https://i.scdn.co/image/ab67616100005174509ab34423cf9b4bd0f6dde6",
+          "width": 320
+        },
+        {
+          "height": 160,
+          "url": "https://i.scdn.co/image/ab6761610000f178509ab34423cf9b4bd0f6dde6",
+          "width": 160
+        }
+      ],
+      "name": "Lyrrix",
+      "popularity": 30,
+      "type": "artist",
+      "uri": "spotify:artist:4fDZJCQwLDf7xD4bn3hmoH"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/3TA0DO95SXcr3GDsQCHuNU"
+      },
+      "followers": {
+        "href": null,
+        "total": 18244
+      },
+      "genres": [
+        "musique guadeloupe",
+        "rap antillais",
+        "trap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/3TA0DO95SXcr3GDsQCHuNU",
+      "id": "3TA0DO95SXcr3GDsQCHuNU",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab6761610000e5eb7e1447500efb44f9bf91640b",
+          "width": 640
+        },
+        {
+          "height": 320,
+          "url": "https://i.scdn.co/image/ab676161000051747e1447500efb44f9bf91640b",
+          "width": 320
+        },
+        {
+          "height": 160,
+          "url": "https://i.scdn.co/image/ab6761610000f1787e1447500efb44f9bf91640b",
+          "width": 160
+        }
+      ],
+      "name": "Railfé",
+      "popularity": 38,
+      "type": "artist",
+      "uri": "spotify:artist:3TA0DO95SXcr3GDsQCHuNU"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/2Le5krQdKYGiP5xUQnIHKN"
+      },
+      "followers": {
+        "href": null,
+        "total": 13336
+      },
+      "genres": [
+        "trap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/2Le5krQdKYGiP5xUQnIHKN",
+      "id": "2Le5krQdKYGiP5xUQnIHKN",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab6761610000e5ebde0a7bd569dfc6470288a4ff",
+          "width": 640
+        },
+        {
+          "height": 320,
+          "url": "https://i.scdn.co/image/ab67616100005174de0a7bd569dfc6470288a4ff",
+          "width": 320
+        },
+        {
+          "height": 160,
+          "url": "https://i.scdn.co/image/ab6761610000f178de0a7bd569dfc6470288a4ff",
+          "width": 160
+        }
+      ],
+      "name": "Latop",
+      "popularity": 34,
+      "type": "artist",
+      "uri": "spotify:artist:2Le5krQdKYGiP5xUQnIHKN"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/3kg1W1uC2DqdaDCmYSWQGF"
+      },
+      "followers": {
+        "href": null,
+        "total": 15208
+      },
+      "genres": [
+        "musique guadeloupe",
+        "rap antillais",
+        "trap antillais",
+        "zouk riddim"
+      ],
+      "href": "https://api.spotify.com/v1/artists/3kg1W1uC2DqdaDCmYSWQGF",
+      "id": "3kg1W1uC2DqdaDCmYSWQGF",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab67616d0000b2734c2d226268624d9b3dd1809f",
+          "width": 640
+        },
+        {
+          "height": 300,
+          "url": "https://i.scdn.co/image/ab67616d00001e024c2d226268624d9b3dd1809f",
+          "width": 300
+        },
+        {
+          "height": 64,
+          "url": "https://i.scdn.co/image/ab67616d000048514c2d226268624d9b3dd1809f",
+          "width": 64
+        }
+      ],
+      "name": "Pon2mik",
+      "popularity": 24,
+      "type": "artist",
+      "uri": "spotify:artist:3kg1W1uC2DqdaDCmYSWQGF"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/3BsytoDafXioLn4x2pgnaH"
+      },
+      "followers": {
+        "href": null,
+        "total": 1916
+      },
+      "genres": [
+        "trap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/3BsytoDafXioLn4x2pgnaH",
+      "id": "3BsytoDafXioLn4x2pgnaH",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab6761610000e5eb7b53bb2ebc2961560782fb34",
+          "width": 640
+        },
+        {
+          "height": 320,
+          "url": "https://i.scdn.co/image/ab676161000051747b53bb2ebc2961560782fb34",
+          "width": 320
+        },
+        {
+          "height": 160,
+          "url": "https://i.scdn.co/image/ab6761610000f1787b53bb2ebc2961560782fb34",
+          "width": 160
+        }
+      ],
+      "name": "Nono YMD",
+      "popularity": 21,
+      "type": "artist",
+      "uri": "spotify:artist:3BsytoDafXioLn4x2pgnaH"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/4xOmYTM8mDlUiuQJSqvAVV"
+      },
+      "followers": {
+        "href": null,
+        "total": 16083
+      },
+      "genres": [
+        "rap antillais",
+        "trap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/4xOmYTM8mDlUiuQJSqvAVV",
+      "id": "4xOmYTM8mDlUiuQJSqvAVV",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab6761610000e5ebb9bae57623999e12217c81a4",
+          "width": 640
+        },
+        {
+          "height": 320,
+          "url": "https://i.scdn.co/image/ab67616100005174b9bae57623999e12217c81a4",
+          "width": 320
+        },
+        {
+          "height": 160,
+          "url": "https://i.scdn.co/image/ab6761610000f178b9bae57623999e12217c81a4",
+          "width": 160
+        }
+      ],
+      "name": "Don Snoop",
+      "popularity": 32,
+      "type": "artist",
+      "uri": "spotify:artist:4xOmYTM8mDlUiuQJSqvAVV"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/0Y4XPAlixU89K3Z6oRziZ1"
+      },
+      "followers": {
+        "href": null,
+        "total": 31499
+      },
+      "genres": [
+        "musique guadeloupe",
+        "rap antillais",
+        "trap antillais",
+        "zouk riddim"
+      ],
+      "href": "https://api.spotify.com/v1/artists/0Y4XPAlixU89K3Z6oRziZ1",
+      "id": "0Y4XPAlixU89K3Z6oRziZ1",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab6761610000e5ebf91c82503c52baa857299dc8",
+          "width": 640
+        },
+        {
+          "height": 320,
+          "url": "https://i.scdn.co/image/ab67616100005174f91c82503c52baa857299dc8",
+          "width": 320
+        },
+        {
+          "height": 160,
+          "url": "https://i.scdn.co/image/ab6761610000f178f91c82503c52baa857299dc8",
+          "width": 160
+        }
+      ],
+      "name": "Young Chang MC",
+      "popularity": 35,
+      "type": "artist",
+      "uri": "spotify:artist:0Y4XPAlixU89K3Z6oRziZ1"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/3N8BWulSGADw4SvDE2k6Yl"
+      },
+      "followers": {
+        "href": null,
+        "total": 11155
+      },
+      "genres": [
+        "bouyon",
+        "rap antillais",
+        "trap antillais",
+        "zouk riddim"
+      ],
+      "href": "https://api.spotify.com/v1/artists/3N8BWulSGADw4SvDE2k6Yl",
+      "id": "3N8BWulSGADw4SvDE2k6Yl",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab6761610000e5ebefad4a77ceebd464f3d2120b",
+          "width": 640
+        },
+        {
+          "height": 320,
+          "url": "https://i.scdn.co/image/ab67616100005174efad4a77ceebd464f3d2120b",
+          "width": 320
+        },
+        {
+          "height": 160,
+          "url": "https://i.scdn.co/image/ab6761610000f178efad4a77ceebd464f3d2120b",
+          "width": 160
+        }
+      ],
+      "name": "Drexi",
+      "popularity": 23,
+      "type": "artist",
+      "uri": "spotify:artist:3N8BWulSGADw4SvDE2k6Yl"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/4tdlXdW4Agcp0EGX9otdDK"
+      },
+      "followers": {
+        "href": null,
+        "total": 17279
+      },
+      "genres": [
+        "trap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/4tdlXdW4Agcp0EGX9otdDK",
+      "id": "4tdlXdW4Agcp0EGX9otdDK",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab67616d0000b273886e514509ec8574478b87b4",
+          "width": 640
+        },
+        {
+          "height": 300,
+          "url": "https://i.scdn.co/image/ab67616d00001e02886e514509ec8574478b87b4",
+          "width": 300
+        },
+        {
+          "height": 64,
+          "url": "https://i.scdn.co/image/ab67616d00004851886e514509ec8574478b87b4",
+          "width": 64
+        }
+      ],
+      "name": "Mata",
+      "popularity": 34,
+      "type": "artist",
+      "uri": "spotify:artist:4tdlXdW4Agcp0EGX9otdDK"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/7mZYTV6yPUvtbxZcH0OK3v"
+      },
+      "followers": {
+        "href": null,
+        "total": 4211
+      },
+      "genres": [
+        "trap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/7mZYTV6yPUvtbxZcH0OK3v",
+      "id": "7mZYTV6yPUvtbxZcH0OK3v",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab6761610000e5ebf4bc5232943467334673efb8",
+          "width": 640
+        },
+        {
+          "height": 320,
+          "url": "https://i.scdn.co/image/ab67616100005174f4bc5232943467334673efb8",
+          "width": 320
+        },
+        {
+          "height": 160,
+          "url": "https://i.scdn.co/image/ab6761610000f178f4bc5232943467334673efb8",
+          "width": 160
+        }
+      ],
+      "name": "LaRose",
+      "popularity": 41,
+      "type": "artist",
+      "uri": "spotify:artist:7mZYTV6yPUvtbxZcH0OK3v"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/3WbS1ppPV9QmsO29NG28fG"
+      },
+      "followers": {
+        "href": null,
+        "total": 23152
+      },
+      "genres": [
+        "rap antillais",
+        "trap antillais",
+        "zouk riddim"
+      ],
+      "href": "https://api.spotify.com/v1/artists/3WbS1ppPV9QmsO29NG28fG",
+      "id": "3WbS1ppPV9QmsO29NG28fG",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab6761610000e5ebd8e9f5589b68417b316a4406",
+          "width": 640
+        },
+        {
+          "height": 320,
+          "url": "https://i.scdn.co/image/ab67616100005174d8e9f5589b68417b316a4406",
+          "width": 320
+        },
+        {
+          "height": 160,
+          "url": "https://i.scdn.co/image/ab6761610000f178d8e9f5589b68417b316a4406",
+          "width": 160
+        }
+      ],
+      "name": "Marginal",
+      "popularity": 34,
+      "type": "artist",
+      "uri": "spotify:artist:3WbS1ppPV9QmsO29NG28fG"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/1TSdTHidTqbViCJfKSvlEG"
+      },
+      "followers": {
+        "href": null,
+        "total": 18418
+      },
+      "genres": [
+        "rap antillais",
+        "trap antillais",
+        "zouk riddim"
+      ],
+      "href": "https://api.spotify.com/v1/artists/1TSdTHidTqbViCJfKSvlEG",
+      "id": "1TSdTHidTqbViCJfKSvlEG",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab6761610000e5eb95f43b41372585b4fa7385eb",
+          "width": 640
+        },
+        {
+          "height": 320,
+          "url": "https://i.scdn.co/image/ab6761610000517495f43b41372585b4fa7385eb",
+          "width": 320
+        },
+        {
+          "height": 160,
+          "url": "https://i.scdn.co/image/ab6761610000f17895f43b41372585b4fa7385eb",
+          "width": 160
+        }
+      ],
+      "name": "Evil P",
+      "popularity": 34,
+      "type": "artist",
+      "uri": "spotify:artist:1TSdTHidTqbViCJfKSvlEG"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/1NxMxZ8dG0JJbg02CXtw2D"
+      },
+      "followers": {
+        "href": null,
+        "total": 53750
+      },
+      "genres": [
+        "musique guadeloupe",
+        "rap antillais",
+        "trap antillais",
+        "zouk riddim"
+      ],
+      "href": "https://api.spotify.com/v1/artists/1NxMxZ8dG0JJbg02CXtw2D",
+      "id": "1NxMxZ8dG0JJbg02CXtw2D",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab6761610000e5eb43e41d570ca99c0a92898f9b",
+          "width": 640
+        },
+        {
+          "height": 320,
+          "url": "https://i.scdn.co/image/ab6761610000517443e41d570ca99c0a92898f9b",
+          "width": 320
+        },
+        {
+          "height": 160,
+          "url": "https://i.scdn.co/image/ab6761610000f17843e41d570ca99c0a92898f9b",
+          "width": 160
+        }
+      ],
+      "name": "T Kimp Gee",
+      "popularity": 40,
+      "type": "artist",
+      "uri": "spotify:artist:1NxMxZ8dG0JJbg02CXtw2D"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/1AT8NKdQOU0EVPu6ehN4NA"
+      },
+      "followers": {
+        "href": null,
+        "total": 72066
+      },
+      "genres": [
+        "rap antillais",
+        "trap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/1AT8NKdQOU0EVPu6ehN4NA",
+      "id": "1AT8NKdQOU0EVPu6ehN4NA",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab6761610000e5eb6ee4cef64f9661e18c69b578",
+          "width": 640
+        },
+        {
+          "height": 320,
+          "url": "https://i.scdn.co/image/ab676161000051746ee4cef64f9661e18c69b578",
+          "width": 320
+        },
+        {
+          "height": 160,
+          "url": "https://i.scdn.co/image/ab6761610000f1786ee4cef64f9661e18c69b578",
+          "width": 160
+        }
+      ],
+      "name": "Meryl",
+      "popularity": 53,
+      "type": "artist",
+      "uri": "spotify:artist:1AT8NKdQOU0EVPu6ehN4NA"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/65MUgQC8e81VcdqDSmwfem"
+      },
+      "followers": {
+        "href": null,
+        "total": 17277
+      },
+      "genres": [
+        "trap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/65MUgQC8e81VcdqDSmwfem",
+      "id": "65MUgQC8e81VcdqDSmwfem",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab6761610000e5ebdce92c0b06c6435283e32707",
+          "width": 640
+        },
+        {
+          "height": 320,
+          "url": "https://i.scdn.co/image/ab67616100005174dce92c0b06c6435283e32707",
+          "width": 320
+        },
+        {
+          "height": 160,
+          "url": "https://i.scdn.co/image/ab6761610000f178dce92c0b06c6435283e32707",
+          "width": 160
+        }
+      ],
+      "name": "Lé will",
+      "popularity": 35,
+      "type": "artist",
+      "uri": "spotify:artist:65MUgQC8e81VcdqDSmwfem"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/5DFOYJLWzBdNifHaXGuRQc"
+      },
+      "followers": {
+        "href": null,
+        "total": 42218
+      },
+      "genres": [
+        "musique guadeloupe",
+        "rap antillais",
+        "trap antillais",
+        "zouk riddim"
+      ],
+      "href": "https://api.spotify.com/v1/artists/5DFOYJLWzBdNifHaXGuRQc",
+      "id": "5DFOYJLWzBdNifHaXGuRQc",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab6761610000e5eb017131256ab1ae63362e45a7",
+          "width": 640
+        },
+        {
+          "height": 320,
+          "url": "https://i.scdn.co/image/ab67616100005174017131256ab1ae63362e45a7",
+          "width": 320
+        },
+        {
+          "height": 160,
+          "url": "https://i.scdn.co/image/ab6761610000f178017131256ab1ae63362e45a7",
+          "width": 160
+        }
+      ],
+      "name": "Keros-N",
+      "popularity": 33,
+      "type": "artist",
+      "uri": "spotify:artist:5DFOYJLWzBdNifHaXGuRQc"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/0BJZXLGWGd3IkwiSkUEQk2"
+      },
+      "followers": {
+        "href": null,
+        "total": 6469
+      },
+      "genres": [
+        "trap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/0BJZXLGWGd3IkwiSkUEQk2",
+      "id": "0BJZXLGWGd3IkwiSkUEQk2",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab67616d0000b2730a863029e2ada4e083b5741f",
+          "width": 640
+        },
+        {
+          "height": 300,
+          "url": "https://i.scdn.co/image/ab67616d00001e02989f824a226c33e589661f0d",
+          "width": 300
+        },
+        {
+          "height": 64,
+          "url": "https://i.scdn.co/image/ab67616d00004851989f824a226c33e589661f0d",
+          "width": 64
+        }
+      ],
+      "name": "Dy-Nïce",
+      "popularity": 28,
+      "type": "artist",
+      "uri": "spotify:artist:0BJZXLGWGd3IkwiSkUEQk2"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/3J7r4VsNmuWixU0nXvyPd8"
+      },
+      "followers": {
+        "href": null,
+        "total": 791676
+      },
+      "genres": [
+        "cloud rap francais",
+        "french hip hop",
+        "pop urbaine",
+        "rap antillais",
+        "trap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/3J7r4VsNmuWixU0nXvyPd8",
+      "id": "3J7r4VsNmuWixU0nXvyPd8",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab6761610000e5ebbeffebd066171f03029a3c2a",
+          "width": 640
+        },
+        {
+          "height": 320,
+          "url": "https://i.scdn.co/image/ab67616100005174beffebd066171f03029a3c2a",
+          "width": 320
+        },
+        {
+          "height": 160,
+          "url": "https://i.scdn.co/image/ab6761610000f178beffebd066171f03029a3c2a",
+          "width": 160
+        }
+      ],
+      "name": "Kalash",
+      "popularity": 64,
+      "type": "artist",
+      "uri": "spotify:artist:3J7r4VsNmuWixU0nXvyPd8"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/2fKiJz55OB9rZJLb80o6d4"
+      },
+      "followers": {
+        "href": null,
+        "total": 16124
+      },
+      "genres": [
+        "musique guadeloupe",
+        "rap antillais",
+        "trap antillais",
+        "zouk riddim"
+      ],
+      "href": "https://api.spotify.com/v1/artists/2fKiJz55OB9rZJLb80o6d4",
+      "id": "2fKiJz55OB9rZJLb80o6d4",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab6761610000e5eba63ddeb76f112addff51ebda",
+          "width": 640
+        },
+        {
+          "height": 320,
+          "url": "https://i.scdn.co/image/ab67616100005174a63ddeb76f112addff51ebda",
+          "width": 320
+        },
+        {
+          "height": 160,
+          "url": "https://i.scdn.co/image/ab6761610000f178a63ddeb76f112addff51ebda",
+          "width": 160
+        }
+      ],
+      "name": "Nicy",
+      "popularity": 27,
+      "type": "artist",
+      "uri": "spotify:artist:2fKiJz55OB9rZJLb80o6d4"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/51RG7tEip3vlXG9y9vylxp"
+      },
+      "followers": {
+        "href": null,
+        "total": 17197
+      },
+      "genres": [
+        "trap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/51RG7tEip3vlXG9y9vylxp",
+      "id": "51RG7tEip3vlXG9y9vylxp",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab6761610000e5eb956fe8238c26fb4776642192",
+          "width": 640
+        },
+        {
+          "height": 320,
+          "url": "https://i.scdn.co/image/ab67616100005174956fe8238c26fb4776642192",
+          "width": 320
+        },
+        {
+          "height": 160,
+          "url": "https://i.scdn.co/image/ab6761610000f178956fe8238c26fb4776642192",
+          "width": 160
+        }
+      ],
+      "name": "Tency",
+      "popularity": 32,
+      "type": "artist",
+      "uri": "spotify:artist:51RG7tEip3vlXG9y9vylxp"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/3HIHUK30XZ456qOcA9wvTw"
+      },
+      "followers": {
+        "href": null,
+        "total": 5173
+      },
+      "genres": [
+        "rap antillais",
+        "trap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/3HIHUK30XZ456qOcA9wvTw",
+      "id": "3HIHUK30XZ456qOcA9wvTw",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab6761610000e5eb24d026f901f2467f45ac069e",
+          "width": 640
+        },
+        {
+          "height": 320,
+          "url": "https://i.scdn.co/image/ab6761610000517424d026f901f2467f45ac069e",
+          "width": 320
+        },
+        {
+          "height": 160,
+          "url": "https://i.scdn.co/image/ab6761610000f17824d026f901f2467f45ac069e",
+          "width": 160
+        }
+      ],
+      "name": "Jooslyf",
+      "popularity": 25,
+      "type": "artist",
+      "uri": "spotify:artist:3HIHUK30XZ456qOcA9wvTw"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/67MIpliQaIhUN1WLSkYEqC"
+      },
+      "followers": {
+        "href": null,
+        "total": 21465
+      },
+      "genres": [
+        "drill francais",
+        "trap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/67MIpliQaIhUN1WLSkYEqC",
+      "id": "67MIpliQaIhUN1WLSkYEqC",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab6761610000e5eb4f3875084dc3020cbd5e5399",
+          "width": 640
+        },
+        {
+          "height": 320,
+          "url": "https://i.scdn.co/image/ab676161000051744f3875084dc3020cbd5e5399",
+          "width": 320
+        },
+        {
+          "height": 160,
+          "url": "https://i.scdn.co/image/ab6761610000f1784f3875084dc3020cbd5e5399",
+          "width": 160
+        }
+      ],
+      "name": "Le Juiice",
+      "popularity": 33,
+      "type": "artist",
+      "uri": "spotify:artist:67MIpliQaIhUN1WLSkYEqC"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/43iw2eN2eQhF9GaouZCn1Q"
+      },
+      "followers": {
+        "href": null,
+        "total": 6403
+      },
+      "genres": [
+        "rap francais",
+        "trap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/43iw2eN2eQhF9GaouZCn1Q",
+      "id": "43iw2eN2eQhF9GaouZCn1Q",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab67616d0000b27352a884ca446d1f039c03b349",
+          "width": 640
+        },
+        {
+          "height": 300,
+          "url": "https://i.scdn.co/image/ab67616d00001e0252a884ca446d1f039c03b349",
+          "width": 300
+        },
+        {
+          "height": 64,
+          "url": "https://i.scdn.co/image/ab67616d0000485152a884ca446d1f039c03b349",
+          "width": 64
+        }
+      ],
+      "name": "Laskiiz",
+      "popularity": 28,
+      "type": "artist",
+      "uri": "spotify:artist:43iw2eN2eQhF9GaouZCn1Q"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/0lCzbSVa8RZoPsuDM9YBJS"
+      },
+      "followers": {
+        "href": null,
+        "total": 70708
+      },
+      "genres": [
+        "musique guadeloupe",
+        "rap antillais",
+        "rap francais",
+        "trap antillais",
+        "zouk riddim"
+      ],
+      "href": "https://api.spotify.com/v1/artists/0lCzbSVa8RZoPsuDM9YBJS",
+      "id": "0lCzbSVa8RZoPsuDM9YBJS",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab6761610000e5eb08606fbe8547457b04e6f870",
+          "width": 640
+        },
+        {
+          "height": 320,
+          "url": "https://i.scdn.co/image/ab6761610000517408606fbe8547457b04e6f870",
+          "width": 320
+        },
+        {
+          "height": 160,
+          "url": "https://i.scdn.co/image/ab6761610000f17808606fbe8547457b04e6f870",
+          "width": 160
+        }
+      ],
+      "name": "Tiitof",
+      "popularity": 39,
+      "type": "artist",
+      "uri": "spotify:artist:0lCzbSVa8RZoPsuDM9YBJS"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/11goLdSWu1o1Eo5bn0KiSw"
+      },
+      "followers": {
+        "href": null,
+        "total": 5499
+      },
+      "genres": [
+        "trap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/11goLdSWu1o1Eo5bn0KiSw",
+      "id": "11goLdSWu1o1Eo5bn0KiSw",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab67616d0000b2735c93d00b9723a278c4787d8b",
+          "width": 640
+        },
+        {
+          "height": 300,
+          "url": "https://i.scdn.co/image/ab67616d00001e025c93d00b9723a278c4787d8b",
+          "width": 300
+        },
+        {
+          "height": 64,
+          "url": "https://i.scdn.co/image/ab67616d000048515c93d00b9723a278c4787d8b",
+          "width": 64
+        }
+      ],
+      "name": "Wylix",
+      "popularity": 21,
+      "type": "artist",
+      "uri": "spotify:artist:11goLdSWu1o1Eo5bn0KiSw"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/2gCI025VLFlAHLYBQWAK4M"
+      },
+      "followers": {
+        "href": null,
+        "total": 10631
+      },
+      "genres": [
+        "rap antillais",
+        "trap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/2gCI025VLFlAHLYBQWAK4M",
+      "id": "2gCI025VLFlAHLYBQWAK4M",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab6761610000e5eba408e1ce87d880cfecc3cf9b",
+          "width": 640
+        },
+        {
+          "height": 320,
+          "url": "https://i.scdn.co/image/ab67616100005174a408e1ce87d880cfecc3cf9b",
+          "width": 320
+        },
+        {
+          "height": 160,
+          "url": "https://i.scdn.co/image/ab6761610000f178a408e1ce87d880cfecc3cf9b",
+          "width": 160
+        }
+      ],
+      "name": "Mercenaire",
+      "popularity": 30,
+      "type": "artist",
+      "uri": "spotify:artist:2gCI025VLFlAHLYBQWAK4M"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/0hp836fJ9Dleva1XuehHiS"
+      },
+      "followers": {
+        "href": null,
+        "total": 45326
+      },
+      "genres": [
+        "trap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/0hp836fJ9Dleva1XuehHiS",
+      "id": "0hp836fJ9Dleva1XuehHiS",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab6761610000e5ebed7529b8daac4f9fc7657c37",
+          "width": 640
+        },
+        {
+          "height": 320,
+          "url": "https://i.scdn.co/image/ab67616100005174ed7529b8daac4f9fc7657c37",
+          "width": 320
+        },
+        {
+          "height": 160,
+          "url": "https://i.scdn.co/image/ab6761610000f178ed7529b8daac4f9fc7657c37",
+          "width": 160
+        }
+      ],
+      "name": "Kima",
+      "popularity": 48,
+      "type": "artist",
+      "uri": "spotify:artist:0hp836fJ9Dleva1XuehHiS"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/2xqQatIjUSVF23wUcy8g79"
+      },
+      "followers": {
+        "href": null,
+        "total": 4466
+      },
+      "genres": [
+        "trap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/2xqQatIjUSVF23wUcy8g79",
+      "id": "2xqQatIjUSVF23wUcy8g79",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab67616d0000b273bc7ccc7d980cb9a66ce55434",
+          "width": 640
+        },
+        {
+          "height": 300,
+          "url": "https://i.scdn.co/image/ab67616d00001e02bc7ccc7d980cb9a66ce55434",
+          "width": 300
+        },
+        {
+          "height": 64,
+          "url": "https://i.scdn.co/image/ab67616d00004851bc7ccc7d980cb9a66ce55434",
+          "width": 64
+        }
+      ],
+      "name": "GiZzMoO",
+      "popularity": 25,
+      "type": "artist",
+      "uri": "spotify:artist:2xqQatIjUSVF23wUcy8g79"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/01z3xImb6FUG1QSjuOgP7R"
+      },
+      "followers": {
+        "href": null,
+        "total": 7229
+      },
+      "genres": [
+        "rap antillais",
+        "trap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/01z3xImb6FUG1QSjuOgP7R",
+      "id": "01z3xImb6FUG1QSjuOgP7R",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab6761610000e5ebf104c131afc4a89a4624b5d9",
+          "width": 640
+        },
+        {
+          "height": 320,
+          "url": "https://i.scdn.co/image/ab67616100005174f104c131afc4a89a4624b5d9",
+          "width": 320
+        },
+        {
+          "height": 160,
+          "url": "https://i.scdn.co/image/ab6761610000f178f104c131afc4a89a4624b5d9",
+          "width": 160
+        }
+      ],
+      "name": "Shaka Zulu",
+      "popularity": 28,
+      "type": "artist",
+      "uri": "spotify:artist:01z3xImb6FUG1QSjuOgP7R"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/4jTxLRL2wJ0NfArphhUHb3"
+      },
+      "followers": {
+        "href": null,
+        "total": 6832
+      },
+      "genres": [
+        "trap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/4jTxLRL2wJ0NfArphhUHb3",
+      "id": "4jTxLRL2wJ0NfArphhUHb3",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab6761610000e5eb316475ede03e9a1abc3ec126",
+          "width": 640
+        },
+        {
+          "height": 320,
+          "url": "https://i.scdn.co/image/ab67616100005174316475ede03e9a1abc3ec126",
+          "width": 320
+        },
+        {
+          "height": 160,
+          "url": "https://i.scdn.co/image/ab6761610000f178316475ede03e9a1abc3ec126",
+          "width": 160
+        }
+      ],
+      "name": "Flash",
+      "popularity": 23,
+      "type": "artist",
+      "uri": "spotify:artist:4jTxLRL2wJ0NfArphhUHb3"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/7ArndI9V96Y7AXKQ4O54FH"
+      },
+      "followers": {
+        "href": null,
+        "total": 5081
+      },
+      "genres": [
+        "trap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/7ArndI9V96Y7AXKQ4O54FH",
+      "id": "7ArndI9V96Y7AXKQ4O54FH",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab6761610000e5ebb6d291563bfe2e1c261b8ff3",
+          "width": 640
+        },
+        {
+          "height": 320,
+          "url": "https://i.scdn.co/image/ab67616100005174b6d291563bfe2e1c261b8ff3",
+          "width": 320
+        },
+        {
+          "height": 160,
+          "url": "https://i.scdn.co/image/ab6761610000f178b6d291563bfe2e1c261b8ff3",
+          "width": 160
+        }
+      ],
+      "name": "Reyel Ay",
+      "popularity": 25,
+      "type": "artist",
+      "uri": "spotify:artist:7ArndI9V96Y7AXKQ4O54FH"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/7JVYJr41SahTd7eGMinGyB"
+      },
+      "followers": {
+        "href": null,
+        "total": 7815
+      },
+      "genres": [
+        "dancehall guyanaise",
+        "trap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/7JVYJr41SahTd7eGMinGyB",
+      "id": "7JVYJr41SahTd7eGMinGyB",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab6761610000e5eb753fb6b79881c5f65ac13a12",
+          "width": 640
+        },
+        {
+          "height": 320,
+          "url": "https://i.scdn.co/image/ab67616100005174753fb6b79881c5f65ac13a12",
+          "width": 320
+        },
+        {
+          "height": 160,
+          "url": "https://i.scdn.co/image/ab6761610000f178753fb6b79881c5f65ac13a12",
+          "width": 160
+        }
+      ],
+      "name": "Lion P",
+      "popularity": 30,
+      "type": "artist",
+      "uri": "spotify:artist:7JVYJr41SahTd7eGMinGyB"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/1nDtmYJmQcZEXU56pz5R9d"
+      },
+      "followers": {
+        "href": null,
+        "total": 31827
+      },
+      "genres": [
+        "trap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/1nDtmYJmQcZEXU56pz5R9d",
+      "id": "1nDtmYJmQcZEXU56pz5R9d",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab6761610000e5eb9c6297f3fa7aeb3e10f9383c",
+          "width": 640
+        },
+        {
+          "height": 320,
+          "url": "https://i.scdn.co/image/ab676161000051749c6297f3fa7aeb3e10f9383c",
+          "width": 320
+        },
+        {
+          "height": 160,
+          "url": "https://i.scdn.co/image/ab6761610000f1789c6297f3fa7aeb3e10f9383c",
+          "width": 160
+        }
+      ],
+      "name": "Jozii",
+      "popularity": 51,
+      "type": "artist",
+      "uri": "spotify:artist:1nDtmYJmQcZEXU56pz5R9d"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/1qyIUGgexI2Qi0NRweEVgf"
+      },
+      "followers": {
+        "href": null,
+        "total": 4710
+      },
+      "genres": [
+        "dancehall guyanaise",
+        "rap antillais",
+        "trap antillais",
+        "zouk riddim"
+      ],
+      "href": "https://api.spotify.com/v1/artists/1qyIUGgexI2Qi0NRweEVgf",
+      "id": "1qyIUGgexI2Qi0NRweEVgf",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab67616d0000b27345637d9a8171583017152e0f",
+          "width": 640
+        },
+        {
+          "height": 300,
+          "url": "https://i.scdn.co/image/ab67616d00001e0245637d9a8171583017152e0f",
+          "width": 300
+        },
+        {
+          "height": 64,
+          "url": "https://i.scdn.co/image/ab67616d0000485145637d9a8171583017152e0f",
+          "width": 64
+        }
+      ],
+      "name": "DJ Ken",
+      "popularity": 22,
+      "type": "artist",
+      "uri": "spotify:artist:1qyIUGgexI2Qi0NRweEVgf"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/1plos0OOJvR2aPpzSn0Bxq"
+      },
+      "followers": {
+        "href": null,
+        "total": 4659
+      },
+      "genres": [
+        "trap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/1plos0OOJvR2aPpzSn0Bxq",
+      "id": "1plos0OOJvR2aPpzSn0Bxq",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab67616d0000b2735b87b86467da449de1072165",
+          "width": 640
+        },
+        {
+          "height": 300,
+          "url": "https://i.scdn.co/image/ab67616d00001e025b87b86467da449de1072165",
+          "width": 300
+        },
+        {
+          "height": 64,
+          "url": "https://i.scdn.co/image/ab67616d000048515b87b86467da449de1072165",
+          "width": 64
+        }
+      ],
+      "name": "Gomko",
+      "popularity": 23,
+      "type": "artist",
+      "uri": "spotify:artist:1plos0OOJvR2aPpzSn0Bxq"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/6IEJ6vfOs1DAR66IBz5KjJ"
+      },
+      "followers": {
+        "href": null,
+        "total": 2294
+      },
+      "genres": [
+        "trap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/6IEJ6vfOs1DAR66IBz5KjJ",
+      "id": "6IEJ6vfOs1DAR66IBz5KjJ",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab67616d0000b27384b0097e50faa12b4fb1f8ca",
+          "width": 640
+        },
+        {
+          "height": 300,
+          "url": "https://i.scdn.co/image/ab67616d00001e0284b0097e50faa12b4fb1f8ca",
+          "width": 300
+        },
+        {
+          "height": 64,
+          "url": "https://i.scdn.co/image/ab67616d0000485184b0097e50faa12b4fb1f8ca",
+          "width": 64
+        }
+      ],
+      "name": "Le D",
+      "popularity": 20,
+      "type": "artist",
+      "uri": "spotify:artist:6IEJ6vfOs1DAR66IBz5KjJ"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/2kadHmh1ySDU7J1DbH2WF6"
+      },
+      "followers": {
+        "href": null,
+        "total": 9437
+      },
+      "genres": [
+        "trap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/2kadHmh1ySDU7J1DbH2WF6",
+      "id": "2kadHmh1ySDU7J1DbH2WF6",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab6761610000e5eb8c61bcc8829147272ae5bb49",
+          "width": 640
+        },
+        {
+          "height": 320,
+          "url": "https://i.scdn.co/image/ab676161000051748c61bcc8829147272ae5bb49",
+          "width": 320
+        },
+        {
+          "height": 160,
+          "url": "https://i.scdn.co/image/ab6761610000f1788c61bcc8829147272ae5bb49",
+          "width": 160
+        }
+      ],
+      "name": "ZT Elsinky",
+      "popularity": 32,
+      "type": "artist",
+      "uri": "spotify:artist:2kadHmh1ySDU7J1DbH2WF6"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/7id7DIF9SbgA6nMlnkBMhH"
+      },
+      "followers": {
+        "href": null,
+        "total": 14517
+      },
+      "genres": [
+        "rap antillais",
+        "shatta",
+        "trap antillais",
+        "zouk riddim"
+      ],
+      "href": "https://api.spotify.com/v1/artists/7id7DIF9SbgA6nMlnkBMhH",
+      "id": "7id7DIF9SbgA6nMlnkBMhH",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab6761610000e5eb338c6e615a3f0bc12db6baa2",
+          "width": 640
+        },
+        {
+          "height": 320,
+          "url": "https://i.scdn.co/image/ab67616100005174338c6e615a3f0bc12db6baa2",
+          "width": 320
+        },
+        {
+          "height": 160,
+          "url": "https://i.scdn.co/image/ab6761610000f178338c6e615a3f0bc12db6baa2",
+          "width": 160
+        }
+      ],
+      "name": "MrSM",
+      "popularity": 31,
+      "type": "artist",
+      "uri": "spotify:artist:7id7DIF9SbgA6nMlnkBMhH"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/1tk4v7Xu8ZVJFMZN0bayn8"
+      },
+      "followers": {
+        "href": null,
+        "total": 16681
+      },
+      "genres": [
+        "trap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/1tk4v7Xu8ZVJFMZN0bayn8",
+      "id": "1tk4v7Xu8ZVJFMZN0bayn8",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab67616d0000b27318dde1fc0091c3460a4c2418",
+          "width": 640
+        },
+        {
+          "height": 300,
+          "url": "https://i.scdn.co/image/ab67616d00001e0218dde1fc0091c3460a4c2418",
+          "width": 300
+        },
+        {
+          "height": 64,
+          "url": "https://i.scdn.co/image/ab67616d0000485118dde1fc0091c3460a4c2418",
+          "width": 64
+        }
+      ],
+      "name": "Deuspi",
+      "popularity": 36,
+      "type": "artist",
+      "uri": "spotify:artist:1tk4v7Xu8ZVJFMZN0bayn8"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/48B5DmWJhrZJJ3qiUpLzOf"
+      },
+      "followers": {
+        "href": null,
+        "total": 2715
+      },
+      "genres": [
+        "trap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/48B5DmWJhrZJJ3qiUpLzOf",
+      "id": "48B5DmWJhrZJJ3qiUpLzOf",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab67616d0000b2732b31abc4fe71a9001f154022",
+          "width": 640
+        },
+        {
+          "height": 300,
+          "url": "https://i.scdn.co/image/ab67616d00001e022b31abc4fe71a9001f154022",
+          "width": 300
+        },
+        {
+          "height": 64,
+          "url": "https://i.scdn.co/image/ab67616d000048512b31abc4fe71a9001f154022",
+          "width": 64
+        }
+      ],
+      "name": "Lutin",
+      "popularity": 19,
+      "type": "artist",
+      "uri": "spotify:artist:48B5DmWJhrZJJ3qiUpLzOf"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/0jPag6bOjIcN2cNnkmVPky"
+      },
+      "followers": {
+        "href": null,
+        "total": 2765
+      },
+      "genres": [
+        "trap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/0jPag6bOjIcN2cNnkmVPky",
+      "id": "0jPag6bOjIcN2cNnkmVPky",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab67616d0000b2732fe251f2476c15d62cd1f2d1",
+          "width": 640
+        },
+        {
+          "height": 300,
+          "url": "https://i.scdn.co/image/ab67616d00001e022fe251f2476c15d62cd1f2d1",
+          "width": 300
+        },
+        {
+          "height": 64,
+          "url": "https://i.scdn.co/image/ab67616d000048512fe251f2476c15d62cd1f2d1",
+          "width": 64
+        }
+      ],
+      "name": "Sourx's Vermine's",
+      "popularity": 23,
+      "type": "artist",
+      "uri": "spotify:artist:0jPag6bOjIcN2cNnkmVPky"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/1zgdnr3khRwca3IKRvJzi3"
+      },
+      "followers": {
+        "href": null,
+        "total": 2917
+      },
+      "genres": [
+        "trap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/1zgdnr3khRwca3IKRvJzi3",
+      "id": "1zgdnr3khRwca3IKRvJzi3",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab67616d0000b273de438cc066b2b2b0ff82c528",
+          "width": 640
+        },
+        {
+          "height": 300,
+          "url": "https://i.scdn.co/image/ab67616d00001e02de438cc066b2b2b0ff82c528",
+          "width": 300
+        },
+        {
+          "height": 64,
+          "url": "https://i.scdn.co/image/ab67616d00004851de438cc066b2b2b0ff82c528",
+          "width": 64
+        }
+      ],
+      "name": "#31# ATTITUDE",
+      "popularity": 16,
+      "type": "artist",
+      "uri": "spotify:artist:1zgdnr3khRwca3IKRvJzi3"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/7gQp0vjrTIPIkWzL1cNOPA"
+      },
+      "followers": {
+        "href": null,
+        "total": 16366
+      },
+      "genres": [
+        "trap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/7gQp0vjrTIPIkWzL1cNOPA",
+      "id": "7gQp0vjrTIPIkWzL1cNOPA",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab6761610000e5ebc0a392ab1e1b0ebe0056274f",
+          "width": 640
+        },
+        {
+          "height": 320,
+          "url": "https://i.scdn.co/image/ab67616100005174c0a392ab1e1b0ebe0056274f",
+          "width": 320
+        },
+        {
+          "height": 160,
+          "url": "https://i.scdn.co/image/ab6761610000f178c0a392ab1e1b0ebe0056274f",
+          "width": 160
+        }
+      ],
+      "name": "Maarcolme",
+      "popularity": 32,
+      "type": "artist",
+      "uri": "spotify:artist:7gQp0vjrTIPIkWzL1cNOPA"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/02WdyNlw433XSxlOPC7FhA"
+      },
+      "followers": {
+        "href": null,
+        "total": 15031
+      },
+      "genres": [
+        "bouyon",
+        "trap antillais",
+        "zouk riddim"
+      ],
+      "href": "https://api.spotify.com/v1/artists/02WdyNlw433XSxlOPC7FhA",
+      "id": "02WdyNlw433XSxlOPC7FhA",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab6761610000e5eb2aebba5eeaced81713a02611",
+          "width": 640
+        },
+        {
+          "height": 320,
+          "url": "https://i.scdn.co/image/ab676161000051742aebba5eeaced81713a02611",
+          "width": 320
+        },
+        {
+          "height": 160,
+          "url": "https://i.scdn.co/image/ab6761610000f1782aebba5eeaced81713a02611",
+          "width": 160
+        }
+      ],
+      "name": "Kevni",
+      "popularity": 33,
+      "type": "artist",
+      "uri": "spotify:artist:02WdyNlw433XSxlOPC7FhA"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/4mp9IUnjNq7jD5lSu6nG3Y"
+      },
+      "followers": {
+        "href": null,
+        "total": 9610
+      },
+      "genres": [
+        "trap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/4mp9IUnjNq7jD5lSu6nG3Y",
+      "id": "4mp9IUnjNq7jD5lSu6nG3Y",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab67616d0000b273269fb9744eb015993f0dfd9b",
+          "width": 640
+        },
+        {
+          "height": 300,
+          "url": "https://i.scdn.co/image/ab67616d00001e02269fb9744eb015993f0dfd9b",
+          "width": 300
+        },
+        {
+          "height": 64,
+          "url": "https://i.scdn.co/image/ab67616d00004851269fb9744eb015993f0dfd9b",
+          "width": 64
+        }
+      ],
+      "name": "Rekin",
+      "popularity": 30,
+      "type": "artist",
+      "uri": "spotify:artist:4mp9IUnjNq7jD5lSu6nG3Y"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/0KAwYnZbFmMbJ6h5MlnkFM"
+      },
+      "followers": {
+        "href": null,
+        "total": 5625
+      },
+      "genres": [
+        "rap antillais",
+        "trap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/0KAwYnZbFmMbJ6h5MlnkFM",
+      "id": "0KAwYnZbFmMbJ6h5MlnkFM",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab67616d0000b2732646d8ee78008a6cfe604c23",
+          "width": 640
+        },
+        {
+          "height": 300,
+          "url": "https://i.scdn.co/image/ab67616d00001e022646d8ee78008a6cfe604c23",
+          "width": 300
+        },
+        {
+          "height": 64,
+          "url": "https://i.scdn.co/image/ab67616d000048512646d8ee78008a6cfe604c23",
+          "width": 64
+        }
+      ],
+      "name": "Bruce Little",
+      "popularity": 18,
+      "type": "artist",
+      "uri": "spotify:artist:0KAwYnZbFmMbJ6h5MlnkFM"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/3wqLkFQme23zzPPDoEpkUC"
+      },
+      "followers": {
+        "href": null,
+        "total": 1471
+      },
+      "genres": [
+        "rap antillais",
+        "trap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/3wqLkFQme23zzPPDoEpkUC",
+      "id": "3wqLkFQme23zzPPDoEpkUC",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab6761610000e5ebe80b7d212fdfeab47bcd769d",
+          "width": 640
+        },
+        {
+          "height": 320,
+          "url": "https://i.scdn.co/image/ab67616100005174e80b7d212fdfeab47bcd769d",
+          "width": 320
+        },
+        {
+          "height": 160,
+          "url": "https://i.scdn.co/image/ab6761610000f178e80b7d212fdfeab47bcd769d",
+          "width": 160
+        }
+      ],
+      "name": "Didgis",
+      "popularity": 17,
+      "type": "artist",
+      "uri": "spotify:artist:3wqLkFQme23zzPPDoEpkUC"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/3bHUhk9t2X9dXSYtVRDhWz"
+      },
+      "followers": {
+        "href": null,
+        "total": 760
+      },
+      "genres": [
+        "trap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/3bHUhk9t2X9dXSYtVRDhWz",
+      "id": "3bHUhk9t2X9dXSYtVRDhWz",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab6761610000e5eb9a494f235df59b1d2dbd4304",
+          "width": 640
+        },
+        {
+          "height": 320,
+          "url": "https://i.scdn.co/image/ab676161000051749a494f235df59b1d2dbd4304",
+          "width": 320
+        },
+        {
+          "height": 160,
+          "url": "https://i.scdn.co/image/ab6761610000f1789a494f235df59b1d2dbd4304",
+          "width": 160
+        }
+      ],
+      "name": "J-J The Plug",
+      "popularity": 21,
+      "type": "artist",
+      "uri": "spotify:artist:3bHUhk9t2X9dXSYtVRDhWz"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/5MvTyp1ILPh1FZupAcFffI"
+      },
+      "followers": {
+        "href": null,
+        "total": 29920
+      },
+      "genres": [
+        "dancehall guyanaise",
+        "trap antillais",
+        "zouk riddim"
+      ],
+      "href": "https://api.spotify.com/v1/artists/5MvTyp1ILPh1FZupAcFffI",
+      "id": "5MvTyp1ILPh1FZupAcFffI",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab6761610000e5eb7c419ad3f174b0fbba49f2b0",
+          "width": 640
+        },
+        {
+          "height": 320,
+          "url": "https://i.scdn.co/image/ab676161000051747c419ad3f174b0fbba49f2b0",
+          "width": 320
+        },
+        {
+          "height": 160,
+          "url": "https://i.scdn.co/image/ab6761610000f1787c419ad3f174b0fbba49f2b0",
+          "width": 160
+        }
+      ],
+      "name": "Pompis",
+      "popularity": 38,
+      "type": "artist",
+      "uri": "spotify:artist:5MvTyp1ILPh1FZupAcFffI"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/1ntQKIMIgESKpKoNXVBvQg"
+      },
+      "followers": {
+        "href": null,
+        "total": 1906156
+      },
+      "genres": [
+        "drill francais",
+        "french hip hop",
+        "pop urbaine",
+        "rap francais",
+        "trap antillais"
+      ],
+      "href": "https://api.spotify.com/v1/artists/1ntQKIMIgESKpKoNXVBvQg",
+      "id": "1ntQKIMIgESKpKoNXVBvQg",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab6761610000e5ebdb540e90aed8014403605fef",
+          "width": 640
+        },
+        {
+          "height": 320,
+          "url": "https://i.scdn.co/image/ab67616100005174db540e90aed8014403605fef",
+          "width": 320
+        },
+        {
+          "height": 160,
+          "url": "https://i.scdn.co/image/ab6761610000f178db540e90aed8014403605fef",
+          "width": 160
+        }
+      ],
+      "name": "Kaaris",
+      "popularity": 65,
+      "type": "artist",
+      "uri": "spotify:artist:1ntQKIMIgESKpKoNXVBvQg"
+    }
+  ]
+}

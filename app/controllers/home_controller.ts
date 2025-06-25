@@ -17,7 +17,7 @@ export default class HomeController {
       const contactsApi = new ContactsApi()
       contactsApi.setApiKey(ContactsApiApiKeys.apiKey, env.get('BREVO_API_KEY'))
 
-      const res = await contactsApi.createContact({
+      await contactsApi.createContact({
         email: payload?.email,
         listIds: [3],
         attributes: {

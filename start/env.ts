@@ -41,5 +41,18 @@ export default await Env.create(new URL('../', import.meta.url), {
   | Variables for configuring the mail package
   |----------------------------------------------------------
   */
-  BREVO_API_KEY: Env.schema.string()
+  BREVO_API_KEY: Env.schema.string(),
+  /*
+  |----------------------------------------------------------
+  | Variables for configuring spotify api
+  |----------------------------------------------------------
+  */
+  SPOTIFY_CLIENT_ID: Env.schema.string(),
+  SPOTIFY_CLIENT_SECRET: Env.schema.string(),
+  /*
+  |----------------------------------------------------------
+  | Variables for configuring the queue 
+  |----------------------------------------------------------
+  */
+  QUEUE_ENABLED: Env.schema.boolean(),
 })

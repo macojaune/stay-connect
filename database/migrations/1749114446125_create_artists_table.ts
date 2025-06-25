@@ -8,9 +8,9 @@ export default class extends BaseSchema {
       table.uuid('id').primary().notNullable()
       table.string('name').notNullable()
       table.text('description').nullable()
-      table.json('socials').nullable().defaultTo('[]')
+      table.json('socials').nullable()
       table.string('profile_picture').nullable()
-      table.json('followers').nullable().defaultTo('{}')
+      table.json('followers').nullable()
       table.boolean('is_verified').defaultTo(false)
       table.uuid('user_id').references('id').inTable('users').onDelete('CASCADE')
 

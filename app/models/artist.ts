@@ -1,14 +1,28 @@
 import { DateTime } from 'luxon'
-import { BaseModel, column, hasMany, manyToMany, belongsTo, beforeCreate } from '@adonisjs/lucid/orm'
+import {
+  BaseModel,
+  column,
+  hasMany,
+  manyToMany,
+  belongsTo,
+  beforeCreate,
+} from '@adonisjs/lucid/orm'
 import type { HasMany, ManyToMany, BelongsTo } from '@adonisjs/lucid/types/relations'
 import { cuid } from '@adonisjs/core/helpers'
-import User from './User'
-import Category from './Category'
-import Release from './Release'
-import ArtistCategory from './ArtistCategory'
-import Feature from './Feature'
+import User from './user.js'
+import Category from './category.js'
+import Release from './release.js'
+import ArtistCategory from './artist_category.js'
+import Feature from './feature.js'
+import { randomUUID } from 'node:crypto'
 
 export default class Artist extends BaseModel {
+  static selfAssignPrimaryKey = true
+
+  @beforeCreate()
+  static assignUuid(artist: Artist) {
+    artist.id = randomUUID()
+  }
   @column({ isPrimary: true })
   declare id: string
 
@@ -19,8 +33,8 @@ export default class Artist extends BaseModel {
   declare description: string | null
 
   @column({
-    prepare: (value: string[] | null) => value ? JSON.stringify(value) : null,
-    consume: (value: string | null) => value ? JSON.parse(value) : [],
+    prepare: (value: string[] | null) => (value ? JSON.stringify(value) : null),
+    consume: (value: string | null) => (value ? JSON.parse(value) : []),
   })
   declare socials: string[] | null
 
@@ -28,8 +42,8 @@ export default class Artist extends BaseModel {
   declare profilePicture: string | null
 
   @column({
-    prepare: (value: Record<string, any> | null) => value ? JSON.stringify(value) : null,
-    consume: (value: string | null) => value ? JSON.parse(value) : {},
+    prepare: (value: Record<string, any> | null) => (value ? JSON.stringify(value) : null),
+    consume: (value: string | null) => (value ? JSON.parse(value) : {}),
   })
   declare followers: Record<string, any> | null
 
@@ -42,6 +56,12 @@ export default class Artist extends BaseModel {
   @column()
   declare isVerified: boolean
 
+  @column()
+  declare spotifyId: string | null
+
+  @column.dateTime()
+  declare lastSpotifyCheck: DateTime | null
+
   @belongsTo(() => User)
   declare user: BelongsTo<typeof User>
 
@@ -51,6 +71,7 @@ export default class Artist extends BaseModel {
     pivotForeignKey: 'artist_id',
     relatedKey: 'id',
     pivotRelatedForeignKey: 'category_id',
+    pivotTimestamps: true,
   })
   declare categories: ManyToMany<typeof Category>
 
@@ -63,6 +84,7 @@ export default class Artist extends BaseModel {
     pivotForeignKey: 'artist_id',
     relatedKey: 'id',
     pivotRelatedForeignKey: 'release_id',
+    pivotTimestamps: true,
   })
   declare featured: ManyToMany<typeof Release>
 }

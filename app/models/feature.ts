@@ -6,6 +6,8 @@ import Release from './Release.js'
 import Artist from './Artist.js'
 
 export default class Feature extends BaseModel {
+  static selfAssignPrimaryKey = true
+
   @beforeCreate()
   public static assignCuid(feature: Feature) {
     feature.id = cuid()

@@ -1,6 +1,6 @@
-import Artist from "../models/artist"
-import Category from "#models/category"
-import { ArtistValidator } from "../validators/artist"
+import Artist from '#models/artist'
+import Category from '#models/category'
+import { ArtistValidator } from '../validators/artist'
 
 export default class ArtistService {
   /**
@@ -14,10 +14,10 @@ export default class ArtistService {
     })
 
     if (data.categories && Array.isArray(data.categories)) {
-      await artist.related("categories").attach(data.categories)
+      await artist.related('categories').attach(data.categories)
     }
 
-    await artist.load("categories")
+    await artist.load('categories')
     return artist
   }
 
@@ -29,12 +29,12 @@ export default class ArtistService {
     await artist.merge(validatedData).save()
 
     if (data.categories && Array.isArray(data.categories)) {
-      await artist.related("categories").sync(data.categories)
+      await artist.related('categories').sync(data.categories)
     }
 
     await artist.load((loader) => {
-      loader.load("categories").load("releases", (releaseQuery) => {
-        releaseQuery.preload("categories").withCount("votes")
+      loader.load('categories').load('releases', (releaseQuery) => {
+        releaseQuery.preload('categories').withCount('votes')
       })
     })
 
@@ -46,13 +46,13 @@ export default class ArtistService {
    */
   async deleteArtist(artist: Artist) {
     // Remove category associations
-    await artist.related("categories").detach()
+    await artist.related('categories').detach()
 
     // Delete releases and their associations
-    const releases = await artist.related("releases").query()
+    const releases = await artist.related('releases').query()
     for (const release of releases) {
-      await release.related("categories").detach()
-      await release.related("votes").query().delete()
+      await release.related('categories').detach()
+      await release.related('votes').query().delete()
       await release.delete()
     }
 
@@ -64,10 +64,10 @@ export default class ArtistService {
    */
   async addCategories(artist: Artist, categoryIds: string[]) {
     // Verify categories exist
-    await Category.query().whereIn("id", categoryIds).firstOrFail()
+    await Category.query().whereIn('id', categoryIds).firstOrFail()
 
-    await artist.related("categories").attach(categoryIds)
-    await artist.load("categories")
+    await artist.related('categories').attach(categoryIds)
+    await artist.load('categories')
     return artist
   }
 
@@ -75,8 +75,8 @@ export default class ArtistService {
    * Remove categories from an artist
    */
   async removeCategories(artist: Artist, categoryIds: string[]) {
-    await artist.related("categories").detach(categoryIds)
-    await artist.load("categories")
+    await artist.related('categories').detach(categoryIds)
+    await artist.load('categories')
     return artist
   }
 
@@ -86,11 +86,11 @@ export default class ArtistService {
   async getArtistProfile(artist: Artist) {
     await artist.load((loader) => {
       loader
-        .load("categories")
-        .load("releases", (releaseQuery) => {
-          releaseQuery.preload("categories").withCount("votes")
+        .load('categories')
+        .load('releases', (releaseQuery) => {
+          releaseQuery.preload('categories').withCount('votes')
         })
-        .load("user")
+        .load('user')
     })
 
     return artist

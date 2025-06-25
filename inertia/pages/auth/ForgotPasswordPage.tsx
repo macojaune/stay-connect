@@ -1,6 +1,6 @@
 import React from 'react';
 import { Head, Link, useForm } from '@inertiajs/react';
-import { AppLayout } from '~/layouts/AppLayout';
+import  AppLayout  from '~/layouts/AppLayout';
 import { Button } from '~/components/ui/Button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '~/components/ui/Card';
 import { Input } from '~/components/ui/Input';

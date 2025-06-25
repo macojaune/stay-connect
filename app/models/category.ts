@@ -1,14 +1,21 @@
+import { BaseModel, beforeCreate, beforeSave, column, manyToMany } from '@adonisjs/lucid/orm'
+import type { ManyToMany } from '@adonisjs/lucid/types/relations'
+import string from '@adonisjs/core/helpers/string'
 import { DateTime } from 'luxon'
-import { BaseModel, column, manyToMany, beforeSave } from '@adonisjs/lucid/orm'
-import { string } from '@adonisjs/core/helpers'
 import Artist from './artist.js'
 import Release from './release.js'
+import { randomUUID } from 'node:crypto'
 
 export default class Category extends BaseModel {
+  static selfAssignPrimaryKey = true
+  @beforeCreate()
+  static assignUuid(category: Category) {
+    category.id = randomUUID()
+  }
   @beforeSave()
   public static async generateSlug(category: Category) {
     if (category.name) {
-      category.slug = string.slugify(category.name)
+      category.slug = string.slug(category.name)
     }
   }
 
@@ -30,6 +37,7 @@ export default class Category extends BaseModel {
     pivotForeignKey: 'category_id',
     relatedKey: 'id',
     pivotRelatedForeignKey: 'artist_id',
+    pivotTimestamps: true,
   })
   declare artists: ManyToMany<typeof Artist>
 
@@ -39,6 +47,7 @@ export default class Category extends BaseModel {
     pivotForeignKey: 'category_id',
     relatedKey: 'id',
     pivotRelatedForeignKey: 'release_id',
+    pivotTimestamps: true,
   })
   declare releases: ManyToMany<typeof Release>
 

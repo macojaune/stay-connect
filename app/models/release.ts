@@ -1,12 +1,19 @@
-import { DateTime } from 'luxon'
 import { BaseModel, column, hasMany, manyToMany, belongsTo, beforeCreate } from '@adonisjs/lucid/orm'
 import type { HasMany, ManyToMany, BelongsTo } from '@adonisjs/lucid/types/relations'
 import { cuid } from '@adonisjs/core/helpers'
-import Vote from './Vote.js'
-import Category from './Category.js'
-import Artist from './Artist.js'
+import { DateTime } from 'luxon'
+import Vote from './vote.js'
+import Category from './category.js'
+import Artist from './artist.js'
 
 export default class Release extends BaseModel {
+  static selfAssignPrimaryKey = true
+
+  @beforeCreate()
+  public static assignCuid(release: Release) {
+    release.id = cuid()
+  }
+
   @column({ isPrimary: true })
   declare id: string
 
@@ -46,6 +53,12 @@ export default class Release extends BaseModel {
 
   @column({ columnName: 'vote_count' })
   declare voteCount: number
+
+  @column()
+  declare spotifyId: string | null
+
+  @column()
+  declare artistId: string | null
 
   @hasMany(() => Vote)
   declare votes: HasMany<typeof Vote>
