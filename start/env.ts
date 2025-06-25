@@ -55,4 +55,11 @@ export default await Env.create(new URL('../', import.meta.url), {
   |----------------------------------------------------------
   */
   QUEUE_ENABLED: Env.schema.boolean(),
+  /*
+  |----------------------------------------------------------
+  | Variables for configuring umami analytics
+  |----------------------------------------------------------
+  */
+  UMAMI_SCRIPT_URL: Env.schema.string.optional(),
+  UMAMI_WEBSITE_ID: Env.schema.string.optional(),
 })

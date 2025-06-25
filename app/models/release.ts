@@ -81,7 +81,7 @@ export default class Release extends BaseModel {
   declare categories: ManyToMany<typeof Category>
 
   @belongsTo(() => Artist, {
-    foreignKey: 'artist_id',
+    foreignKey: 'artistId',
   })
   declare artist: BelongsTo<typeof Artist>
 

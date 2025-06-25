@@ -8,9 +8,9 @@ import { Button } from '~/components/ui/Button'
 import { FormEvent, useMemo, useState } from 'react'
 import { objectify } from 'radash'
 
-type HomeProps = InferPageProps<HomeController, 'index'>
+type HomeProps = InferPageProps<HomeController, 'index'> & { errors?: { [key: string]: string } }
 
-export default function Home({ errors }: HomeProps) {
+export default function Home({ errors, timelineData }: HomeProps) {
   const [userSuccess, setUserSuccess] = useState(false)
   const [artistSuccess, setArtistSuccess] = useState(false)
   const userForm = useForm({ type: 'user', username: '', email: '' })
@@ -25,21 +25,22 @@ export default function Home({ errors }: HomeProps) {
         userForm.reset()
         setUserSuccess(true)
         setTimeout(() => setUserSuccess(false), 5000)
-      }
+      },
     })
   }
   const handleArtistSubmit = (e: FormEvent) => {
     e.preventDefault()
     artistForm.post('/newsletter', {
-      preserveScroll: true, onSuccess: () => {
+      preserveScroll: true,
+      onSuccess: () => {
         artistForm.reset()
         setArtistSuccess(true)
         setTimeout(() => setArtistSuccess(false), 5000)
-      }
+      },
     })
   }
   const fieldErrors = useMemo(() => {
-    if (!!errors) return objectify(errors, e => e?.field)
+    if (!!errors) return objectify(errors, (e) => e?.field)
     return errors
   }, [errors])
 
@@ -50,30 +51,34 @@ export default function Home({ errors }: HomeProps) {
         <div className="flex flex-col items-center">
           {/* Hero Section */}
           <section className="flex flex-row w-full min-h-screen">
-            <div className="flex flex-col items-center justify-center sm:px-12 w-3/5 sm:py-24">
-              <h1 className="text-brand mt-10 flex items-center text-6xl font-semibold leading-6">
+            <div className="flex flex-col items-center justify-center px-4 md:px-12 w-full md:w-3/5 py-8 md:py-24 gap-4">
+              <h1 className="text-brand md:mt-10 flex items-center md:text-6xl font-semibold text-5xl leading-5 md:leading-6">
                 #StayConnect
-                <small className="bg-brand/5 text-xs ml-3 rounded-full px-2 font-medium leading-6">
+                <small className="bg-brand/5 text-xs ml-2 md:ml-3 rounded-full px-2 font-medium md:leading-6">
                   ALPHA
                 </small>
               </h1>
-              <p className="text-3xl mt-4 font-semibold leading-10 tracking-tighter text-zinc-900 text-balance">
+              <p className="text-2xl text-center md:text-left md:text-3xl mt-4 font-semibold leading-6 tracking-tight md:leading-10 md:tracking-tighter text-zinc-900 text-balance">
                 Ne rate plus aucune sortie musicale aux Antilles-Guyane
               </p>
-              <p className="mt-4 text-base leading-tight text-zinc-600">
-                Je sais pas pour toi, mais j’en avais marre, chaque vendredi, de chercher les sorties 97 ou de louper les nouvelles pépites dès leurs débuts.
+              <p className="text-lg md:text-base md:leading-tight text-zinc-600">
+                Je sais pas pour toi, mais j'en avais marre, chaque vendredi, de chercher les
+                sorties 97 ou de louper les nouvelles pépites dès leurs débuts.
                 <br />
                 Et puis, j'ai grandi avec <b>KalottLyrikal</b> moi…
                 <br />
-                Du coup, j'ai décidé de créer ce site pour répertorier tout ça et aider les artistes à promouvoir leurs sorties.
+                Du coup, j'ai décidé de créer ce site pour répertorier tout ça et aider les artistes
+                à promouvoir leurs sorties.
                 <br />
                 <br />
-                Ça devrait ressembler à ça :
+                Ça devrait ressembler à ça :{' '}
+                <i className="text-sm">en moins laid, je ne suis pas UI designer 😅</i>
               </p>
               {/* Timeline Section in Hero */}
-              <div className="mt-8 w-full max-w-2xl">
-                <Timeline />
+              <div className="md:mt-8 w-full md:max-w-2xl">
+                <Timeline sections={timelineData} />
               </div>
+
               <button
                 onClick={() => {
                   document.querySelector('#newsletter-section')?.scrollIntoView({
@@ -81,19 +86,25 @@ export default function Home({ errors }: HomeProps) {
                     block: 'start',
                   })
                 }}
-                className="mt-8 px-6 py-3 bg-brand text-white rounded-lg hover:bg-brand-dark transition-colors duration-200 font-medium"
+                className="md:mt-8 px-6 py-3 bg-brand text-white rounded-lg hover:bg-brand-dark transition-colors duration-200 font-medium"
+                data-umami-event="newsletter-cta-click"
+                data-umami-event-section="hero"
               >
                 S'inscrire à la newsletter
               </button>
+              <p className="text-sm text-center text-zinc-500 ">
+                Inscris-toi à la newsletter pour suivre l'évolution du projet.
+              </p>
             </div>
 
-
-            <div className="grow bg-grain relative w-2/5">
-              <div className='bg-gradient-to-br from-brand/25 to-brand/60 z-10 inset-0 absolute' />
-              <img className="w-full h-full object-cover" src="https://images.unsplash.com/photo-1587582140428-38110de9f434?q=80" />
+            <div className="grow bg-grain relative md:w-2/5 w-full hidden md:flex">
+              <div className="bg-gradient-to-br from-brand/25 to-brand/60 z-10 inset-0 absolute" />
+              <img
+                className="w-full h-full object-cover"
+                src="https://images.unsplash.com/photo-1587582140428-38110de9f434?q=80"
+              />
             </div>
           </section>
-
 
           {/* For Public Section */}
           <section className="w-full py-20 bg-zinc-100">
@@ -105,15 +116,15 @@ export default function Home({ errors }: HomeProps) {
                     Toutes les sorties musicales à un endroit
                   </h3>
                   <p className="text-zinc-600">
-                    Plus besoin de chercher sur plusieurs plateformes, retrouvez toutes les nouveautés musicales en un clic.
+                    Plus besoin de chercher sur plusieurs plateformes, retrouvez toutes les
+                    nouveautés musicales en un clic.
                   </p>
                 </div>
                 <div>
-                  <h3 className="text-2xl font-semibold mb-4">
-                    Du contenu plus approfondi
-                  </h3>
+                  <h3 className="text-2xl font-semibold mb-4">Du contenu plus approfondi</h3>
                   <p className="text-zinc-600">
-                    Découvre de nouveaux talents et suis tes artistes préférés facilement. Rentre plus en profondeur dans l'univers autour de chaque sortie des artistes.
+                    Découvre de nouveaux talents et suis tes artistes préférés facilement. Rentre
+                    plus en profondeur dans l'univers autour de chaque sortie des artistes.
                   </p>
                 </div>
                 <div>
@@ -126,7 +137,6 @@ export default function Home({ errors }: HomeProps) {
             </div>
           </section>
 
-
           {/* For Artists Section */}
           <section className="w-full py-20  overflow-hidden bg-brand">
             <div className="max-w-6xl mx-auto px-6 relative">
@@ -135,13 +145,18 @@ export default function Home({ errors }: HomeProps) {
                 <div>
                   <h3 className="text-2xl text-white font-semibold mb-4">Engagement Direct</h3>
                   <p className="text-zinc-200 ">
-                    Un nouveau moyen de mettre en avant ta musique et d'interagir directement avec ton public.
+                    Un nouveau moyen de mettre en avant ta musique et d'interagir directement avec
+                    ton public.
                   </p>
                 </div>
                 <div>
-                  <h3 className="text-2xl text-white font-semibold mb-4">Le meilleur est à venir</h3>
+                  <h3 className="text-2xl text-white font-semibold mb-4">
+                    Le meilleur est à venir
+                  </h3>
                   <p className="text-zinc-200">
-                    De nombreuses fonctionnalités sont prévues et en cours de développement, inscris-toi dès maintenant pour participer à leurs tests et faire partie des pionnier·es de la plateforme.
+                    De nombreuses fonctionnalités sont prévues et en cours de développement,
+                    inscris-toi dès maintenant pour participer à leurs tests et faire partie des
+                    pionnier·es de la plateforme.
                   </p>
                 </div>
               </div>
@@ -151,18 +166,24 @@ export default function Home({ errors }: HomeProps) {
           <section className="w-full py-20 bg-zinc-50" id="newsletter-section">
             <div className="max-w-4xl mx-auto px-6">
               <div className="text-center mb-12">
-                <h2 className="text-4xl font-bold text-gray-900 mb-4">
-                  Rejoignez la Communauté
-                </h2>
+                <h2 className="text-4xl font-bold text-gray-900 mb-4">Rejoignez la Communauté</h2>
                 <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-                  Que vous soyez passionné·e de musique ou artiste, rejoignez notre communauté dès maintenant
+                  Que vous soyez passionné·e de musique ou artiste, rejoignez notre communauté dès
+                  maintenant
                 </p>
               </div>
               <div className="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2">
                 {/* General User Lead Form */}
-                <form onSubmit={handleSubmit} className="group relative rounded-2xl p-6 sm:p-8 bg-white shadow-lg flex flex-col">
-                  <h3 className="text-lg font-semibold text-zinc-900 mb-4 text-center">Passionné·es de musique</h3>
-                  <p className="text-sm text-center mb-4 text-brand-lightest">Rejoins la newsletter en attendant la v1.</p>
+                <form
+                  onSubmit={handleSubmit}
+                  className="group relative rounded-2xl p-6 sm:p-8 bg-white shadow-lg flex flex-col"
+                >
+                  <h3 className="text-lg font-semibold text-zinc-900 mb-4 text-center">
+                    Passionné·es de musique
+                  </h3>
+                  <p className="text-sm text-center mb-4 text-brand-lightest">
+                    Rejoins la newsletter en attendant la v1.
+                  </p>
 
                   {userSuccess && (
                     <div className="mb-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded-md text-sm text-center">
@@ -174,7 +195,7 @@ export default function Home({ errors }: HomeProps) {
                     <Input
                       type="text"
                       name="username"
-                      placeholder='macojaune'
+                      placeholder="macojaune"
                       label="Nom d'utilisateur"
                       value={userForm.data.username}
                       onChange={(e) => userForm.setData('username', e.target.value)}
@@ -184,17 +205,19 @@ export default function Home({ errors }: HomeProps) {
                     <Input
                       type="email"
                       name="email"
-                      placeholder='hello@macojaune.com'
+                      placeholder="hello@macojaune.com"
                       label="E-mail"
                       value={userForm.data.email}
                       onChange={(e) => userForm.setData('email', e.target.value)}
                       error={fieldErrors?.email?.message}
                       required
                     />
-                    <Button
-                      type="submit"
-                      className='mt-auto'
+                    <Button 
+                      type="submit" 
+                      className="mt-auto" 
                       disabled={userForm.processing}
+                      data-umami-event="newsletter-submit"
+                      data-umami-event-type="user"
                     >
                       {userForm.processing ? 'Inscription...' : 'Rejoindre'}
                     </Button>
@@ -202,9 +225,16 @@ export default function Home({ errors }: HomeProps) {
                 </form>
 
                 {/* Artist Lead Form */}
-                <form onSubmit={handleArtistSubmit} className="group relative rounded-2xl p-6 sm:p-8 bg-brand shadow-lg flex flex-col" >
-                  <h3 className="text-lg font-semibold text-white mb-4 text-center">Artiste ou Équipe</h3>
-                  <p className="text-sm text-center mb-4 text-brand-lightest">Rejoins la communauté d'artistes.</p>
+                <form
+                  onSubmit={handleArtistSubmit}
+                  className="group relative rounded-2xl p-6 sm:p-8 bg-brand shadow-lg flex flex-col"
+                >
+                  <h3 className="text-lg font-semibold text-white mb-4 text-center">
+                    Artiste ou Équipe
+                  </h3>
+                  <p className="text-sm text-center mb-4 text-brand-lightest">
+                    Rejoins la communauté d'artistes.
+                  </p>
 
                   {artistSuccess && (
                     <div className="mb-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded-md text-sm text-center">
@@ -241,10 +271,12 @@ export default function Home({ errors }: HomeProps) {
                       error={fieldErrors?.email?.message}
                       required
                     />
-                    <Button
-                      type="submit"
-                      variant='secondary'
+                    <Button 
+                      type="submit" 
+                      variant="secondary" 
                       disabled={artistForm.processing}
+                      data-umami-event="newsletter-submit"
+                      data-umami-event-type="artist"
                     >
                       {artistForm.processing ? 'Inscription...' : 'Rejoindre'}
                     </Button>

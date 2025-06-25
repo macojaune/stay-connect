@@ -247,9 +247,9 @@ export default class SpotifyService {
 
     try {
       // Get recent albums (last 3days)
-      const daysAgo = DateTime.now().minus({ days: 10 })
+      const daysAgo = DateTime.now().minus({ days: 2 })
       const albums = await this.getArtistAlbums(artist.spotifyId, {
-        // includeGroups: ['album', 'single'],
+        includeGroups: ['album', 'single'],
         // limit: 10,
       })
 
