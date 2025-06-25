@@ -48,7 +48,7 @@ export default class QueueManager extends BaseCommand {
           this.exitCode = 1
       }
     } catch (error) {
-      this.logger.error('Queue management failed:', error)
+      this.logger.error('Queue management failed: ' + error.message)
       this.exitCode = 1
     }
   }
@@ -57,25 +57,25 @@ export default class QueueManager extends BaseCommand {
     this.logger.info('Initializing queue service...')
     QueueService.initialize()
     QueueService.start()
-    
+
     this.logger.info('Queue service started successfully')
-    
+
     if (this.daemon) {
       this.logger.info('Running in daemon mode. Press Ctrl+C to stop.')
-      
+
       // Handle graceful shutdown
       process.on('SIGINT', () => {
         this.logger.info('Received SIGINT. Stopping queue service...')
         QueueService.stop()
         process.exit(0)
       })
-      
+
       process.on('SIGTERM', () => {
         this.logger.info('Received SIGTERM. Stopping queue service...')
         QueueService.stop()
         process.exit(0)
       })
-      
+
       // Keep the process alive
       await new Promise(() => {}) // This will run indefinitely
     }
@@ -89,7 +89,7 @@ export default class QueueManager extends BaseCommand {
 
   private async showStatus() {
     const jobs = QueueService.getAllJobsStatus()
-    
+
     if (jobs.length === 0) {
       this.logger.info('No jobs configured')
       return
@@ -97,12 +97,12 @@ export default class QueueManager extends BaseCommand {
 
     this.logger.info('Queue Status:')
     this.logger.info('=============')
-    
+
     for (const job of jobs) {
       const status = job.isRunning ? 'RUNNING' : job.enabled ? 'ENABLED' : 'DISABLED'
       const lastRun = job.lastRun ? job.lastRun.toFormat('yyyy-MM-dd HH:mm:ss') : 'Never'
       const nextRun = job.nextRun.toFormat('yyyy-MM-dd HH:mm:ss')
-      
+
       this.logger.info(`
 Job: ${job.name}`)
       this.logger.info(`  ID: ${job.id}`)

@@ -4,13 +4,14 @@ import { cuid } from '@adonisjs/core/helpers'
 import { DateTime } from 'luxon'
 import User from './user.js'
 import Release from './release.js'
+import { randomUUID } from 'node:crypto'
 
 export default class Vote extends BaseModel {
   static selfAssignPrimaryKey = true
 
   @beforeCreate()
-  public static assignCuid(vote: Vote) {
-    vote.id = cuid()
+  public static assignUuid(vote: Vote) {
+    vote.id = randomUUID()
   }
 
   @column({ isPrimary: true })

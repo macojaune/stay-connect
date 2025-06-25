@@ -38,7 +38,7 @@ export default class QueueProvider {
         QueueService.start()
         logger.info('Queue service started successfully')
       } catch (error) {
-        logger.error('Failed to start queue service:', error)
+        logger.error('Failed to start queue service: ' + error.message)
       }
     } else {
       logger.info('Queue service disabled. Set QUEUE_ENABLED=true to enable.')
@@ -66,7 +66,7 @@ export default class QueueProvider {
         QueueService.stop()
         logger.info('Queue service stopped')
       } catch (error) {
-        logger.error('Error stopping queue service:', error)
+        logger.error('Error stopping queue service: ' + error.message)
       }
     }
   }

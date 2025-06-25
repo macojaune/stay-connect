@@ -111,7 +111,7 @@ export default class QueueService {
         await this.executeJob(job)
       }
     } catch (error) {
-      logger.error('Error processing jobs:', error)
+      logger.error('Error processing jobs: ' + error.message)
     } finally {
       this.isProcessing = false
     }
@@ -141,20 +141,22 @@ export default class QueueService {
       // Reset retry count on success
       job.retryCount = 0
       job.nextRun = this.getNextRunTime(job.schedule)
-      
+
       logger.info(`Job ${job.name} completed successfully. Next run: ${job.nextRun.toISO()}`)
     } catch (error) {
-      logger.error(`Job ${job.name} failed:`, error)
-      
+      logger.error(`Job ${job.name} failed:  ${error.message}`)
+
       job.retryCount++
-      
+
       if (job.retryCount >= job.maxRetries) {
         logger.error(`Job ${job.name} exceeded max retries (${job.maxRetries}). Disabling.`)
         job.enabled = false
       } else {
         // Retry in 5 minutes
         job.nextRun = DateTime.now().plus({ minutes: 5 })
-        logger.info(`Job ${job.name} will retry in 5 minutes (attempt ${job.retryCount}/${job.maxRetries})`)
+        logger.info(
+          `Job ${job.name} will retry in 5 minutes (attempt ${job.retryCount}/${job.maxRetries})`
+        )
       }
     } finally {
       job.isRunning = false
@@ -167,7 +169,7 @@ export default class QueueService {
    */
   private static getNextRunTime(schedule: string): DateTime {
     const now = DateTime.now()
-    
+
     // Parse simple cron patterns
     const parts = schedule.split(' ')
     if (parts.length !== 5) {
@@ -180,7 +182,8 @@ export default class QueueService {
     if (schedule === '0 */6 * * *') {
       // Every 6 hours
       const nextHour = Math.ceil(now.hour / 6) * 6
-      return now.set({ hour: nextHour, minute: 0, second: 0, millisecond: 0 })
+      return now
+        .set({ hour: nextHour, minute: 0, second: 0, millisecond: 0 })
         .plus(nextHour >= 24 ? { days: 1 } : {})
     }
 

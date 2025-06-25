@@ -3,6 +3,7 @@ import { DateTime } from 'luxon'
 import Artist from '#models/artist'
 import Release from '#models/release'
 import logger from '@adonisjs/core/services/logger'
+import ky from 'ky'
 
 export interface SpotifyArtist {
   id: string
@@ -50,50 +51,73 @@ export interface SpotifyTokenResponse {
 }
 
 export default class SpotifyService {
-  private static accessToken: string | null = null
-  private static tokenExpiresAt: DateTime | null = null
-  private static readonly BASE_URL = 'https://api.spotify.com/v1'
-  private static readonly AUTH_URL = 'https://accounts.spotify.com/api/token'
+  private accessToken: string | null = null
+  private tokenExpiresAt: DateTime | null = null
+  private readonly BASE_URL = 'https://api.spotify.com/v1'
+  private readonly AUTH_URL = 'https://accounts.spotify.com/api/token'
+  private api: typeof ky
+
+  constructor() {
+    this.api = ky.create({
+      retry: {
+        limit: 3,
+        methods: ['get', 'post'],
+        statusCodes: [429, 408, 413, 429, 500, 502, 503, 504],
+        delay: (attemptCount) => {
+          // For rate limiting (429), use exponential backoff starting at 1 second
+          return Math.min(1000 * Math.pow(2, attemptCount - 1), 30000)
+        },
+      },
+      hooks: {
+        beforeRetry: [
+          async ({ request, options, error, retryCount }) => {
+            const response = error.response
+            if (response?.status === 429) {
+              const retryAfter = response.headers.get('Retry-After')
+              const delay = retryAfter ? parseInt(retryAfter) * 1000 : 1000
+              logger.warn(`Rate limited. Waiting ${delay}ms before retry ${retryCount + 1}`)
+              await new Promise((resolve) => setTimeout(resolve, delay))
+            }
+          },
+        ],
+      },
+    })
+  }
 
   /**
    * Get access token for Spotify API
    */
-  private static async getAccessToken(): Promise<string> {
+  private async getAccessToken(): Promise<string> {
     // Check if we have a valid token
     if (this.accessToken && this.tokenExpiresAt && this.tokenExpiresAt > DateTime.now()) {
       return this.accessToken
     }
-
-    const clientId = env.get('SPOTIFY_CLIENT_ID')
-    const clientSecret = env.get('SPOTIFY_CLIENT_SECRET')
-
-    if (!clientId || !clientSecret) {
-      throw new Error('Spotify credentials not configured')
-    }
-
-    const credentials = Buffer.from(`${clientId}:${clientSecret}`).toString('base64')
-
     try {
-      const response = await fetch(this.AUTH_URL, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Basic ${credentials}`,
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: 'grant_type=client_credentials',
-      })
+      const clientId = env.get('SPOTIFY_CLIENT_ID')
+      const clientSecret = env.get('SPOTIFY_CLIENT_SECRET')
 
-      if (!response.ok) {
-        throw new Error(`Failed to get access token: ${response.statusText}`)
+      if (!clientId || !clientSecret) {
+        throw new Error('Spotify credentials not configured')
       }
 
-      const data: SpotifyTokenResponse = await response.json()
+      const credentials = Buffer.from(`${clientId}:${clientSecret}`).toString('base64')
+
+      const data = await this.api
+        .post(this.AUTH_URL, {
+          headers: {
+            'Authorization': `Basic ${credentials}`,
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: 'grant_type=client_credentials',
+        })
+        .json<SpotifyTokenResponse>()
+
       this.accessToken = data.access_token
       this.tokenExpiresAt = DateTime.now().plus({ seconds: data.expires_in - 60 }) // Refresh 1 minute early
 
       return this.accessToken
     } catch (error) {
-      logger.error('Failed to get Spotify access token:', error)
+      logger.error('Failed to get Spotify access token: ' + error.message)
       throw error
     }
   }
@@ -101,48 +125,34 @@ export default class SpotifyService {
   /**
    * Make authenticated request to Spotify API
    */
-  private static async makeRequest<T>(endpoint: string): Promise<T> {
+  private async makeRequest<T>(endpoint: string): Promise<T> {
     const token = await this.getAccessToken()
-    const url = `${this.BASE_URL}${endpoint}`
 
     try {
-      const response = await fetch(url, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      })
-
-      if (!response.ok) {
-        if (response.status === 429) {
-          // Rate limited - wait and retry
-          const retryAfter = response.headers.get('Retry-After')
-          const waitTime = retryAfter ? Number.parseInt(retryAfter) * 1000 : 1000
-          logger.warn(`Spotify API rate limited. Waiting ${waitTime}ms`)
-          await new Promise((resolve) => setTimeout(resolve, waitTime))
-          return this.makeRequest<T>(endpoint)
-        }
-        throw new Error(`Spotify API error: ${response.status} ${response.statusText}`)
-      }
-
-      return await response.json()
-    } catch (error) {
-      logger.error(`Failed to make Spotify API request to ${endpoint}:`, error)
-      throw error
+      return await this.api
+        .get(`${this.BASE_URL}${endpoint}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        })
+        .json<T>()
+    } catch (error: any) {
+      throw new Error(`Spotify API error: ${error.response?.status || 'Unknown'} ${error.message}`)
     }
   }
 
   /**
    * Get artist information from Spotify
    */
-  static async getArtist(spotifyId: string): Promise<SpotifyArtist> {
+  async getArtist(spotifyId: string): Promise<SpotifyArtist> {
     return this.makeRequest<SpotifyArtist>(`/artists/${spotifyId}`)
   }
 
   /**
    * Get artist's albums from Spotify
    */
-  static async getArtistAlbums(
+  async getArtistAlbums(
     spotifyId: string,
     options: {
       includeGroups?: string[]
@@ -152,26 +162,30 @@ export default class SpotifyService {
     } = {}
   ): Promise<{ items: SpotifyAlbum[] }> {
     const params = new URLSearchParams({
-      include_groups: options.includeGroups?.join(',') || 'album,single',
-      market: options.market || 'US',
+      // include_groups: options.includeGroups?.join(',') || 'album,single,',
+      // market: options.market || 'FR',
       limit: (options.limit || 50).toString(),
       offset: (options.offset || 0).toString(),
     })
-
-    return this.makeRequest<{ items: SpotifyAlbum[] }>(`/artists/${spotifyId}/albums?${params}`)
+    logger.info(`Fetching albums for artist ${spotifyId} with params ${params}`)
+    const res = await this.makeRequest<{ items: SpotifyAlbum[] }>(
+      `/artists/${spotifyId}/albums?${params}`
+    )
+    logger.info(`Fetched ${res.items.length} albums for artist ${spotifyId}`)
+    return res
   }
 
   /**
    * Get album details with tracks
    */
-  static async getAlbum(spotifyId: string): Promise<SpotifyAlbum> {
+  async getAlbum(spotifyId: string): Promise<SpotifyAlbum> {
     return this.makeRequest<SpotifyAlbum>(`/albums/${spotifyId}`)
   }
 
   /**
    * Search for artists on Spotify
    */
-  static async searchArtists(
+  async searchArtists(
     query: string,
     limit: number = 20
   ): Promise<{ artists: { items: SpotifyArtist[] } }> {
@@ -187,7 +201,7 @@ export default class SpotifyService {
   /**
    * Check for new releases for all artists with Spotify IDs
    */
-  static async checkForNewReleases(): Promise<{
+  async checkForNewReleases(): Promise<{
     processed: number
     newReleases: number
     errors: number
@@ -208,7 +222,7 @@ export default class SpotifyService {
           // Add delay to respect rate limits
           await new Promise((resolve) => setTimeout(resolve, 100))
         } catch (error) {
-          logger.error(`Error checking releases for artist ${artist.name}:`, error)
+          logger.error(`Error checking releases for artist ${artist.name}: ${error.message}`)
           stats.errors++
         }
       }
@@ -218,7 +232,7 @@ export default class SpotifyService {
       )
       return stats
     } catch (error) {
-      logger.error('Failed to check for new releases:', error)
+      logger.error('Failed to check for new releases: ' + error.message)
       throw error
     }
   }
@@ -226,24 +240,24 @@ export default class SpotifyService {
   /**
    * Check for new releases for a specific artist
    */
-  private static async checkArtistForNewReleases(artist: Artist): Promise<void> {
+  private async checkArtistForNewReleases(artist: Artist): Promise<void> {
     if (!artist.spotifyId) {
       return
     }
 
     try {
-      // Get recent albums (last 2 years)
-      const twoYearsAgo = DateTime.now().minus({ years: 2 })
+      // Get recent albums (last 3days)
+      const daysAgo = DateTime.now().minus({ days: 10 })
       const albums = await this.getArtistAlbums(artist.spotifyId, {
-        includeGroups: ['album', 'single'],
-        limit: 50,
+        // includeGroups: ['album', 'single'],
+        // limit: 10,
       })
 
       for (const album of albums.items) {
         const releaseDate = DateTime.fromISO(album.release_date)
 
         // Only check releases from the last 2 years
-        if (releaseDate < twoYearsAgo) {
+        if (releaseDate < daysAgo) {
           continue
         }
 
@@ -257,7 +271,7 @@ export default class SpotifyService {
         }
       }
     } catch (error) {
-      logger.error(`Error checking artist ${artist.name} for new releases:`, error)
+      logger.error(`Error checking artist ${artist.name} for new releases:`, error.message)
       throw error
     }
   }
@@ -265,10 +279,7 @@ export default class SpotifyService {
   /**
    * Create a new release from Spotify data
    */
-  private static async createReleaseFromSpotify(
-    artist: Artist,
-    album: SpotifyAlbum
-  ): Promise<Release> {
+  private async createReleaseFromSpotify(artist: Artist, album: SpotifyAlbum): Promise<Release> {
     try {
       const release = await Release.create({
         title: album.name,
@@ -286,7 +297,7 @@ export default class SpotifyService {
       logger.info(`Created new release: ${album.name} by ${artist.name}`)
       return release
     } catch (error) {
-      logger.error(`Failed to create release for album ${album.name}:`, error)
+      logger.error(`Failed to create release for album ${album.name}: ${error.message}`)
       throw error
     }
   }
@@ -294,7 +305,7 @@ export default class SpotifyService {
   /**
    * Update artist information from Spotify
    */
-  static async updateArtistFromSpotify(artist: Artist): Promise<void> {
+  async updateArtistFromSpotify(artist: Artist): Promise<void> {
     if (!artist.spotifyId) {
       return
     }
@@ -314,7 +325,7 @@ export default class SpotifyService {
 
       logger.info(`Updated artist ${artist.name} from Spotify`)
     } catch (error) {
-      logger.error(`Failed to update artist ${artist.name} from Spotify:`, error)
+      logger.error(`Failed to update artist ${artist.name} from Spotify:  ${error.message}`)
       throw error
     }
   }

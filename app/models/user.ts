@@ -6,6 +6,7 @@ import { cuid } from '@adonisjs/core/helpers' // Import cuid for UUID generation
 import { DateTime } from 'luxon'
 import Artist from './artist.js'
 import Vote from './vote.js'
+import { randomUUID } from 'node:crypto'
 
 const AuthFinder = withAuthFinder(() => hash.use('scrypt'), {
   uids: ['email'],
@@ -16,8 +17,8 @@ export default class User extends compose(BaseModel, AuthFinder) {
   static selfAssignPrimaryKey = true
 
   @beforeCreate()
-  public static assignCuid(user: User) {
-    user.id = cuid()
+  public static assignUuid(user: User) {
+    user.id = randomUUID()
   }
 
   @column({ isPrimary: true })
