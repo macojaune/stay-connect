@@ -51,7 +51,7 @@ export default class SyncSpotifyArtists extends BaseCommand {
     }
 
     if (!artist.spotifyId) {
-      this.logger.warn(`Artist ${artist.name} does not have a Spotify ID`)
+      this.logger.warning(`Artist ${artist.name} does not have a Spotify ID`)
       return
     }
 

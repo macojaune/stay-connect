@@ -33,10 +33,10 @@ export default class Artist extends BaseModel {
   declare description: string | null
 
   @column({
-    prepare: (value: string[] | null) => (value ? JSON.stringify(value) : null),
-    consume: (value: string | null) => (value ? JSON.parse(value) : []),
+    prepare: (value: Record<string, string> | null) => (value ? JSON.stringify(value) : null),
+    consume: (value: string | null) => (value ? JSON.parse(value) : {}),
   })
-  declare socials: string[] | null
+  declare socials: Record<string, string> | null
 
   @column()
   declare profilePicture: string | null

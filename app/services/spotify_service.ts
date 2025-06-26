@@ -4,6 +4,7 @@ import Artist from '#models/artist'
 import Release from '#models/release'
 import logger from '@adonisjs/core/services/logger'
 import ky from 'ky'
+import ArtistService from '#services/artist_service'
 
 export interface SpotifyArtist {
   id: string
@@ -16,6 +17,9 @@ export interface SpotifyArtist {
   }>
   followers: {
     total: number
+  }
+  external_urls: {
+    [key: string]: string
   }
 }
 
@@ -50,14 +54,42 @@ export interface SpotifyTokenResponse {
   expires_in: number
 }
 
+// Search-related interfaces
+export interface SpotifySearchResult {
+  id: string
+  name: string
+  genres: string[]
+  followers: number
+  images: Array<{
+    url: string
+    height: number
+    width: number
+  }>
+  spotifyUrl: string
+}
+
+export interface CreateArtistOptions {
+  description?: string
+  socials?: string[]
+  categories?: string[]
+}
+
+export interface SearchAndCreateResult {
+  searchResults: SpotifySearchResult[]
+  createdArtist?: Artist
+  error?: string
+}
+
 export default class SpotifyService {
   private accessToken: string | null = null
   private tokenExpiresAt: DateTime | null = null
   private readonly BASE_URL = 'https://api.spotify.com/v1'
   private readonly AUTH_URL = 'https://accounts.spotify.com/api/token'
   private api: typeof ky
+  private artistService: ArtistService
 
   constructor() {
+    this.artistService = new ArtistService()
     this.api = ky.create({
       retry: {
         limit: 3,
@@ -327,6 +359,167 @@ export default class SpotifyService {
     } catch (error) {
       logger.error(`Failed to update artist ${artist.name} from Spotify:  ${error.message}`)
       throw error
+    }
+  }
+
+  /**
+   * Search for artists on Spotify and return formatted results
+   */
+  async searchArtistsFormatted(query: string, limit: number = 10): Promise<SpotifySearchResult[]> {
+    try {
+      const response = await this.searchArtists(query, limit)
+      const artists = response.artists.items
+
+      return artists.map((artist) => ({
+        id: artist.id,
+        name: artist.name,
+        genres: artist.genres,
+        followers: artist.followers.total,
+        images: artist.images,
+        socials: artist.external_urls,
+        spotifyUrl: `https://open.spotify.com/artist/${artist.id}`,
+      }))
+    } catch (error) {
+      logger.error(`Failed to search Spotify artists: ${error.message}`)
+      throw new Error(`Spotify search failed: ${error.message}`)
+    }
+  }
+
+  /**
+   * Check if an artist already exists in the database by Spotify ID
+   */
+  async findExistingArtistBySpotifyId(spotifyId: string): Promise<Artist | null> {
+    return await Artist.query().where('spotifyId', spotifyId).first()
+  }
+
+  /**
+   * Create artist from Spotify data
+   */
+  async createArtistFromSpotify(
+    spotifyResult: SpotifySearchResult,
+    options: CreateArtistOptions = {}
+  ): Promise<Artist> {
+    // Check if artist already exists with this Spotify ID
+    const existingArtist = await this.findExistingArtistBySpotifyId(spotifyResult.id)
+
+    if (existingArtist) {
+      throw new Error(
+        `Artist already exists in database: ${existingArtist.name} (ID: ${existingArtist.id})`
+      )
+    }
+
+    // Prepare artist data
+    const artistData = {
+      name: spotifyResult.name,
+      description: options?.description || `${spotifyResult.name} - Artist from Spotify`,
+      profilePicture: spotifyResult.images[0]?.url || null,
+      spotifyId: spotifyResult.id,
+      followers: {
+        spotify: spotifyResult.followers,
+        lastUpdated: DateTime.now().toISO(),
+      },
+      socials: options?.socials || { spotify: spotifyResult.spotifyUrl },
+      isVerified: false,
+      categories: options.categories || [],
+    }
+
+    try {
+      // Create the artist
+      const artist = await this.artistService.createArtist(artistData)
+      if (!artist) throw new Error('Artist not created')
+
+      // Mark as checked
+      artist.lastSpotifyCheck = DateTime.now()
+      await artist.save()
+
+      logger.info(`Created new artist: ${artist.name} with Spotify ID: ${artist.spotifyId}`)
+
+      return artist
+    } catch (error) {
+      logger.error(`Failed to create artist from Spotify data: ${error.message}`)
+      throw new Error(`Artist creation failed: ${error.message}`)
+    }
+  }
+
+  /**
+   * Search and optionally create artist in one operation
+   */
+  async searchAndCreate(
+    query: string,
+    spotifyId?: string,
+    options: CreateArtistOptions & { limit?: number } = {}
+  ): Promise<SearchAndCreateResult> {
+    const result: SearchAndCreateResult = {
+      searchResults: [],
+    }
+
+    try {
+      // Search for artists
+      result.searchResults = await this.searchArtistsFormatted(query, options.limit || 10)
+
+      // If a specific Spotify ID is provided, try to create that artist
+      if (spotifyId) {
+        const selectedArtist = result.searchResults.find((artist) => artist.id === spotifyId)
+
+        if (!selectedArtist) {
+          result.error = `Artist with Spotify ID ${spotifyId} not found in search results`
+          return result
+        }
+
+        try {
+          result.createdArtist = await this.createArtistFromSpotify(selectedArtist, options)
+        } catch (error) {
+          result.error = error.message
+        }
+      }
+
+      return result
+    } catch (error) {
+      result.error = error.message
+      return result
+    }
+  }
+
+  /**
+   * Get detailed artist information from Spotify
+   */
+  async getArtistDetails(spotifyId: string) {
+    try {
+      const artist = await this.getArtist(spotifyId)
+      return {
+        id: artist.id,
+        name: artist.name,
+        genres: artist.genres,
+        followers: artist.followers.total,
+        images: artist.images,
+        spotifyUrl: `https://open.spotify.com/artist/${artist.id}`,
+      }
+    } catch (error) {
+      logger.error(`Failed to get artist details from Spotify: ${error.message}`)
+      throw new Error(`Failed to get artist details: ${error.message}`)
+    }
+  }
+
+  /**
+   * Sync existing artist with Spotify data
+   */
+  async syncExistingArtist(artistId: string): Promise<Artist> {
+    const artist = await Artist.findOrFail(artistId)
+
+    if (!artist.spotifyId) {
+      throw new Error('Artist does not have a Spotify ID')
+    }
+
+    try {
+      await this.updateArtistFromSpotify(artist)
+      artist.lastSpotifyCheck = DateTime.now()
+      await artist.save()
+
+      logger.info(`Synced artist ${artist.name} with Spotify data`)
+      return artist
+    } catch (error) {
+      logger.error(`Failed to sync artist with Spotify: ${error.message}`)
+      throw new Error(`Sync failed: ${error.message}`)
     }
   }
 }

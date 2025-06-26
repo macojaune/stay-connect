@@ -1,4 +1,4 @@
-import { HttpContext } from "@adonisjs/core/http"
+import type { HttpContext } from '@adonisjs/core/http'
 import Artist from "../models/artist"
 import Category from "#models/category"
 
