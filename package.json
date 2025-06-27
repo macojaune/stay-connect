@@ -53,6 +53,7 @@
     "prettier-plugin-tailwindcss": "^0.6.13",
     "tailwindcss": "^4.1.8",
     "ts-node-maintained": "^10.9.5",
+    "tw-animate-css": "^1.3.4",
     "typescript": "~5.8.3",
     "vite": "^6.3.5"
   },
@@ -69,19 +70,21 @@
     "@adonisjs/vite": "^4.0.0",
     "@getbrevo/brevo": "^2.2.0",
     "@inertiajs/react": "^2.0.11",
+    "@radix-ui/react-tooltip": "^1.2.7",
     "@tailwindcss/vite": "^4.1.8",
     "@vinejs/vine": "^3.0.1",
-    "clsx": "^2.1.0",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
     "edge.js": "^6.2.1",
     "ky": "^1.8.1",
-    "lucide-react": "^0.522.0",
+    "lucide-react": "^0.523.0",
     "luxon": "^3.6.1",
     "pg": "^8.16.0",
     "radash": "^12.1.1",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "reflect-metadata": "^0.2.2",
-    "tailwind-merge": "^2.2.1"
+    "tailwind-merge": "^3.3.1"
   },
   "hotHook": {
     "boundaries": [
