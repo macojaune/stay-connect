@@ -8,9 +8,13 @@ import { Button } from '~/components/ui/Button'
 import { FormEvent, useMemo, useState } from 'react'
 import { objectify } from 'radash'
 
-type HomeProps = InferPageProps<HomeController, 'index'> & { errors?: { [key: string]: string } }
+type HomeProps = InferPageProps<HomeController, 'index'> & { 
+  errors?: { [key: string]: string }
+  artists: string[]
+  remainingArtistsCount: number
+}
 
-export default function Home({ errors, timelineData }: HomeProps) {
+export default function Home({ errors, timelineData, artists, remainingArtistsCount }: HomeProps) {
   const [userSuccess, setUserSuccess] = useState(false)
   const [artistSuccess, setArtistSuccess] = useState(false)
   const userForm = useForm({ type: 'user', username: '', email: '' })
@@ -110,7 +114,7 @@ export default function Home({ errors, timelineData }: HomeProps) {
           <section className="w-full py-20 bg-zinc-100">
             <div className="max-w-6xl mx-auto px-6">
               <h2 className="text-4xl font-bold text-center mb-12">Pour le Public</h2>
-              <div className="grid md:grid-cols-3 gap-8">
+              <div className="grid md:grid-cols-3 gap-8 mb-16">
                 <div>
                   <h3 className="text-2xl font-semibold mb-4">
                     Toutes les sorties musicales à un endroit
@@ -133,6 +137,31 @@ export default function Home({ errors, timelineData }: HomeProps) {
                     Partenariats, exclusivités et bien plus encore en préparation.
                   </p>
                 </div>
+              </div>
+              
+              {/* Artist Tags Section */}
+              <div className="text-center">
+                <h3 className="text-2xl font-semibold mb-6 text-zinc-800">
+                  Artistes présents sur la plateforme
+                </h3>
+                <div className="flex flex-wrap justify-center gap-2 mb-4">
+                  {artists.map((artistName, index) => (
+                    <span
+                      key={index}
+                      className="inline-block bg-white px-3 py-1 rounded-full text-sm font-medium text-zinc-700 shadow-sm border border-zinc-200 hover:bg-zinc-50 transition-colors duration-200"
+                    >
+                      {artistName}
+                    </span>
+                  ))}
+                  {remainingArtistsCount > 0 && (
+                    <span className="inline-block bg-brand/10 px-3 py-1 rounded-full text-sm font-medium text-brand border border-brand/20">
+                      et {remainingArtistsCount} autres…
+                    </span>
+                  )}
+                </div>
+                <p className="text-sm text-zinc-500">
+                  Découvrez tous les talents des Antilles-Guyane sur notre plateforme
+                </p>
               </div>
             </div>
           </section>

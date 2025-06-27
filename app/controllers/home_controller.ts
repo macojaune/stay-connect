@@ -3,6 +3,7 @@ import { createLeadValidator } from '#validators/newsletter'
 import type { HttpContext } from '@adonisjs/core/http'
 import { ContactsApi, ContactsApiApiKeys } from '@getbrevo/brevo'
 import Release from '#models/release'
+import Artist from '#models/artist'
 import { DateTime } from 'luxon'
 
 export default class HomeController {
@@ -20,12 +21,24 @@ export default class HomeController {
       .preload('categories')
       .orderBy('date', 'desc')
 
+    // Get artists for the tag list (limit to 30)
+    const allArtists = await Artist.query().select('name')
+    
+    // Shuffle the artists array and take first 30
+    const shuffledArtists = allArtists.sort(() => Math.random() - 0.5).slice(0, 30)
+    
+    // Get total artist count for the "et X autres" text
+    const totalArtistCount = await Artist.query().count('* as total')
+    const remainingArtists = Math.max(0, Number(totalArtistCount[0].$extras.total) - 30)
+
     // Group releases by week
     const groupedReleases = this.groupReleasesByWeek(releases, now)
 
     return inertia.render('home', {
       errors: undefined,
       timelineData: groupedReleases,
+      artists: shuffledArtists.map(artist => artist.name),
+      remainingArtistsCount: remainingArtists,
     })
   }
 
