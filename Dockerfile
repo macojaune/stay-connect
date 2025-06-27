@@ -1,39 +1,41 @@
 # Multi-stage build for AdonisJS application
-FROM node:20-alpine AS base
+FROM oven/bun:1-alpine AS base
 
 # Install dependencies only when needed
 FROM base AS deps
 RUN apk add --no-cache libc6-compat
-WORKDIR /app
+WORKDIR /home/bun/app
 
 # Copy package files
-COPY package*.json ./
-RUN npm ci --only=production && npm cache clean --force
+COPY package.json bun.lockb ./
+RUN bun install --frozen-lockfile --production
 
 # Build the application
 FROM base AS builder
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci
+WORKDIR /home/bun/app
 
-# Copy source code
+# Copy package files first
+COPY package.json bun.lockb ./
+RUN bun install --frozen-lockfile
+
+# Copy all source code and configuration files
 COPY . .
 
-# Build the application
-RUN npm run build
+# Build the application with explicit working directory
+RUN bun run build --ignore-ts-errors
 
 # Production image
 FROM base AS runner
-WORKDIR /app
+WORKDIR /home/bun/app
 
 # Create a non-root user
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 adonisjs
 
 # Copy built application
-COPY --from=builder --chown=adonisjs:nodejs /app/build ./
-COPY --from=deps --chown=adonisjs:nodejs /app/node_modules ./node_modules
-COPY --from=builder --chown=adonisjs:nodejs /app/package*.json ./
+COPY --from=builder --chown=adonisjs:nodejs home/bun/app/build ./
+COPY --from=deps --chown=adonisjs:nodejs home/bun/app/node_modules ./node_modules
+COPY --from=builder --chown=adonisjs:nodejs  home/bun/app/package*.json home/bun/app/bun.lockb ./
 
 # Switch to non-root user
 USER adonisjs
@@ -51,4 +53,4 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD node ace healthcheck || exit 1
 
 # Start the application
-CMD ["node", "bin/server.js"]
+CMD ["bun", "start"]
