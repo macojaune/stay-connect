@@ -1,3 +1,6 @@
+import Artist from '#models/artist'
+import Category from '#models/category'
+import Vote from '#models/vote'
 import {
   BaseModel,
   column,
@@ -7,11 +10,7 @@ import {
   beforeCreate,
 } from '@adonisjs/lucid/orm'
 import type { HasMany, ManyToMany, BelongsTo } from '@adonisjs/lucid/types/relations'
-import { cuid } from '@adonisjs/core/helpers'
 import { DateTime } from 'luxon'
-import Vote from './vote.js'
-import Category from './category.js'
-import Artist from './artist.js'
 import { randomUUID } from 'node:crypto'
 
 export default class Release extends BaseModel {

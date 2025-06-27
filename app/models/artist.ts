@@ -8,13 +8,10 @@ import {
   beforeCreate,
 } from '@adonisjs/lucid/orm'
 import type { HasMany, ManyToMany, BelongsTo } from '@adonisjs/lucid/types/relations'
-import { cuid } from '@adonisjs/core/helpers'
-import User from './user.js'
-import Category from './category.js'
-import Release from './release.js'
-import ArtistCategory from './artist_category.js'
-import Feature from './feature.js'
 import { randomUUID } from 'node:crypto'
+import Category from '#models/category'
+import Release from '#models/release'
+import User from '#models/user'
 
 export default class Artist extends BaseModel {
   static selfAssignPrimaryKey = true

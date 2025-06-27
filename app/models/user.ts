@@ -1,12 +1,12 @@
 import hash from '@adonisjs/core/services/hash'
 import { compose } from '@adonisjs/core/helpers'
-import { BaseModel, column, beforeCreate, hasOne, hasMany } from '@adonisjs/lucid/orm'
 import { withAuthFinder } from '@adonisjs/auth/mixins/lucid'
-import { cuid } from '@adonisjs/core/helpers' // Import cuid for UUID generation
 import { DateTime } from 'luxon'
-import Artist from './artist.js'
-import Vote from './vote.js'
 import { randomUUID } from 'node:crypto'
+import { BaseModel, beforeCreate, column, hasMany, hasOne } from '@adonisjs/lucid/orm'
+import Artist from '#models/artist'
+import Vote from '#models/vote'
+import type { HasOne, HasMany } from '@adonisjs/lucid/types/relations'
 
 const AuthFinder = withAuthFinder(() => hash.use('scrypt'), {
   uids: ['email'],

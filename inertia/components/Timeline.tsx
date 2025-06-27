@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import NewsCard from './NewsCard'
+import NewsCard from '~/components/NewsCard'
 
 interface NewsItem {
   id: string

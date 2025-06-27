@@ -1,5 +1,4 @@
 import vine from '@vinejs/vine'
-import BaseValidator from './base_validator'
 
 export const categoryValidator = vine.compile(
   vine.object({

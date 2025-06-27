@@ -2,9 +2,9 @@ import { BaseModel, beforeCreate, beforeSave, column, manyToMany } from '@adonis
 import type { ManyToMany } from '@adonisjs/lucid/types/relations'
 import string from '@adonisjs/core/helpers/string'
 import { DateTime } from 'luxon'
-import Artist from './artist.js'
-import Release from './release.js'
 import { randomUUID } from 'node:crypto'
+import Artist from '#models/artist'
+import Release from '#models/release'
 
 export default class Category extends BaseModel {
   static selfAssignPrimaryKey = true

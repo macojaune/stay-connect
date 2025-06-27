@@ -1,10 +1,9 @@
 import { DateTime } from 'luxon'
 import { BaseModel, column, belongsTo, beforeCreate } from '@adonisjs/lucid/orm'
 import type { BelongsTo } from '@adonisjs/lucid/types/relations'
-import { cuid } from '@adonisjs/core/helpers'
-import Release from './Release.js'
-import Artist from './Artist.js'
 import { randomUUID } from 'node:crypto'
+import Artist from '#models/artist'
+import Release from '#models/release'
 
 export default class Feature extends BaseModel {
   static selfAssignPrimaryKey = true
