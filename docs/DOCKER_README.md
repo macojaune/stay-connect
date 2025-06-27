@@ -154,7 +154,7 @@ docker-compose exec postgres psql -U stayconnect_user -d stayconnect_db
 
 ### Common Issues
 
-1. **Port conflicts**: Ensure ports 3333, 5432, and 8080 are not in use
+1. **Port conflicts**: Ensure ports 3333, 5433, and 8080 are not in use
 2. **Permission issues**: Check file permissions and Docker daemon access
 3. **Database connection**: Verify database is healthy before starting the app
 

@@ -114,7 +114,8 @@ docker-compose*.yml
 .cursor/
 .roo
 .taskmaster
-
+.roomodes
+.windsurfrules
 
 # OS
 .DS_Store
@@ -134,3 +135,5 @@ tests/
 .eslintrc*
 .prettierrc*
 # tsconfig.json
+docs/
+elixir-archive/

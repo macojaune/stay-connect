@@ -48,9 +48,9 @@ ENV NODE_ENV=production
 ENV HOST=0.0.0.0
 ENV PORT=3333
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD node ace healthcheck || exit 1
+# # Health check
+# HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+#   CMD node ace healthcheck || exit 1
 
 # Start the application
-CMD ["bun", "start"]
+# CMD ["bun", "start"]
