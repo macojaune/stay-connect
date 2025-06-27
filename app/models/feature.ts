@@ -4,11 +4,14 @@ import type { BelongsTo } from '@adonisjs/lucid/types/relations'
 import { cuid } from '@adonisjs/core/helpers'
 import Release from './Release.js'
 import Artist from './Artist.js'
+import { randomUUID } from 'node:crypto'
 
 export default class Feature extends BaseModel {
+  static selfAssignPrimaryKey = true
+
   @beforeCreate()
-  public static assignCuid(feature: Feature) {
-    feature.id = cuid()
+  public static assignUuid(feature: Feature) {
+    feature.id = randomUUID()
   }
 
   @column({ isPrimary: true })

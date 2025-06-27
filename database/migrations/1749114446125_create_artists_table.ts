@@ -5,12 +5,12 @@ export default class extends BaseSchema {
 
   async up() {
     this.schema.createTable(this.tableName, (table) => {
-      table.uuid('id').primary().notNullable().defaultTo(this.db.rawQuery('uuid_generate_v4()').knexQuery)
+      table.uuid('id').primary().notNullable()
       table.string('name').notNullable()
       table.text('description').nullable()
-      table.json('socials').nullable().defaultTo('[]')
+      table.json('socials').nullable()
       table.string('profile_picture').nullable()
-      table.json('followers').nullable().defaultTo('{}')
+      table.json('followers').nullable()
       table.boolean('is_verified').defaultTo(false)
       table.uuid('user_id').references('id').inTable('users').onDelete('CASCADE')
 

@@ -7,11 +7,15 @@
 |
 */
 
+import { middleware } from '#start/kernel'
 import router from '@adonisjs/core/services/router'
-import { middleware } from './kernel.js'
-
+//healthcheck
+router.get('/health', '#controllers/health_checks_controller')
 // Web routes
-router.on('/').renderInertia('home')
+router.get('/', '#controllers/home_controller.index')
+
+// Newsletter routes
+router.post('/newsletter', '#controllers/home_controller.subscribe')
 
 // API routes group
 router
@@ -60,6 +64,12 @@ router
         // Release-Category relationships
         router.post('/releases/:id/categories', 'releases_controller.addCategory')
         router.delete('/releases/:id/categories/:categoryId', 'releases_controller.removeCategory')
+
+        // Queue management routes
+        router.get('/queue/status', 'queue_controller.status')
+        router.post('/queue/trigger', 'queue_controller.trigger')
+        router.post('/queue/toggle', 'queue_controller.toggle')
+        router.get('/queue/health', 'queue_controller.health')
       })
       .use(middleware.auth())
   })

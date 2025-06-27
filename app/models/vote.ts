@@ -1,11 +1,19 @@
-import { DateTime } from 'luxon'
 import { BaseModel, column, belongsTo, beforeCreate } from '@adonisjs/lucid/orm'
 import type { BelongsTo } from '@adonisjs/lucid/types/relations'
 import { cuid } from '@adonisjs/core/helpers'
-import User from './User.js'
-import Release from './Release.js'
+import { DateTime } from 'luxon'
+import User from './user.js'
+import Release from './release.js'
+import { randomUUID } from 'node:crypto'
 
 export default class Vote extends BaseModel {
+  static selfAssignPrimaryKey = true
+
+  @beforeCreate()
+  public static assignUuid(vote: Vote) {
+    vote.id = randomUUID()
+  }
+
   @column({ isPrimary: true })
   declare id: string
 

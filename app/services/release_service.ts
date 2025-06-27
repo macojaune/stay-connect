@@ -1,6 +1,6 @@
-import Release from "#models/release"
-import Category from "#models/category"
-import { ReleaseValidator } from "../validators/release"
+import Release from '#models/release'
+import Category from '#models/category'
+import { ReleaseValidator } from '../validators/release'
 
 export default class ReleaseService {
   /**
@@ -15,11 +15,11 @@ export default class ReleaseService {
     })
 
     if (data.categories && Array.isArray(data.categories)) {
-      await release.related("categories").attach(data.categories)
+      await release.related('categories').attach(data.categories)
     }
 
     await release.load((loader) => {
-      loader.load("categories").load("artist")
+      loader.load('categories').load('artist')
     })
 
     return release
@@ -33,11 +33,11 @@ export default class ReleaseService {
     await release.merge(validatedData).save()
 
     if (data.categories && Array.isArray(data.categories)) {
-      await release.related("categories").sync(data.categories)
+      await release.related('categories').sync(data.categories)
     }
 
     await release.load((loader) => {
-      loader.load("categories").load("artist").load("votes")
+      loader.load('categories').load('artist').load('votes')
     })
 
     return release
@@ -48,10 +48,10 @@ export default class ReleaseService {
    */
   async deleteRelease(release: Release) {
     // Remove category associations
-    await release.related("categories").detach()
+    await release.related('categories').detach()
 
     // Delete votes
-    await release.related("votes").query().delete()
+    await release.related('votes').query().delete()
 
     // Delete the release
     await release.delete()
@@ -62,10 +62,10 @@ export default class ReleaseService {
    */
   async addCategories(release: Release, categoryIds: string[]) {
     // Verify categories exist
-    await Category.query().whereIn("id", categoryIds).firstOrFail()
+    await Category.query().whereIn('id', categoryIds).firstOrFail()
 
-    await release.related("categories").attach(categoryIds)
-    await release.load("categories")
+    await release.related('categories').attach(categoryIds)
+    await release.load('categories')
     return release
   }
 
@@ -73,8 +73,8 @@ export default class ReleaseService {
    * Remove categories from a release
    */
   async removeCategories(release: Release, categoryIds: string[]) {
-    await release.related("categories").detach(categoryIds)
-    await release.load("categories")
+    await release.related('categories').detach(categoryIds)
+    await release.load('categories')
     return release
   }
 
@@ -84,12 +84,12 @@ export default class ReleaseService {
   async getReleaseDetails(release: Release) {
     await release.load((loader) => {
       loader
-        .load("categories")
-        .load("artist", (artistQuery) => {
-          artistQuery.preload("categories")
+        .load('categories')
+        .load('artist', (artistQuery) => {
+          artistQuery.preload('categories')
         })
-        .load("votes", (voteQuery) => {
-          voteQuery.preload("user")
+        .load('votes', (voteQuery) => {
+          voteQuery.preload('user')
         })
     })
 
@@ -101,10 +101,10 @@ export default class ReleaseService {
    */
   async getTrendingReleases(limit: number = 10) {
     const releases = await Release.query()
-      .orderBy("voteCount", "desc")
+      .orderBy('voteCount', 'desc')
       .limit(limit)
-      .preload("artist")
-      .preload("categories")
+      .preload('artist')
+      .preload('categories')
 
     return releases
   }

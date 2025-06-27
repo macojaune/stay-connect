@@ -1,6 +1,7 @@
 import React from 'react';
 import { Head } from '@inertiajs/react';
 import { Navigation } from '~/components/Navigation';
+import { usePage } from '@inertiajs/react';
 import { Footer } from '~/components/Footer';
 
 interface AppLayoutProps {
@@ -19,7 +20,7 @@ export default function AppLayout({ children, title = 'StayConnect', description
       </Head>
       
       <div className="min-h-screen bg-gray-50 flex flex-col">
-        <Navigation />
+        <Navigation isLandingPage={usePage().url === '/'} />
         
         <main className="flex-1">
           {children}

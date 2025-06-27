@@ -1,12 +1,27 @@
-import { DateTime } from 'luxon'
-import { BaseModel, column, hasMany, manyToMany, belongsTo, beforeCreate } from '@adonisjs/lucid/orm'
+import {
+  BaseModel,
+  column,
+  hasMany,
+  manyToMany,
+  belongsTo,
+  beforeCreate,
+} from '@adonisjs/lucid/orm'
 import type { HasMany, ManyToMany, BelongsTo } from '@adonisjs/lucid/types/relations'
 import { cuid } from '@adonisjs/core/helpers'
-import Vote from './Vote.js'
-import Category from './Category.js'
-import Artist from './Artist.js'
+import { DateTime } from 'luxon'
+import Vote from './vote.js'
+import Category from './category.js'
+import Artist from './artist.js'
+import { randomUUID } from 'node:crypto'
 
 export default class Release extends BaseModel {
+  static selfAssignPrimaryKey = true
+
+  @beforeCreate()
+  public static assignUuid(release: Release) {
+    release.id = randomUUID()
+  }
+
   @column({ isPrimary: true })
   declare id: string
 
@@ -24,7 +39,7 @@ export default class Release extends BaseModel {
 
   @column({
     prepare: (value: string[]) => JSON.stringify(value),
-    consume: (value: string) => JSON.parse(value),
+    // consume: (value: string) => JSON.parse(value),
     serializeAs: 'urls',
   })
   declare urls: string[]
@@ -47,6 +62,12 @@ export default class Release extends BaseModel {
   @column({ columnName: 'vote_count' })
   declare voteCount: number
 
+  @column()
+  declare spotifyId: string | null
+
+  @column()
+  declare artistId: string | null
+
   @hasMany(() => Vote)
   declare votes: HasMany<typeof Vote>
 
@@ -60,7 +81,7 @@ export default class Release extends BaseModel {
   declare categories: ManyToMany<typeof Category>
 
   @belongsTo(() => Artist, {
-    foreignKey: 'artist_id',
+    foreignKey: 'artistId',
   })
   declare artist: BelongsTo<typeof Artist>
 

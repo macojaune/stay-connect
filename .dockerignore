@@ -98,6 +98,7 @@ build/
 .git
 .gitignore
 README.md
+.jj
 
 # Docker
 Dockerfile
@@ -110,6 +111,10 @@ docker-compose*.yml
 *.swp
 *.swo
 *~
+.cursor/
+.roo
+.taskmaster
+
 
 # OS
 .DS_Store
@@ -128,4 +133,4 @@ tests/
 .editorconfig
 .eslintrc*
 .prettierrc*
-tsconfig.json
+# tsconfig.json

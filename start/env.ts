@@ -34,5 +34,32 @@ export default await Env.create(new URL('../', import.meta.url), {
   DB_PORT: Env.schema.number(),
   DB_USER: Env.schema.string(),
   DB_PASSWORD: Env.schema.string.optional(),
-  DB_DATABASE: Env.schema.string()
+  DB_DATABASE: Env.schema.string(),
+
+  /*
+  |----------------------------------------------------------
+  | Variables for configuring the mail package
+  |----------------------------------------------------------
+  */
+  BREVO_API_KEY: Env.schema.string(),
+  /*
+  |----------------------------------------------------------
+  | Variables for configuring spotify api
+  |----------------------------------------------------------
+  */
+  SPOTIFY_CLIENT_ID: Env.schema.string(),
+  SPOTIFY_CLIENT_SECRET: Env.schema.string(),
+  /*
+  |----------------------------------------------------------
+  | Variables for configuring the queue 
+  |----------------------------------------------------------
+  */
+  QUEUE_ENABLED: Env.schema.boolean(),
+  /*
+  |----------------------------------------------------------
+  | Variables for configuring umami analytics
+  |----------------------------------------------------------
+  */
+  UMAMI_SCRIPT_URL: Env.schema.string.optional(),
+  UMAMI_WEBSITE_ID: Env.schema.string.optional(),
 })

@@ -1,3 +1,4 @@
+import env from '#start/env'
 import { defineConfig } from '@adonisjs/inertia'
 import type { InferSharedProps } from '@adonisjs/inertia/types'
 
@@ -11,6 +12,8 @@ const inertiaConfig = defineConfig({
    * Data that should be shared with all rendered pages
    */
   sharedData: {
+    umamiURL: env.get('UMAMI_SCRIPT_URL', ''),
+    umamiID: env.get('UMAMI_WEBSITE_ID', ''),
     // user: (ctx) => ctx.inertia.always(() => ctx.auth.user),
   },
 
@@ -19,8 +22,8 @@ const inertiaConfig = defineConfig({
    */
   ssr: {
     enabled: true,
-    entrypoint: 'inertia/app/ssr.tsx'
-  }
+    entrypoint: 'inertia/app/ssr.tsx',
+  },
 })
 
 export default inertiaConfig

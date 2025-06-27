@@ -1,43 +1,31 @@
 import vine from '@vinejs/vine'
-import BaseValidator from './base_validator'
+import BaseValidator from '#validators/base_validator'
 
-export class ArtistValidator extends BaseValidator {
-  protected static schema = vine.object({
-    name: vine.string()
-      .minLength(2)
-      .maxLength(100)
-      .unique(async (db, value, field) => {
-        const query = db.from('artists').where('name', value)
-        if (field.meta?.artistId) {
-          query.whereNot('id', field.meta.artistId)
-        }
-        const artist = await query.first()
-        return !artist
+export const artistValidator = vine.compile(
+  vine.object({
+    name: vine.string().minLength(2),
+    spotifyId: vine.string().optional(),
+    description: vine.string().optional(),
+    location: vine.string().optional(),
+    website: vine.string().url().optional(),
+    socials: vine
+      .object({
+        facebook: vine.string().url().optional(),
+        twitter: vine.string().url().optional(),
+        instagram: vine.string().url().optional(),
+        soundcloud: vine.string().url().optional(),
+        spotify: vine.string().url().optional(),
+        youtube: vine.string().url().optional(),
       })
-      .required(),
-    bio: vine.string()
-      .maxLength(1000)
+      .allowUnknownProperties()
       .optional(),
-    location: vine.string()
-      .maxLength(100)
-      .optional(),
-    website: vine.string()
-      .url()
-      .optional(),
-    socialLinks: vine.object({
-      facebook: vine.string().url().optional(),
-      twitter: vine.string().url().optional(),
-      instagram: vine.string().url().optional(),
-      soundcloud: vine.string().url().optional(),
-      spotify: vine.string().url().optional(),
-      youtube: vine.string().url().optional()
-    }).optional(),
-    categories: vine.array(vine.string().uuid()).optional(),
-    features: vine.array(
-      vine.object({
-        name: vine.string().maxLength(50).required(),
-        value: vine.string().maxLength(200).required()
+    isVerified: vine.boolean(),
+    followers: vine
+      .object({
+        spotify: vine.number().optional(),
+        lastUpdated: vine.date({ formats: ['iso8601'] }).optional(),
       })
-    ).optional()
+      .allowUnknownProperties(),
+    profilePicture: vine.string().url().optional(),
   })
-}
+)

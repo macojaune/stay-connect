@@ -1,265 +1,321 @@
-import { Head } from '@inertiajs/react'
+import { Head, useForm } from '@inertiajs/react'
 import AppLayout from '../layouts/AppLayout'
-import { Button } from '../components/ui/Button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/Card'
-import { PageProps } from '../types'
+import Timeline from '../components/Timeline'
+import type { InferPageProps } from '@adonisjs/inertia/types'
+import type HomeController from '#controllers/home_controller'
+import { Input } from '~/components/ui/Input'
+import { Button } from '~/components/ui/Button'
+import { FormEvent, useMemo, useState } from 'react'
+import { objectify } from 'radash'
 
-interface HomeProps extends PageProps {
-  featuredArtists?: any[]
-  featuredReleases?: any[]
-  stats?: {
-    totalArtists: number
-    totalReleases: number
-    totalVotes: number
-  }
+type HomeProps = InferPageProps<HomeController, 'index'> & { 
+  errors?: { [key: string]: string }
+  artists: string[]
+  remainingArtistsCount: number
 }
 
-export default function Home({ auth, featuredArtists = [], featuredReleases = [], stats }: HomeProps) {
+export default function Home({ errors, timelineData, artists, remainingArtistsCount }: HomeProps) {
+  const [userSuccess, setUserSuccess] = useState(false)
+  const [artistSuccess, setArtistSuccess] = useState(false)
+  const userForm = useForm({ type: 'user', username: '', email: '' })
+  const artistForm = useForm({ type: 'artist', email: '', artistName: '', role: '' })
+
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault()
+    userForm.post('/newsletter', {
+      preserveScroll: true,
+      preserveUrl: true,
+      onSuccess: () => {
+        userForm.reset()
+        setUserSuccess(true)
+        setTimeout(() => setUserSuccess(false), 5000)
+      },
+    })
+  }
+  const handleArtistSubmit = (e: FormEvent) => {
+    e.preventDefault()
+    artistForm.post('/newsletter', {
+      preserveScroll: true,
+      onSuccess: () => {
+        artistForm.reset()
+        setArtistSuccess(true)
+        setTimeout(() => setArtistSuccess(false), 5000)
+      },
+    })
+  }
+  const fieldErrors = useMemo(() => {
+    if (!!errors) return objectify(errors, (e) => e?.field)
+    return errors
+  }, [errors])
+
   return (
     <AppLayout>
-      <Head title="StayConnect - Discover Amazing Music" />
-
-      {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-primary-600 via-primary-700 to-primary-800 text-white py-20 lg:py-32">
-        <div className="absolute inset-0 bg-black/20"></div>
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <h1 className="text-4xl md:text-6xl font-heading font-bold mb-6 text-balance">
-              Discover Your Next
-              <span className="block bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">
-                Favorite Artist
-              </span>
-            </h1>
-            <p className="text-xl md:text-2xl text-primary-100 mb-8 max-w-3xl mx-auto text-balance">
-              Connect with emerging artists, discover new releases, and help shape the future of music through community-driven discovery.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" className="bg-white text-primary-700 hover:bg-primary-50">
-                Start Discovering
-              </Button>
-              {!auth?.user && (
-                <Button variant="outline" size="lg" className="border-white text-white hover:bg-white hover:text-primary-700">
-                  Join the Community
-                </Button>
-              )}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Stats Section */}
-      {stats && (
-        <section className="py-16 bg-secondary-50">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="text-center">
-                <div className="text-4xl font-bold text-primary-600 mb-2">
-                  {stats.totalArtists.toLocaleString()}
-                </div>
-                <div className="text-secondary-600 font-medium">Artists Discovered</div>
+      <Head title="StayConnect - Ne rate plus aucune sortie musicale" />
+      <div className="w-full">
+        <div className="flex flex-col items-center">
+          {/* Hero Section */}
+          <section className="flex flex-row w-full min-h-screen">
+            <div className="flex flex-col items-center justify-center px-4 md:px-12 w-full md:w-3/5 py-8 md:py-24 gap-4">
+              <h1 className="text-brand md:mt-10 flex items-center md:text-6xl font-semibold text-5xl leading-5 md:leading-6">
+                #StayConnect
+                <small className="bg-brand/5 text-xs ml-2 md:ml-3 rounded-full px-2 font-medium md:leading-6">
+                  ALPHA
+                </small>
+              </h1>
+              <p className="text-2xl text-center md:text-left md:text-3xl mt-4 font-semibold leading-6 tracking-tight md:leading-10 md:tracking-tighter text-zinc-900 text-balance">
+                Ne rate plus aucune sortie musicale aux Antilles-Guyane
+              </p>
+              <p className="text-lg md:text-base md:leading-tight text-zinc-600">
+                Je sais pas pour toi, mais j'en avais marre, chaque vendredi, de chercher les
+                sorties 97 ou de louper les nouvelles pépites dès leurs débuts.
+                <br />
+                Et puis, j'ai grandi avec <b>KalottLyrikal</b> moi…
+                <br />
+                Du coup, j'ai décidé de créer ce site pour répertorier tout ça et aider les artistes
+                à promouvoir leurs sorties.
+                <br />
+                <br />
+                Ça devrait ressembler à ça :{' '}
+                <i className="text-sm">en moins laid, je ne suis pas UI designer 😅</i>
+              </p>
+              {/* Timeline Section in Hero */}
+              <div className="md:mt-8 w-full md:max-w-2xl">
+                <Timeline sections={timelineData} />
               </div>
-              <div className="text-center">
-                <div className="text-4xl font-bold text-primary-600 mb-2">
-                  {stats.totalReleases.toLocaleString()}
+
+              <button
+                onClick={() => {
+                  document.querySelector('#newsletter-section')?.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start',
+                  })
+                }}
+                className="md:mt-8 px-6 py-3 bg-brand text-white rounded-lg hover:bg-brand-dark transition-colors duration-200 font-medium"
+                data-umami-event="newsletter-cta-click"
+                data-umami-event-section="hero"
+              >
+                S'inscrire à la newsletter
+              </button>
+              <p className="text-sm text-center text-zinc-500 ">
+                Inscris-toi à la newsletter pour suivre l'évolution du projet.
+              </p>
+            </div>
+
+            <div className="grow bg-grain relative md:w-2/5 w-full hidden md:flex">
+              <div className="bg-gradient-to-br from-brand/25 to-brand/60 z-10 inset-0 absolute" />
+              <img
+                className="w-full h-full object-cover"
+                src="https://images.unsplash.com/photo-1587582140428-38110de9f434?q=80"
+              />
+            </div>
+          </section>
+
+          {/* For Public Section */}
+          <section className="w-full py-20 bg-zinc-100">
+            <div className="max-w-6xl mx-auto px-6">
+              <h2 className="text-4xl font-bold text-center mb-12">Pour le Public</h2>
+              <div className="grid md:grid-cols-3 gap-8 mb-16">
+                <div>
+                  <h3 className="text-2xl font-semibold mb-4">
+                    Toutes les sorties musicales à un endroit
+                  </h3>
+                  <p className="text-zinc-600">
+                    Plus besoin de chercher sur plusieurs plateformes, retrouvez toutes les
+                    nouveautés musicales en un clic.
+                  </p>
                 </div>
-                <div className="text-secondary-600 font-medium">Releases Featured</div>
-              </div>
-              <div className="text-center">
-                <div className="text-4xl font-bold text-primary-600 mb-2">
-                  {stats.totalVotes.toLocaleString()}
+                <div>
+                  <h3 className="text-2xl font-semibold mb-4">Du contenu plus approfondi</h3>
+                  <p className="text-zinc-600">
+                    Découvre de nouveaux talents et suis tes artistes préférés facilement. Rentre
+                    plus en profondeur dans l'univers autour de chaque sortie des artistes.
+                  </p>
                 </div>
-                <div className="text-secondary-600 font-medium">Community Votes</div>
+                <div>
+                  <h3 className="text-2xl font-semibold mb-4">Et bien plus</h3>
+                  <p className="text-zinc-600">
+                    Partenariats, exclusivités et bien plus encore en préparation.
+                  </p>
+                </div>
+              </div>
+              
+              {/* Artist Tags Section */}
+              <div className="text-center">
+                <h3 className="text-2xl font-semibold mb-6 text-zinc-800">
+                  Artistes présents sur la plateforme
+                </h3>
+                <div className="flex flex-wrap justify-center gap-2 mb-4">
+                  {artists.map((artistName, index) => (
+                    <span
+                      key={index}
+                      className="inline-block bg-white px-3 py-1 rounded-full text-sm font-medium text-zinc-700 shadow-sm border border-zinc-200 hover:bg-zinc-50 transition-colors duration-200"
+                    >
+                      {artistName}
+                    </span>
+                  ))}
+                  {remainingArtistsCount > 0 && (
+                    <span className="inline-block bg-brand/10 px-3 py-1 rounded-full text-sm font-medium text-brand border border-brand/20">
+                      et {remainingArtistsCount} autres…
+                    </span>
+                  )}
+                </div>
+                <p className="text-sm text-zinc-500">
+                  Découvrez tous les talents des Antilles-Guyane sur notre plateforme
+                </p>
               </div>
             </div>
-          </div>
-        </section>
-      )}
+          </section>
 
-      {/* Featured Artists Section */}
-      <section className="py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-heading font-bold text-secondary-900 mb-4">
-              Featured Artists
-            </h2>
-            <p className="text-lg text-secondary-600 max-w-2xl mx-auto">
-              Discover talented artists that are making waves in the music industry
-            </p>
-          </div>
-          
-          {featuredArtists.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-              {featuredArtists.slice(0, 6).map((artist, index) => (
-                <Card key={artist.id || index} className="hover:shadow-medium transition-shadow duration-300">
-                  <CardHeader>
-                    <div className="w-full h-48 bg-secondary-200 rounded-lg mb-4 flex items-center justify-center">
-                      {artist.imageUrl ? (
-                        <img 
-                          src={artist.imageUrl} 
-                          alt={artist.name}
-                          className="w-full h-full object-cover rounded-lg"
-                        />
-                      ) : (
-                        <div className="text-secondary-400 text-4xl">🎵</div>
-                      )}
-                    </div>
-                    <CardTitle className="text-xl">{artist.name || `Artist ${index + 1}`}</CardTitle>
-                    <CardDescription>
-                      {artist.genres?.join(', ') || 'Various Genres'}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex items-center justify-between">
-                      <div className="text-sm text-secondary-600">
-                        ⭐ {artist.averageRating?.toFixed(1) || '4.5'} ({artist.totalVotes || '12'} votes)
-                      </div>
-                      <Button variant="outline" size="sm">
-                        View Profile
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+          {/* For Artists Section */}
+          <section className="w-full py-20  overflow-hidden bg-brand">
+            <div className="max-w-6xl mx-auto px-6 relative">
+              <h2 className="text-4xl text-white font-bold text-center mb-12">Pour les Artistes</h2>
+              <div className="grid md:grid-cols-2 gap-8">
+                <div>
+                  <h3 className="text-2xl text-white font-semibold mb-4">Engagement Direct</h3>
+                  <p className="text-zinc-200 ">
+                    Un nouveau moyen de mettre en avant ta musique et d'interagir directement avec
+                    ton public.
+                  </p>
+                </div>
+                <div>
+                  <h3 className="text-2xl text-white font-semibold mb-4">
+                    Le meilleur est à venir
+                  </h3>
+                  <p className="text-zinc-200">
+                    De nombreuses fonctionnalités sont prévues et en cours de développement,
+                    inscris-toi dès maintenant pour participer à leurs tests et faire partie des
+                    pionnier·es de la plateforme.
+                  </p>
+                </div>
+              </div>
             </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-              {[1, 2, 3].map((index) => (
-                <Card key={index} className="hover:shadow-medium transition-shadow duration-300">
-                  <CardHeader>
-                    <div className="w-full h-48 bg-secondary-200 rounded-lg mb-4 flex items-center justify-center">
-                      <div className="text-secondary-400 text-4xl">🎵</div>
+          </section>
+          {/* Forms Section */}
+          <section className="w-full py-20 bg-zinc-50" id="newsletter-section">
+            <div className="max-w-4xl mx-auto px-6">
+              <div className="text-center mb-12">
+                <h2 className="text-4xl font-bold text-gray-900 mb-4">Rejoignez la Communauté</h2>
+                <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+                  Que vous soyez passionné·e de musique ou artiste, rejoignez notre communauté dès
+                  maintenant
+                </p>
+              </div>
+              <div className="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2">
+                {/* General User Lead Form */}
+                <form
+                  onSubmit={handleSubmit}
+                  className="group relative rounded-2xl p-6 sm:p-8 bg-white shadow-lg flex flex-col"
+                >
+                  <h3 className="text-lg font-semibold text-zinc-900 mb-4 text-center">
+                    Passionné·es de musique
+                  </h3>
+                  <p className="text-sm text-center mb-4 text-brand-lightest">
+                    Rejoins la newsletter en attendant la v1.
+                  </p>
+
+                  {userSuccess && (
+                    <div className="mb-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded-md text-sm text-center">
+                      🎉 Merci ! Tu es maintenant inscrit·e à la newsletter.
                     </div>
-                    <CardTitle className="text-xl">Featured Artist {index}</CardTitle>
-                    <CardDescription>Indie Rock, Alternative</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex items-center justify-between">
-                      <div className="text-sm text-secondary-600">
-                        ⭐ 4.{index + 2} (1{index}2 votes)
-                      </div>
-                      <Button variant="outline" size="sm">
-                        View Profile
-                      </Button>
+                  )}
+
+                  <div className="space-y-3 flex flex-col h-full">
+                    <Input
+                      type="text"
+                      name="username"
+                      placeholder="macojaune"
+                      label="Nom d'utilisateur"
+                      value={userForm.data.username}
+                      onChange={(e) => userForm.setData('username', e.target.value)}
+                      error={fieldErrors?.username?.message}
+                      required
+                    />
+                    <Input
+                      type="email"
+                      name="email"
+                      placeholder="hello@macojaune.com"
+                      label="E-mail"
+                      value={userForm.data.email}
+                      onChange={(e) => userForm.setData('email', e.target.value)}
+                      error={fieldErrors?.email?.message}
+                      required
+                    />
+                    <Button 
+                      type="submit" 
+                      className="mt-auto" 
+                      disabled={userForm.processing}
+                      data-umami-event="newsletter-submit"
+                      data-umami-event-type="user"
+                    >
+                      {userForm.processing ? 'Inscription...' : 'Rejoindre'}
+                    </Button>
+                  </div>
+                </form>
+
+                {/* Artist Lead Form */}
+                <form
+                  onSubmit={handleArtistSubmit}
+                  className="group relative rounded-2xl p-6 sm:p-8 bg-brand shadow-lg flex flex-col"
+                >
+                  <h3 className="text-lg font-semibold text-white mb-4 text-center">
+                    Artiste ou Équipe
+                  </h3>
+                  <p className="text-sm text-center mb-4 text-brand-lightest">
+                    Rejoins la communauté d'artistes.
+                  </p>
+
+                  {artistSuccess && (
+                    <div className="mb-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded-md text-sm text-center">
+                      🎵 Parfait ! Bienvenue dans la communauté d'artistes.
                     </div>
-                  </CardContent>
-                </Card>
-              ))}
+                  )}
+
+                  <div className="space-y-3 flex flex-col h-full">
+                    <Input
+                      type="text"
+                      name="artistName"
+                      label="Nom d'artiste / Équipe"
+                      placeholder="ex: Don Snoop"
+                      value={artistForm.data.artistName}
+                      onChange={(e) => artistForm.setData('artistName', e.target.value)}
+                      error={fieldErrors?.artistName?.message}
+                    />
+                    <Input
+                      type="text"
+                      name="role"
+                      label="Role du contact"
+                      placeholder="ex: Artiste, Manager, Attaché de presse..."
+                      value={artistForm.data.role}
+                      onChange={(e) => artistForm.setData('role', e.target.value)}
+                      error={fieldErrors?.role?.message}
+                    />
+                    <Input
+                      type="email"
+                      name="email"
+                      label="Email de contact"
+                      placeholder="gel@ayo.gwo"
+                      value={artistForm.data.email}
+                      onChange={(e) => artistForm.setData('email', e.target.value)}
+                      error={fieldErrors?.email?.message}
+                      required
+                    />
+                    <Button 
+                      type="submit" 
+                      variant="secondary" 
+                      disabled={artistForm.processing}
+                      data-umami-event="newsletter-submit"
+                      data-umami-event-type="artist"
+                    >
+                      {artistForm.processing ? 'Inscription...' : 'Rejoindre'}
+                    </Button>
+                  </div>
+                </form>
+              </div>
             </div>
-          )}
-          
-          <div className="text-center">
-            <Button variant="outline" size="lg">
-              View All Artists
-            </Button>
-          </div>
+          </section>
         </div>
-      </section>
-
-      {/* Featured Releases Section */}
-      <section className="py-16 bg-secondary-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-heading font-bold text-secondary-900 mb-4">
-              Latest Releases
-            </h2>
-            <p className="text-lg text-secondary-600 max-w-2xl mx-auto">
-              Fresh music from artists you should know about
-            </p>
-          </div>
-          
-          {featuredReleases.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-              {featuredReleases.slice(0, 4).map((release, index) => (
-                <Card key={release.id || index} className="hover:shadow-medium transition-shadow duration-300">
-                  <CardHeader>
-                    <div className="w-full h-48 bg-secondary-200 rounded-lg mb-4 flex items-center justify-center">
-                      {release.coverImageUrl ? (
-                        <img 
-                          src={release.coverImageUrl} 
-                          alt={release.title}
-                          className="w-full h-full object-cover rounded-lg"
-                        />
-                      ) : (
-                        <div className="text-secondary-400 text-4xl">💿</div>
-                      )}
-                    </div>
-                    <CardTitle className="text-lg">{release.title || `Release ${index + 1}`}</CardTitle>
-                    <CardDescription>
-                      {release.artist?.name || `Artist ${index + 1}`} • {release.type || 'Album'}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex items-center justify-between">
-                      <div className="text-sm text-secondary-600">
-                        ⭐ {release.averageRating?.toFixed(1) || '4.3'}
-                      </div>
-                      <Button variant="outline" size="sm">
-                        Listen
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-              {[1, 2, 3, 4].map((index) => (
-                <Card key={index} className="hover:shadow-medium transition-shadow duration-300">
-                  <CardHeader>
-                    <div className="w-full h-48 bg-secondary-200 rounded-lg mb-4 flex items-center justify-center">
-                      <div className="text-secondary-400 text-4xl">💿</div>
-                    </div>
-                    <CardTitle className="text-lg">New Release {index}</CardTitle>
-                    <CardDescription>Artist Name • Album</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex items-center justify-between">
-                      <div className="text-sm text-secondary-600">
-                        ⭐ 4.{index + 1}
-                      </div>
-                      <Button variant="outline" size="sm">
-                        Listen
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          )}
-          
-          <div className="text-center">
-            <Button variant="outline" size="lg">
-              View All Releases
-            </Button>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-16 bg-gradient-primary text-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl md:text-4xl font-heading font-bold mb-4">
-            Ready to Discover Amazing Music?
-          </h2>
-          <p className="text-xl text-primary-100 mb-8">
-            Join our community of music lovers and help emerging artists get the recognition they deserve.
-          </p>
-          {!auth?.user ? (
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" className="bg-white text-primary-700 hover:bg-primary-50">
-                Sign Up Now
-              </Button>
-              <Button variant="outline" size="lg" className="border-white text-white hover:bg-white hover:text-primary-700">
-                Learn More
-              </Button>
-            </div>
-          ) : (
-            <Button size="lg" className="bg-white text-primary-700 hover:bg-primary-50">
-              Explore More Music
-            </Button>
-          )}
-        </div>
-      </section>
-
-    </AppLayout>)
+      </div>
+    </AppLayout>
+  )
 }
