@@ -15,7 +15,7 @@ export default class SyncSpotifyArtists extends BaseCommand {
     staysAlive: false,
   }
 
-  @args.string({ description: 'Specific artist ID to sync (optional)' })
+  @args.string({ description: 'Specific artist ID to sync (optional)' ,required: false})
   declare artistId?: string
 
   @flags.boolean({ description: 'Force sync even if recently updated' })
@@ -42,28 +42,33 @@ export default class SyncSpotifyArtists extends BaseCommand {
   }
 
   private async syncSingleArtist(artistId: string) {
-    const artist = await Artist.find(artistId)
+    try {
+      const artist = await Artist.find(artistId)
 
-    if (!artist) {
-      this.logger.error(`Artist with ID ${artistId} not found`)
+      if (!artist) {
+        this.logger.error(`Artist with ID ${artistId} not found`)
+        this.exitCode = 1
+        return
+      }
+
+      if (!artist.spotifyId) {
+        this.logger.warning(`Artist ${artist.name} does not have a Spotify ID`)
+        return
+      }
+
+      this.logger.info(`Syncing artist: ${artist.name}`)
+      const spotifyService = new SpotifyService()
+      await spotifyService.updateArtistFromSpotify(artist)
+
+      // Update last check timestamp
+      artist.lastSpotifyCheck = DateTime.now()
+      await artist.save()
+
+      this.logger.info(`Successfully synced artist: ${artist.name}`)
+    } catch (error) {
+      logger.error(error, `Failed to sync single artist`)
       this.exitCode = 1
-      return
     }
-
-    if (!artist.spotifyId) {
-      this.logger.warning(`Artist ${artist.name} does not have a Spotify ID`)
-      return
-    }
-
-    this.logger.info(`Syncing artist: ${artist.name}`)
-    const spotifyService = new SpotifyService()
-    await spotifyService.updateArtistFromSpotify(artist)
-
-    // Update last check timestamp
-    artist.lastSpotifyCheck = DateTime.now()
-    await artist.save()
-
-    this.logger.info(`Successfully synced artist: ${artist.name}`)
   }
 
   private async syncAllArtists() {
@@ -73,7 +78,7 @@ export default class SyncSpotifyArtists extends BaseCommand {
     if (!this.force) {
       const yesterday = DateTime.now().minus({ hours: 24 })
       query = query.where((builder) => {
-        builder.whereNull('lastSpotifyCheck').orWhere('lastSpotifyCheck', '<', yesterday)
+        builder.whereNull('lastSpotifyCheck').orWhere('lastSpotifyCheck', '<', yesterday.toSQL())
       })
     }
 

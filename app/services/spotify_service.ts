@@ -233,7 +233,7 @@ export default class SpotifyService {
   /**
    * Check for new releases for all artists with Spotify IDs
    */
-  async checkForNewReleases(): Promise<{
+  async checkForNewReleases(artistId?: Artist['id']): Promise<{
     processed: number
     newReleases: number
     errors: number
@@ -241,6 +241,15 @@ export default class SpotifyService {
     const stats = { processed: 0, newReleases: 0, errors: 0 }
 
     try {
+      if (artistId) {
+        const artist = await Artist.find(artistId)
+        if (!artist) {
+          throw new Error(`Artist with ID ${artistId} not found`)
+        }
+        await this.checkArtistForNewReleases(artist)
+        stats.processed++
+        return stats
+      }
       // Get all artists with Spotify IDs
       const artists = await Artist.query().whereNotNull('spotifyId').preload('releases')
 
@@ -279,7 +288,7 @@ export default class SpotifyService {
 
     try {
       // Get recent albums (last 3days)
-      const daysAgo = DateTime.now().minus({ days: 2 })
+      const daysAgo = DateTime.now().minus({ days: 4 })
       const albums = await this.getArtistAlbums(artist.spotifyId, {
         includeGroups: ['album', 'single'],
         // limit: 10,

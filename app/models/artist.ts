@@ -34,7 +34,7 @@ export default class Artist extends BaseModel {
 
   @column({
     prepare: (value: Record<string, string> | null) => (value ? JSON.stringify(value) : null),
-    consume: (value: string | null) => (value ? JSON.parse(value) : {}),
+    // consume: (value: string | null) => (value ? JSON.parse(value) : {}),
   })
   declare socials: Record<string, string> | null
 
@@ -43,7 +43,7 @@ export default class Artist extends BaseModel {
 
   @column({
     prepare: (value: Record<string, any> | null) => (value ? JSON.stringify(value) : null),
-    consume: (value: string | null) => (value ? JSON.parse(value) : {}),
+    // consume: (value: string | null) => (value ? JSON.parse(value) : {}),
   })
   declare followers: Record<string, any> | null
 
