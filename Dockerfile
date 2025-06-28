@@ -47,9 +47,5 @@ ENV NODE_ENV=production
 ENV HOST=0.0.0.0
 ENV PORT=3333
 
-# Health check using bun instead of node
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-    CMD bun ace healthcheck || exit 1
-
 # Start the application using bun
 CMD ["bun", "run", "start"]

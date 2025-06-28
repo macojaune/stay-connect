@@ -27,11 +27,9 @@ export default class QueueProvider {
    * The application has been booted
    */
   async start() {
-    // Only start queue in production or when explicitly enabled
-    const environment = env.get('NODE_ENV')
-    const queueEnabled = env.get('QUEUE_ENABLED', 'false') === 'true'
+    const queueEnabled = env.get('QUEUE_ENABLED', false)
 
-    if (environment === 'production' || queueEnabled) {
+    if (queueEnabled) {
       try {
         logger.info('Starting queue service...')
         QueueService.initialize()
@@ -56,11 +54,10 @@ export default class QueueProvider {
    * Preparing to shutdown the app
    */
   async shutdown() {
-    // Only start queue in production or when explicitly enabled
-    const environment = env.get('NODE_ENV')
-    const queueEnabled = env.get('QUEUE_ENABLED', 'false') === 'true'
+    // Only end queue if it is enabled
+    const queueEnabled = env.get('QUEUE_ENABLED', false)
 
-    if (environment === 'production' || queueEnabled) {
+    if (queueEnabled) {
       try {
         logger.info('Shutting down queue service...')
         QueueService.stop()
