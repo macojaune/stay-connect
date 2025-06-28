@@ -54,3 +54,4 @@ ENV PORT=3333
 
 # Start the application
 # CMD ["bun", "start"]
+CMD ["ls", "-la", "/run/secrets/stayconnect_env"]

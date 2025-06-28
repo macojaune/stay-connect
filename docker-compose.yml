@@ -22,13 +22,13 @@ services:
   adonis_app:
     image: ghcr.io/macojaune/stay-connect:latest
     secrets:
-      - source: stayconnect_env
+      - stayconnect_env
     environment:
       NODE_ENV: production
       PORT: 3333
       HOST: 0.0.0.0
       LOG_LEVEL: info
-      ENV_PATH: /run/secrets/stayconnect_env/.env
+      ENV_PATH_FILE: /run/secrets/stayconnect_env
     ports:
       - '3333:3333'
     depends_on:
