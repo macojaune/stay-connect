@@ -16,13 +16,13 @@ WORKDIR /home/bun/app
 
 # Copy package files first
 COPY package.json bun.lockb ./
-RUN bun install --frozen-lockfile
+RUN bun install --frozen-lockfile --production
 
 # Copy all source code and configuration files
 COPY . .
 
 # Build the application with explicit working directory
-RUN bun run build --ignore-ts-errors
+RUN bun run build --ignore-ts-errors 
 
 # Production image
 FROM base AS runner
@@ -48,10 +48,9 @@ ENV NODE_ENV=production
 ENV HOST=0.0.0.0
 ENV PORT=3333
 
-# # Health check
-# HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-#   CMD node ace healthcheck || exit 1
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+    CMD node ace healthcheck || exit 1
 
 # Start the application
-# CMD ["bun", "start"]
-CMD ["ls", "-la", "/run/secrets/stayconnect_env"]
+CMD ["bun", "start"]
