@@ -28,7 +28,9 @@ export default class CheckSpotifyReleases extends BaseCommand {
       )
 
       if (stats.errors > 0) {
-        this.logger.warn(`${stats.errors} errors occurred during the check. See logs for details.`)
+        this.logger.warning(
+          `${stats.errors} errors occurred during the check. See logs for details.`
+        )
       }
     } catch (error) {
       this.logger.error('Failed to check Spotify releases: ' + error.message)

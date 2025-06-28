@@ -33,13 +33,8 @@ RUN addgroup --system --gid 1001 bunjs
 RUN adduser --system --uid 1001 adonisjs
 
 # Copy built application from builder stage
-COPY --from=builder --chown=adonisjs:bunjs /app/build ./build
+COPY --from=builder --chown=adonisjs:bunjs /app/build ./
 COPY --from=deps --chown=adonisjs:bunjs /app/node_modules ./node_modules
-COPY --from=builder --chown=adonisjs:bunjs /app/package.json /app/bun.lockb ./
-
-# Copy other necessary files
-COPY --from=builder --chown=adonisjs:bunjs /app/ace.js ./
-COPY --from=builder --chown=adonisjs:bunjs /app/adonisrc.ts ./
 
 # Switch to non-root user
 USER adonisjs
