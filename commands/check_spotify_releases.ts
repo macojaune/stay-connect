@@ -1,7 +1,6 @@
+import SpotifyService from '#services/spotify_service'
 import { args, BaseCommand } from '@adonisjs/core/ace'
 import type { CommandOptions } from '@adonisjs/core/types/ace'
-import SpotifyService from '#services/spotify_service'
-import logger from '@adonisjs/core/services/logger'
 
 export default class CheckSpotifyReleases extends BaseCommand {
   static commandName = 'spotify:check-releases'

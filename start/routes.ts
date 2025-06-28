@@ -7,7 +7,6 @@
 |
 */
 
-import { middleware } from '#start/kernel'
 import router from '@adonisjs/core/services/router'
 //healthcheck
 router.get('/health', '#controllers/health_checks_controller')
