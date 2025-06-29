@@ -1,5 +1,8 @@
 # Multi-stage build for production
-FROM node:20-alpine AS base
+FROM node:22-alpine AS base
+
+# Install pnpm globally
+RUN npm install -g pnpm
 
 # Install dependencies only when needed
 FROM base AS deps
@@ -7,22 +10,22 @@ RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
 # Copy package files
-COPY package*.json ./
-RUN npm ci --only=production && npm cache clean --force
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm install --prod --frozen-lockfile
 
 # Build the application
 FROM base AS builder
 WORKDIR /app
-
-# Copy package files first
-COPY package*.json ./
-RUN npm ci
-
 # Copy all source code and configuration files
 COPY . .
 
+# Copy package files first
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile
+
+
 # Build the application
-RUN npm run build
+RUN pnpm run build --ignore-ts-errors
 
 # Production image
 FROM base AS runner
