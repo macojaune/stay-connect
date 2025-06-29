@@ -14,7 +14,7 @@
   @stack('dumper')
   @viteReactRefresh()
   @inertiaHead()
-  @vite([ 'inertia/css/app.css','inertia/app/app.tsx', `inertia/pages/${page.component}.tsx`])
+  @vite(['inertia/app/app.tsx', `inertia/pages/${page.component}.tsx`])
   <script defer src="{{ umamiURL }}" data-website-id="{{ umamiID}}"></script>
 </head>
 
