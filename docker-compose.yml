@@ -22,7 +22,7 @@ services:
   adonis_app:
     image: ghcr.io/macojaune/stay-connect:latest
     secrets:
-      - source: stayconnect_env
+      - source: stayconnect_env3
         target: /app/.env
     environment:
       NODE_ENV: production
@@ -41,17 +41,16 @@ services:
         max_attempts: 3
         window: 120s
     healthcheck:
-      test:
-        ['CMD', 'wget', '--no-verbose', '--tries=1', '--spider', 'http://localhost:3333/health']
-      interval: 30s
-      timeout: 30s
-      retries: 3
+      test: ['CMD', 'wget', '--no-verbose', '--tries=1', '--spider', 'http://127.0.0.1:3333/health']
+      interval: 10s
+      timeout: 5s
+      retries: 5
       start_period: 40s
   # Migration and Command Runner Service
   adonis_migrations:
     image: ghcr.io/macojaune/stay-connect:latest
     secrets:
-      - source: stayconnect_env
+      - source: stayconnect_env3
         target: /app/.env
     environment:
       NODE_ENV: production
@@ -82,5 +81,5 @@ volumes:
   postgres_data:
     driver: local
 secrets:
-  stayconnect_env:
+  stayconnect_env3:
     external: true
