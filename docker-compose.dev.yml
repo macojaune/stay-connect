@@ -30,7 +30,7 @@ services:
       target: development
     container_name: stayconnect_adonis_dev
     env_file:
-      - path: .env.local
+      - path: .env.development.local
     restart: unless-stopped
     environment:
       NODE_ENV: development
@@ -38,7 +38,7 @@ services:
       HOST: 0.0.0.0
       LOG_LEVEL: debug
       DB_HOST: postgres
-      DB_PORT: 5433
+      # DB_PORT: 5433
       DB_USER: stayconnect_user
       DB_PASSWORD: stayconnect_password
       DB_DATABASE: stayconnect_dev
@@ -54,12 +54,12 @@ services:
       - stayconnect_dev_network
     volumes:
       - ./:/app
-      - ./uploads:/app/uploads
+      - /app/node_modules
     # command: npm run dev
 
   # Database Admin Interface
   adminer:
-    image: adminer:4.8.1
+    image: adminer:latest
     container_name: stayconnect_adminer_dev
     restart: unless-stopped
     ports:
@@ -69,25 +69,9 @@ services:
     depends_on:
       - postgres
 
-  # # Redis for caching and sessions (optional)
-  # redis:
-  #   image: redis:7-alpine
-  #   container_name: stayconnect_redis_dev
-  #   restart: unless-stopped
-  #   ports:
-  #     - "6379:6379"
-  #   networks:
-  #     - stayconnect_dev_network
-  #   volumes:
-  #     - redis_dev_data:/data
-  #   command: redis-server --appendonly yes
-
 volumes:
   postgres_dev_data:
     driver: local
-  redis_dev_data:
-    driver: local
-
 networks:
   stayconnect_dev_network:
     driver: bridge

@@ -92,5 +92,9 @@
       "./app/middleware/*.ts"
     ]
   },
-  "prettier": "@adonisjs/prettier-config"
+  "prettier": "@adonisjs/prettier-config",
+  "optionalDependencies": {
+    "@swc/core-linux-x64-gnu": "^1.12.7",
+    "@swc/core-linux-arm64-musl": "^1.12.7"
+  }
 }

@@ -1,5 +1,6 @@
 # Development Dockerfile for AdonisJS with hot reloading
-FROM --platform=linux/arm64 oven/bun:1.2-alpine AS development
+FROM arm64v8/node:22-alpine AS development
+
 # Install dependencies for development
 RUN apk add --no-cache \
     git \
@@ -8,22 +9,25 @@ RUN apk add --no-cache \
     g++ \
     libc6-compat
 
+# Install pnpm globally
+RUN npm install -g pnpm
+
 WORKDIR /app
 
 # Copy package files
-COPY package*.json bun.lockb ./
+COPY package.json pnpm-lock.yaml* ./
 
 # Install all dependencies (including dev dependencies)
-RUN bun install
+RUN pnpm install --frozen-lockfile
 
-# Copy source code
-COPY . .
+# Create uploads directory and set permissions
+RUN mkdir -p uploads && chown -R node:node /app
 
-# Create uploads directory
-# RUN mkdir -p uploads && chown -R node:node uploads
+# Copy source code with proper ownership
+COPY --chown=node:node . .
 
 # Switch to node user for security
-USER bun
+USER node
 
 # Expose ports
 EXPOSE 3333 9229
@@ -33,5 +37,6 @@ ENV NODE_ENV=development
 ENV HOST=0.0.0.0
 ENV PORT=3333
 
+
 # Start development server with hot reloading
-CMD ["bun", "dev"]
+CMD ["pnpm", "run", "dev"]

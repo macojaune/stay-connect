@@ -1,14 +1,14 @@
 import { healthChecks } from '#start/health'
-import type { HttpContext } from '@adonisjs/core/http'
+import { HttpContext } from '@adonisjs/core/http'
 
 export default class HealthChecksController {
   async handle({ response }: HttpContext) {
     const report = await healthChecks.run()
 
     if (report.isHealthy) {
-      return response.ok(report)
+      return response.ok(0)
     }
 
-    return response.serviceUnavailable(report)
+    return response.serviceUnavailable(1)
   }
 }
