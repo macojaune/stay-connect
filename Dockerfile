@@ -16,6 +16,11 @@ RUN pnpm install --prod --frozen-lockfile
 # Build the application
 FROM base AS builder
 WORKDIR /app
+
+# Accept build arguments for Umami
+ARG UMAMI_SCRIPT_URL
+ARG UMAMI_WEBSITE_ID
+
 # Copy all source code and configuration files
 COPY . .
 
@@ -23,6 +28,9 @@ COPY . .
 COPY package.json pnpm-lock.yaml ./
 RUN pnpm install --frozen-lockfile
 
+# Set Umami environment variables
+ENV UMAMI_SCRIPT_URL=$UMAMI_SCRIPT_URL
+ENV UMAMI_WEBSITE_ID=$UMAMI_WEBSITE_ID
 
 # Build the application
 RUN pnpm run build --ignore-ts-errors

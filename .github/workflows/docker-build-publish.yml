@@ -65,6 +65,9 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           platforms: linux/amd64,linux/arm64
+          build-args: |
+            UMAMI_URL=${{ secrets.UMAMI_URL }}
+            UMAMI_WEBSITE_ID=${{ secrets.UMAMI_WEBSITE_ID }}
 
       - name: Generate artifact attestation
         if: github.event_name != 'pull_request'
