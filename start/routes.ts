@@ -10,6 +10,14 @@
 import router from '@adonisjs/core/services/router'
 //healthcheck
 router.get('/health', '#controllers/health_checks_controller')
+
+// Secure cron endpoints
+router
+  .group(() => {
+    router.post('/spotify-releases', '#controllers/cron_controller.spotifyReleases')
+    router.get('/health', '#controllers/cron_controller.health')
+  })
+  .prefix('/cron')
 // Web routes
 router.get('/', '#controllers/home_controller.index')
 
