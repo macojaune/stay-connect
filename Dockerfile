@@ -58,5 +58,13 @@ ENV NODE_ENV=production
 ENV HOST=0.0.0.0
 ENV PORT=3333
 
+# Accept build arguments for Umami in production stage
+ARG UMAMI_SCRIPT_URL
+ARG UMAMI_WEBSITE_ID
+
+# Set Umami environment variables for production
+ENV UMAMI_SCRIPT_URL=$UMAMI_SCRIPT_URL
+ENV UMAMI_WEBSITE_ID=$UMAMI_WEBSITE_ID
+
 # Start the application using Node.js
 CMD ["node", "bin/server.js"]

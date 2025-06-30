@@ -18,6 +18,7 @@ router
     router.get('/health', '#controllers/cron_controller.health')
   })
   .prefix('/cron')
+  
 // Web routes
 router.get('/', '#controllers/home_controller.index')
 
