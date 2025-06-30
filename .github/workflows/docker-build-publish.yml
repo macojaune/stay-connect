@@ -66,7 +66,7 @@ jobs:
           cache-to: type=gha,mode=max
           platforms: linux/amd64,linux/arm64
           build-args: |
-            UMAMI_URL=${{ secrets.UMAMI_URL }}
+            UMAMI_SCRIPT_URL=${{ secrets.UMAMI_SCRIPT_URL }}
             UMAMI_WEBSITE_ID=${{ secrets.UMAMI_WEBSITE_ID }}
 
       - name: Generate artifact attestation
@@ -76,3 +76,25 @@ jobs:
           subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           subject-digest: ${{ steps.build.outputs.digest }}
           push-to-registry: true
+
+  deploy:
+    needs: build-and-publish
+    runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request' && (github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/tags/v'))
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Create env file
+        run: |
+          echo "GIT_COMMIT_HASH=${{ github.sha }}" > ./envfile
+
+      - name: Deploy to Docker Swarm
+        uses: cssnr/stack-deploy-action@v1.3
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          user: ${{ secrets.DEPLOY_USER }}
+          ssh_key: ${{ secrets.DEPLOY_SSH_KEY }}
+          name: stayconnect
+          file: docker-compose.yml
+          env_file: './envfile'
