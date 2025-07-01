@@ -50,7 +50,9 @@ export default function Home({ errors, timelineData, artists, remainingArtistsCo
 
   return (
     <AppLayout>
-      <Head title="StayConnect - Ne rate plus aucune sortie musicale" />
+      <Head>
+        {/* Page-specific meta tags can be added here if needed */}
+      </Head>
       <div className="w-full">
         <div className="flex flex-col items-center">
           {/* Hero Section */}

@@ -23,10 +23,10 @@ export default class HomeController {
 
     // Get artists for the tag list (limit to 30)
     const allArtists = await Artist.query().select('name')
-    
+
     // Shuffle the artists array and take first 30
     const shuffledArtists = allArtists.sort(() => Math.random() - 0.5).slice(0, 30)
-    
+
     // Get total artist count for the "et X autres" text
     const totalArtistCount = await Artist.query().count('* as total')
     const remainingArtists = Math.max(0, Number(totalArtistCount[0].$extras.total) - 30)
@@ -34,12 +34,16 @@ export default class HomeController {
     // Group releases by week
     const groupedReleases = this.groupReleasesByWeek(releases, now)
 
-    return inertia.render('home', {
-      errors: undefined,
-      timelineData: groupedReleases,
-      artists: shuffledArtists.map(artist => artist.name),
-      remainingArtistsCount: remainingArtists,
-    })
+    return inertia.render(
+      'home',
+      {
+        errors: undefined,
+        timelineData: groupedReleases,
+        artists: shuffledArtists.map((artist) => artist.name),
+        remainingArtistsCount: remainingArtists,
+      },
+      { page: { title: 'Accueil' } }
+    )
   }
 
   private groupReleasesByWeek(releases: Release[], now: DateTime) {

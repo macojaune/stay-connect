@@ -25,10 +25,10 @@ router.get('/', '#controllers/home_controller.index')
 // Newsletter routes
 router.post('/newsletter', '#controllers/home_controller.subscribe')
 
-// // API routes group
+// API routes group
 // router
-//   .group(() => {
-//     // Public routes
+  // .group(() => {
+    // Public routes
 //     router.get('/artists', 'artists_controller.index')
 //     router.get('/artists/:id', 'artists_controller.show')
 //     router.get('/releases', 'releases_controller.index')
@@ -80,5 +80,5 @@ router.post('/newsletter', '#controllers/home_controller.subscribe')
 //         router.get('/queue/health', 'queue_controller.health')
 //       })
 //       .use(middleware.auth())
-//   })
-//   .prefix('/api')
+  // })
+  // .prefix('/api')
