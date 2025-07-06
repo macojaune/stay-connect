@@ -22,7 +22,7 @@ services:
   adonis_app:
     image: ghcr.io/macojaune/stay-connect:latest
     secrets:
-      - source: stayconnect_env3
+      - source: stayconnect_env
         target: /app/.env
     environment:
       NODE_ENV: production
@@ -50,7 +50,7 @@ services:
   adonis_migrations:
     image: ghcr.io/macojaune/stay-connect:latest
     secrets:
-      - source: stayconnect_env3
+      - source: stayconnect_env
         target: /app/.env
     environment:
       NODE_ENV: production
@@ -81,5 +81,5 @@ volumes:
   postgres_data:
     driver: local
 secrets:
-  stayconnect_env3:
+  stayconnect_env:
     external: true
