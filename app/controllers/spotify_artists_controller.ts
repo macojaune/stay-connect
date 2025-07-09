@@ -24,7 +24,10 @@ export default class SpotifyArtistsController {
         })
       }
 
-      const results = await this.spotifyService.searchArtistsFormatted(query, parseInt(limit))
+      const results = await this.spotifyService.searchArtistsFormatted(
+        query,
+        Number.parseInt(limit)
+      )
 
       return response.json({
         success: true,
@@ -62,8 +65,6 @@ export default class SpotifyArtistsController {
           message: 'Please provide a valid Spotify artist ID',
         })
       }
-
-      
 
       // Check if artist already exists
       const existingArtist = await this.spotifyService.findExistingArtistBySpotifyId(spotifyId)
@@ -116,14 +117,14 @@ export default class SpotifyArtistsController {
    */
   async searchAndCreate({ request, response, auth }: HttpContext) {
     try {
-      const { query, spotifyId, description, categories, socials, limit = 10 } = request.only([
-        'query',
-        'spotifyId',
-        'description',
-        'categories',
-        'socials',
-        'limit',
-      ])
+      const {
+        query,
+        spotifyId,
+        description,
+        categories,
+        socials,
+        limit = 10,
+      } = request.only(['query', 'spotifyId', 'description', 'categories', 'socials', 'limit'])
 
       if (!query) {
         return response.badRequest({

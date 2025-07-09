@@ -1,14 +1,18 @@
 import { defineConfig } from '@adonisjs/auth'
 import { sessionGuard, sessionUserProvider } from '@adonisjs/auth/session'
 import type { InferAuthenticators, InferAuthEvents, Authenticators } from '@adonisjs/auth/types'
+import { ApiTokenGuard } from '../app/auth/guards/api_token_guard.js'
 
 const authConfig = defineConfig({
   default: 'web',
   guards: {
+    api: (ctx) => {
+      return new ApiTokenGuard(ctx)
+    },
     web: sessionGuard({
       useRememberMeTokens: false,
       provider: sessionUserProvider({
-        model: () => import('#models/user')
+        model: () => import('#models/user'),
       }),
     }),
   },

@@ -69,4 +69,5 @@ export default await Env.create(new URL('../', import.meta.url), {
   */
   CRON_API_KEY: Env.schema.string.optional(),
   CRON_ALLOWED_IPS: Env.schema.string.optional(),
+  API_KEY: Env.schema.string.optional(),
 })
