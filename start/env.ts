@@ -62,6 +62,7 @@ export default await Env.create(new URL('../', import.meta.url), {
   */
   UMAMI_SCRIPT_URL: Env.schema.string.optional(),
   UMAMI_WEBSITE_ID: Env.schema.string.optional(),
+  AXEPTIO_CLIENT_ID: Env.schema.string.optional(),
   /*
   |----------------------------------------------------------
   | Variables for configuring cron security

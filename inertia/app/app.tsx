@@ -12,7 +12,7 @@ createInertiaApp({
   progress: { color: '#5468FF' },
 
   title: (title) => `${title} - ${appName}`,
-
+  
   resolve: (name) => {
     return resolvePageComponent(
       `../pages/${name}.tsx`,

@@ -42,7 +42,7 @@ export default class HomeController {
         artists: shuffledArtists.map((artist) => artist.name),
         remainingArtistsCount: remainingArtists,
       },
-      { page: { title: 'Accueil' } }
+      { title: 'Accueil' }
     )
   }
 
@@ -52,9 +52,9 @@ export default class HomeController {
     releases.forEach((release) => {
       const releaseDate = DateTime.fromJSDate(release.date.toJSDate())
       const weekStart = releaseDate.startOf('week')
-      const weekKey = weekStart.toISODate()
+      const weekKey = weekStart.toISODate() || now.toISODate()
 
-      if (!groups[weekKey]) {
+      if (!groups?.[weekKey!]) {
         const isThisWeek = weekStart.hasSame(now.startOf('week'), 'day')
         const isNextWeek = weekStart.hasSame(now.plus({ weeks: 1 }).startOf('week'), 'day')
         const isPastWeek = weekStart < now.startOf('week')
@@ -80,7 +80,7 @@ export default class HomeController {
           subtitle = 'Retour sur les temps forts'
         }
 
-        groups[weekKey] = {
+        groups[weekKey!] = {
           title,
           subtitle,
           isUpcoming,
@@ -100,7 +100,7 @@ export default class HomeController {
         imageUrl: release.cover,
       }
 
-      groups[weekKey].news.push(newsItem)
+      groups[weekKey!].news.push(newsItem)
     })
 
     // Convert to array and sort by week
@@ -162,6 +162,6 @@ export default class HomeController {
       })
     }
 
-    return inertia.render('home', { errors: errors?.messages })
+    return inertia.render('home', { errors: errors?.messages }, { title: 'Accueil' })
   }
 }

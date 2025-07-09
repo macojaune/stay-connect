@@ -1,20 +1,15 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Head } from '@inertiajs/react'
 import { Navigation } from '~/components/Navigation'
 import { usePage } from '@inertiajs/react'
 import { Footer } from '~/components/Footer'
-
 interface AppLayoutProps {
   children: React.ReactNode
   title?: string
   description?: string
 }
 
-export default function AppLayout({
-  children,
-  title = 'StayConnect',
-  description,
-}: AppLayoutProps) {
+export default function AppLayout({ children, description }: AppLayoutProps) {
   return (
     <>
       <Head>
