@@ -17,7 +17,12 @@ const shieldConfig = defineConfig({
    */
   csrf: {
     enabled: true,
-    exceptRoutes: ['/cron/*', '/cron/spotify-releases', '/cron/health'],
+    exceptRoutes: [
+      '/cron/*',
+      '/cron/spotify-releases',
+      '/cron/health',
+      '/api/spotify/artists/create',
+    ],
     enableXsrfCookie: true,
     methods: ['POST', 'PUT', 'PATCH', 'DELETE'],
   },
