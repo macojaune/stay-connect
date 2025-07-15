@@ -13,7 +13,6 @@ import type {
   SpotifyArtist,
   SpotifySearchResult,
   SpotifyTokenResponse,
-  SpotifyTrack,
 } from '@/types/index.js'
 
 export default class SpotifyService {
@@ -188,7 +187,7 @@ export default class SpotifyService {
         if (!artist) {
           throw new Error(`Artist with ID ${artistId} not found`)
         }
-        await this.checkArtistForNewReleases(artist)
+        await this.checkArtistForNewReleases(artist, stats)
         stats.processed++
         return stats
       }
@@ -199,7 +198,7 @@ export default class SpotifyService {
 
       for (const artist of artists) {
         try {
-          await this.checkArtistForNewReleases(artist)
+          await this.checkArtistForNewReleases(artist, stats)
           stats.processed++
 
           // Add delay to respect rate limits
@@ -223,7 +222,10 @@ export default class SpotifyService {
   /**
    * Check for new releases for a specific artist
    */
-  private async checkArtistForNewReleases(artist: Artist): Promise<void> {
+  private async checkArtistForNewReleases(
+    artist: Artist,
+    stats: { processed: number; newReleases: number; errors: number }
+  ): Promise<void> {
     if (!artist.spotifyId) {
       return
     }
@@ -248,13 +250,9 @@ export default class SpotifyService {
         const existingRelease = await Release.query().where('spotifyId', album.id).first()
 
         if (!existingRelease) {
-          let fullAlbum
-          if (album.album_type === 'single') {
-            fullAlbum = await this.getTrack(album.id)
-          } else {
-            fullAlbum = await this.getAlbum(album.id)
-          }
+          const fullAlbum = await this.getAlbum(album.id)
           await this.createReleaseFromSpotify(artist, fullAlbum, album.album_type === 'single')
+          stats.newReleases++
         }
       }
     } catch (error) {
@@ -268,34 +266,30 @@ export default class SpotifyService {
    */
   private async createReleaseFromSpotify(
     artist: Artist,
-    albumOrTrack: SpotifyAlbum | SpotifyTrack,
+    album: SpotifyAlbum,
     isSingle: boolean
   ): Promise<Release> {
     try {
-      let album
-      if (isSingle) {
-        album = (albumOrTrack as SpotifyTrack).album
-      } else album = albumOrTrack as SpotifyAlbum
-
-      const release = await Release.create({
-        title: isSingle ? albumOrTrack.name : album.name,
+      const releaseData = {
+        title: isSingle ? album.tracks.items[0].name : album.name,
         description: `${album.album_type.charAt(0).toUpperCase() + album.album_type.slice(1)} by ${artist.name}`,
         date: DateTime.fromISO(album.release_date),
         type: album.album_type,
-        urls: Object.values(albumOrTrack.external_urls).map((url) => url),
+        urls: Object.values(album.external_urls).map((url) => url),
         cover: album.images[0]?.url || null,
         isSecret: false,
         isAutomated: true, // Mark as automatically created
-        spotifyId: albumOrTrack.id,
+        spotifyId: album.id,
         artistId: artist.id,
-      })
+      }
+
+      const release = await Release.create(releaseData)
 
       logger.info(`Created new release: ${album.name} by ${artist.name}`)
-
       // Create features for all artists on the album/track
-      for (const spotifyArtist of albumOrTrack.artists) {
+      for (const spotifyArtist of album.artists) {
         // Exclude the main artist of the release from being added as a feature
-        if (spotifyArtist.id === artist.id) {
+        if (spotifyArtist.id === artist.spotifyId) {
           continue
         }
 

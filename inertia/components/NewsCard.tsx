@@ -6,12 +6,12 @@ interface NewsCardProps {
   isUpcoming?: boolean
 }
 
-export default function NewsCard({ item, isUpcoming =false }: NewsCardProps) {
+export default function NewsCard({ item, isUpcoming = false }: NewsCardProps) {
   const { title, artist, date, type, category, imageUrl, featuredArtists } = item
-
+  console.log(featuredArtists, title)
   return (
     <Tooltip>
-      <TooltipTrigger  asChild>
+      <TooltipTrigger asChild>
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow duration-300 cursor-pointer">
           <div className="flex items-center p-2 gap-4">
             {/* Square Album Cover */}
