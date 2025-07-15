@@ -5,80 +5,15 @@ import Release from '#models/release'
 import logger from '@adonisjs/core/services/logger'
 import ky from 'ky'
 import ArtistService from '#services/artist_service'
-
-export interface SpotifyArtist {
-  id: string
-  name: string
-  genres: string[]
-  images: Array<{
-    url: string
-    height: number
-    width: number
-  }>
-  followers: {
-    total: number
-  }
-  external_urls: {
-    [key: string]: string
-  }
-}
-
-export interface SpotifyAlbum {
-  id: string
-  name: string
-  release_date: string
-  album_type: 'album' | 'single' | 'compilation'
-  images: Array<{
-    url: string
-    height: number
-    width: number
-  }>
-  artists: Array<{
-    id: string
-    name: string
-  }>
-  tracks: {
-    items: Array<{
-      id: string
-      name: string
-      duration_ms: number
-      preview_url?: string
-      track_number: number
-    }>
-  }
-}
-
-export interface SpotifyTokenResponse {
-  access_token: string
-  token_type: string
-  expires_in: number
-}
-
-// Search-related interfaces
-export interface SpotifySearchResult {
-  id: string
-  name: string
-  genres: string[]
-  followers: number
-  images: Array<{
-    url: string
-    height: number
-    width: number
-  }>
-  spotifyUrl: string
-}
-
-export interface CreateArtistOptions {
-  description?: string
-  socials?: string[]
-  categories?: string[]
-}
-
-export interface SearchAndCreateResult {
-  searchResults: SpotifySearchResult[]
-  createdArtist?: Artist
-  error?: string
-}
+import type {
+  CreateArtistOptions,
+  SearchAndCreateResult,
+  SpotifyAlbum,
+  SpotifyArtist,
+  SpotifySearchResult,
+  SpotifyTokenResponse,
+  SpotifyTrack,
+} from '@/types/index.js'
 
 export default class SpotifyService {
   private accessToken: string | null = null
@@ -106,7 +41,7 @@ export default class SpotifyService {
             const response = error.response
             if (response?.status === 429) {
               const retryAfter = response.headers.get('Retry-After')
-              const delay = retryAfter ? parseInt(retryAfter) * 1000 : 1000
+              const delay = retryAfter ? Number.parseInt(retryAfter) * 1000 : 1000
               logger.warn(`Rate limited. Waiting ${delay}ms before retry ${retryCount + 1}`)
               await new Promise((resolve) => setTimeout(resolve, delay))
             }
@@ -194,7 +129,7 @@ export default class SpotifyService {
     } = {}
   ): Promise<{ items: SpotifyAlbum[] }> {
     const params = new URLSearchParams({
-      // include_groups: options.includeGroups?.join(',') || 'album,single,',
+      include_groups: options.includeGroups?.join(',') || 'album,single,',
       // market: options.market || 'FR',
       limit: (options.limit || 50).toString(),
       offset: (options.offset || 0).toString(),
@@ -212,6 +147,12 @@ export default class SpotifyService {
    */
   async getAlbum(spotifyId: string): Promise<SpotifyAlbum> {
     return this.makeRequest<SpotifyAlbum>(`/albums/${spotifyId}`)
+  }
+  /**
+   * Get track details
+   */
+  async getTrack(spotifyId: string): Promise<SpotifyAlbum> {
+    return this.makeRequest<SpotifyAlbum>(`/tracks/${spotifyId}`)
   }
 
   /**
@@ -297,7 +238,7 @@ export default class SpotifyService {
       for (const album of albums.items) {
         const releaseDate = DateTime.fromISO(album.release_date)
 
-        // Only check releases from the last 2 years
+        // Only check releases from the last 4 days
         if (releaseDate < daysAgo) {
           continue
         }
@@ -306,9 +247,13 @@ export default class SpotifyService {
         const existingRelease = await Release.query().where('spotifyId', album.id).first()
 
         if (!existingRelease) {
-          // Get full album details
-          const fullAlbum = await this.getAlbum(album.id)
-          await this.createReleaseFromSpotify(artist, fullAlbum)
+          let fullAlbum
+          if (album.album_type === 'single') {
+            fullAlbum = await this.getTrack(album.id)
+          } else {
+            fullAlbum = await this.getAlbum(album.id)
+          }
+          await this.createReleaseFromSpotify(artist, fullAlbum, album.album_type === 'single')
         }
       }
     } catch (error) {
@@ -320,18 +265,27 @@ export default class SpotifyService {
   /**
    * Create a new release from Spotify data
    */
-  private async createReleaseFromSpotify(artist: Artist, album: SpotifyAlbum): Promise<Release> {
+  private async createReleaseFromSpotify(
+    artist: Artist,
+    albumOrTrack: SpotifyAlbum | SpotifyTrack,
+    isSingle: boolean
+  ): Promise<Release> {
     try {
+      let album
+      if (isSingle) {
+        album = (albumOrTrack as SpotifyTrack).album
+      } else album = albumOrTrack as SpotifyAlbum
+
       const release = await Release.create({
-        title: album.name,
+        title: isSingle ? albumOrTrack.name : album.name,
         description: `${album.album_type.charAt(0).toUpperCase() + album.album_type.slice(1)} by ${artist.name}`,
         date: DateTime.fromISO(album.release_date),
         type: album.album_type,
-        urls: [`https://open.spotify.com/album/${album.id}`],
+        urls: Object.values(albumOrTrack.external_urls).map((url) => url),
         cover: album.images[0]?.url || null,
         isSecret: false,
         isAutomated: true, // Mark as automatically created
-        spotifyId: album.id,
+        spotifyId: albumOrTrack.id,
         artistId: artist.id,
       })
 

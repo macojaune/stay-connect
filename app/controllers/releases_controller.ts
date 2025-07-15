@@ -7,9 +7,7 @@ export default class ReleasesController {
    * Display a list of releases
    */
   async index({ response }: HttpContext) {
-    const releases = await Release.query()
-      .preload('artist')
-      .preload('categories')
+    const releases = await Release.query().preload('artist').preload('categories')
     return response.json(releases)
   }
 
@@ -26,7 +24,7 @@ export default class ReleasesController {
       'cover',
       'isSecret',
       'isAutomated',
-      'artistId'
+      'artistId',
     ])
 
     const release = await Release.create(data)
@@ -59,9 +57,9 @@ export default class ReleasesController {
       'urls',
       'cover',
       'isSecret',
-      'isAutomated'
+      'isAutomated',
     ])
-    
+
     await release.merge(data).save()
     await release.load('artist')
     await release.load('categories')
@@ -84,7 +82,7 @@ export default class ReleasesController {
     const release = await Release.findOrFail(params.id)
     const categoryId = request.input('categoryId')
     const category = await Category.findOrFail(categoryId)
-    
+
     await release.related('categories').attach([category.id])
     await release.load('categories')
     return response.json(release)
