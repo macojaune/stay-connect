@@ -4,6 +4,7 @@ import Artist from '#models/artist'
 import Release from '#models/release'
 import logger from '@adonisjs/core/services/logger'
 import ky from 'ky'
+import Feature from '#models/feature'
 import ArtistService from '#services/artist_service'
 import type {
   CreateArtistOptions,
@@ -290,6 +291,30 @@ export default class SpotifyService {
       })
 
       logger.info(`Created new release: ${album.name} by ${artist.name}`)
+
+      // Create features for all artists on the album/track
+      for (const spotifyArtist of albumOrTrack.artists) {
+        // Exclude the main artist of the release from being added as a feature
+        if (spotifyArtist.id === artist.id) {
+          continue
+        }
+
+        const existingArtist = await Artist.findBy('spotifyId', spotifyArtist.id)
+        if (existingArtist) {
+          await Feature.create({
+            releaseId: release.id,
+            artistId: existingArtist.id,
+            artistName: null,
+          })
+        } else {
+          await Feature.create({
+            releaseId: release.id,
+            artistId: null,
+            artistName: spotifyArtist.name,
+          })
+        }
+      }
+
       return release
     } catch (error) {
       logger.error(`Failed to create release for album ${album.name}: ${error.message}`)

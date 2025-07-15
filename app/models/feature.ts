@@ -20,7 +20,10 @@ export default class Feature extends BaseModel {
   declare releaseId: string
 
   @column()
-  declare artistId: string
+  declare artistId: string | null
+
+  @column()
+  declare artistName: string | null
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime

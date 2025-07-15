@@ -19,6 +19,9 @@ export default class HomeController {
       .where('isSecret', false)
       .preload('artist')
       .preload('categories')
+      .preload('features', (query) => {
+        query.preload('artist')
+      })
       .orderBy('date', 'desc')
 
     // Get artists for the tag list (limit to 30)
@@ -98,6 +101,7 @@ export default class HomeController {
         type: release.type || 'release',
         category: release.categories?.[0]?.name || 'Musique',
         imageUrl: release.cover,
+        featuredArtists: release.features.map((feature) => feature.artistName || feature.artist?.name!),
       }
 
       groups[weekKey!].news.push(newsItem)

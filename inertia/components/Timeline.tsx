@@ -1,14 +1,15 @@
 import { useState } from 'react'
 import NewsCard from '~/components/NewsCard'
 
-interface NewsItem {
+export interface NewsItem {
   id: string
   title: string
   artist: string
   date: string
-  type: string // single, album, event
-  category: string // genre or event type
+  type: string
+  category: string
   imageUrl?: string
+  featuredArtists: string[]
 }
 
 interface TimelineSection {
@@ -122,13 +123,8 @@ export default function Timeline({ sections = [] }: TimelineProps) {
                           {groupedByDay[day].map((newsItem) => (
                             <NewsCard
                               key={newsItem.id}
-                              title={newsItem.title}
-                              artist={newsItem.artist}
-                              date={newsItem.date}
-                              type={newsItem.type}
-                              category={newsItem.category}
-                              imageUrl={newsItem.imageUrl}
-                              isUpcoming={section.isUpcoming}
+                            item={newsItem}
+                              isUpcoming={section?.isUpcoming}
                             />
                           ))}
                         </div>
@@ -173,12 +169,7 @@ export default function Timeline({ sections = [] }: TimelineProps) {
                       newsToShow.map((newsItem) => (
                         <NewsCard
                           key={newsItem.id}
-                          title={newsItem.title}
-                          artist={newsItem.artist}
-                          date={newsItem.date}
-                          type={newsItem.type}
-                          category={newsItem.category}
-                          imageUrl={newsItem.imageUrl}
+                         item={newsItem}
                           isUpcoming={section.isUpcoming}
                         />
                       ))
@@ -289,12 +280,7 @@ export default function Timeline({ sections = [] }: TimelineProps) {
                     todayNewsToShow.map((newsItem) => (
                       <NewsCard
                         key={newsItem.id}
-                        title={newsItem.title}
-                        artist={newsItem.artist}
-                        date={newsItem.date}
-                        type={newsItem.type}
-                        category={newsItem.category}
-                        imageUrl={newsItem.imageUrl}
+                        item={newsItem} 
                         isUpcoming={section.isUpcoming}
                       />
                     ))
