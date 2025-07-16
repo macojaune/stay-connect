@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.1.0](https://github.com/macojaune/stay-connect/compare/v1.0.0...v1.1.0) (2025-07-16)
+
+
+### Features
+
+* add axeptio ([a8bb3c7](https://github.com/macojaune/stay-connect/commit/a8bb3c70b80208e2d00f58e080e8d654c4219316))
+* add featurings ([6ad2b6b](https://github.com/macojaune/stay-connect/commit/6ad2b6ba8faa36d1a9e0b33dfeb4fb775f0724e4))
+* add n8n endpoint search/add artist ([5194edf](https://github.com/macojaune/stay-connect/commit/5194edf1f6b6fa82668bcc27bf0cfd22c0594cab))
+* exept csrf on artist/create ([a02052e](https://github.com/macojaune/stay-connect/commit/a02052ee43fdc9c2c27da4c083419fec12648296))
+* update release fetching and creation ([77a09d5](https://github.com/macojaune/stay-connect/commit/77a09d55d8f5daf820cfd631b2002e9d1f5340c1))
+
 ## 1.0.0 (2025-07-06)
 
 
