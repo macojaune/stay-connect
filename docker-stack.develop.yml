@@ -1,0 +1,85 @@
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${DB_DATABASE}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_PORT: ${DB_PORT}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - '5454:5432'
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${DB_USER} -d ${DB_DATABASE}']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # AdonisJS Application
+  adonis_app:
+    image: ghcr.io/macojaune/stay-connect:develop
+    secrets:
+      - source: stayconnect_env_develop
+        target: /app/.env
+    environment:
+      NODE_ENV: production
+    ports:
+      - '3334:3333'
+    depends_on:
+      - postgres
+    volumes:
+      - /home/ubuntu/stayConnect/uploads:/app/uploads
+    deploy:
+      update_config:
+        order: start-first
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+    healthcheck:
+      test: ['CMD', 'wget', '--no-verbose', '--tries=1', '--spider', 'http://127.0.0.1:3333/health']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+  # Migration and Command Runner Service
+  adonis_migrations:
+    image: ghcr.io/macojaune/stay-connect:latest
+    secrets:
+      - source: stayconnect_env_develop
+        target: /app/.env
+    environment:
+      NODE_ENV: production
+    depends_on:
+      - postgres
+    volumes:
+      - /home/ubuntu/stayConnect/uploads:/app/uploads
+    deploy:
+      replicas: 0 # Don't run by default
+      restart_policy:
+        condition: none
+    command: ['tail', '-f', '/dev/null'] # Keep container alive
+
+  # Development Database Admin (optional)
+  adminer:
+    image: adminer:latest
+    ports:
+      - '8089:8080'
+    environment:
+      ADMINER_DEFAULT_DB_DRIVER: pgsql
+      ADMINER_DESIGN: dracula
+      ADMINER_DEFAULT_DB_HOST: postgres
+      ADMINER_DEFAULT_DB_NAME: ${DB_DATABASE}
+    depends_on:
+      - postgres
+
+volumes:
+  postgres_data:
+    driver: local
+secrets:
+  stayconnect_env_develop:
+    external: true
