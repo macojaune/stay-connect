@@ -8,7 +8,7 @@ import { Button } from '~/components/ui/Button'
 import { FormEvent, useMemo, useState } from 'react'
 import { objectify } from 'radash'
 
-type HomeProps = InferPageProps<HomeController, 'index'> & { 
+type HomeProps = InferPageProps<HomeController, 'index'> & {
   errors?: { [key: string]: string }
   artists: string[]
   remainingArtistsCount: number
@@ -50,9 +50,7 @@ export default function Home({ errors, timelineData, artists, remainingArtistsCo
 
   return (
     <AppLayout>
-      <Head>
-        {/* Page-specific meta tags can be added here if needed */}
-      </Head>
+      <Head>{/* Page-specific meta tags can be added here if needed */}</Head>
       <div className="w-full">
         <div className="flex flex-col items-center">
           {/* Hero Section */}
@@ -140,7 +138,7 @@ export default function Home({ errors, timelineData, artists, remainingArtistsCo
                   </p>
                 </div>
               </div>
-              
+
               {/* Artist Tags Section */}
               <div className="text-center">
                 <h3 className="text-2xl font-semibold mb-6 text-zinc-800">
@@ -243,7 +241,7 @@ export default function Home({ errors, timelineData, artists, remainingArtistsCo
                       error={fieldErrors?.email?.message}
                       required
                     />
-                    <Button 
+                    {/* <Button 
                       type="submit" 
                       className="mt-auto" 
                       disabled={userForm.processing}
@@ -251,7 +249,7 @@ export default function Home({ errors, timelineData, artists, remainingArtistsCo
                       data-umami-event-type="user"
                     >
                       {userForm.processing ? 'Inscription...' : 'Rejoindre'}
-                    </Button>
+                    </Button> */}
                   </div>
                 </form>
 
@@ -302,7 +300,7 @@ export default function Home({ errors, timelineData, artists, remainingArtistsCo
                       error={fieldErrors?.email?.message}
                       required
                     />
-                    <Button 
+                    {/* <Button 
                       type="submit" 
                       variant="secondary" 
                       disabled={artistForm.processing}
@@ -310,7 +308,7 @@ export default function Home({ errors, timelineData, artists, remainingArtistsCo
                       data-umami-event-type="artist"
                     >
                       {artistForm.processing ? 'Inscription...' : 'Rejoindre'}
-                    </Button>
+                    </Button> */}
                   </div>
                 </form>
               </div>

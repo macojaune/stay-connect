@@ -8,7 +8,6 @@ interface NewsCardProps {
 
 export default function NewsCard({ item, isUpcoming = false }: NewsCardProps) {
   const { title, artist, date, type, category, imageUrl, featuredArtists } = item
-  console.log(featuredArtists, title)
   return (
     <Tooltip>
       <TooltipTrigger asChild>
