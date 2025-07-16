@@ -95,6 +95,6 @@ jobs:
           host: ${{ secrets.DEPLOY_HOST }}
           user: ${{ secrets.DEPLOY_USER }}
           ssh_key: ${{ secrets.DEPLOY_SSH_KEY }}
-          name: stayconnect
+          name: stayconnect${{ github.ref_name == 'develop' && format('-{0}', github.ref_name) || '' }}
           file: docker-compose.yml
           env_file: './envfile'
