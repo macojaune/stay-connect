@@ -1,14 +1,15 @@
+import React from 'react'
 import { Head, useForm } from '@inertiajs/react'
-import AppLayout from '../layouts/AppLayout'
-import Timeline from '../components/Timeline'
+import AppLayout from '~/layouts/AppLayout'
+import Timeline from '~/components/Timeline'
 import type { InferPageProps } from '@adonisjs/inertia/types'
 import type HomeController from '#controllers/home_controller'
 import { Input } from '~/components/ui/Input'
-import { Button } from '~/components/ui/Button'
 import { FormEvent, useMemo, useState } from 'react'
 import { objectify } from 'radash'
+import { Button } from '~/components/ui/Button'
 
-type HomeProps = InferPageProps<HomeController, 'index'> & { 
+type HomeProps = InferPageProps<HomeController, 'index'> & {
   errors?: { [key: string]: string }
   artists: string[]
   remainingArtistsCount: number
@@ -24,11 +25,13 @@ export default function Home({ errors, timelineData, artists, remainingArtistsCo
     e.preventDefault()
     userForm.post('/newsletter', {
       preserveScroll: true,
-      preserveUrl: true,
       onSuccess: () => {
         userForm.reset()
         setUserSuccess(true)
         setTimeout(() => setUserSuccess(false), 5000)
+      },
+      onError: (e) => {
+        userForm.setError('email', e)
       },
     })
   }
@@ -43,16 +46,14 @@ export default function Home({ errors, timelineData, artists, remainingArtistsCo
       },
     })
   }
-  const fieldErrors = useMemo(() => {
-    if (!!errors) return objectify(errors, (e) => e?.field)
-    return errors
-  }, [errors])
+  // const fieldErrors = useMemo(() => {
+  //   if (!!errors) return objectify(errors, (e) => e?.field)
+  //   return errors
+  // }, [errors])
 
   return (
     <AppLayout>
-      <Head>
-        {/* Page-specific meta tags can be added here if needed */}
-      </Head>
+      <Head>{/* Page-specific meta tags can be added here if needed */}</Head>
       <div className="w-full">
         <div className="flex flex-col items-center">
           {/* Hero Section */}
@@ -140,7 +141,7 @@ export default function Home({ errors, timelineData, artists, remainingArtistsCo
                   </p>
                 </div>
               </div>
-              
+
               {/* Artist Tags Section */}
               <div className="text-center">
                 <h3 className="text-2xl font-semibold mb-6 text-zinc-800">
@@ -224,28 +225,30 @@ export default function Home({ errors, timelineData, artists, remainingArtistsCo
 
                   <div className="space-y-3 flex flex-col h-full">
                     <Input
+                      id="username"
                       type="text"
                       name="username"
                       placeholder="macojaune"
                       label="Nom d'utilisateur"
                       value={userForm.data.username}
                       onChange={(e) => userForm.setData('username', e.target.value)}
-                      error={fieldErrors?.username?.message}
+                      error={userForm.errors?.username}
                       required
                     />
                     <Input
+                      id="email"
                       type="email"
                       name="email"
                       placeholder="hello@macojaune.com"
                       label="E-mail"
                       value={userForm.data.email}
                       onChange={(e) => userForm.setData('email', e.target.value)}
-                      error={fieldErrors?.email?.message}
+                      error={userForm.errors?.email}
                       required
                     />
-                    <Button 
-                      type="submit" 
-                      className="mt-auto" 
+                    <Button
+                      type="submit"
+                      className="mt-auto"
                       disabled={userForm.processing}
                       data-umami-event="newsletter-submit"
                       data-umami-event-type="user"
@@ -258,6 +261,7 @@ export default function Home({ errors, timelineData, artists, remainingArtistsCo
                 {/* Artist Lead Form */}
                 <form
                   onSubmit={handleArtistSubmit}
+                  method="post"
                   className="group relative rounded-2xl p-6 sm:p-8 bg-brand shadow-lg flex flex-col"
                 >
                   <h3 className="text-lg font-semibold text-white mb-4 text-center">
@@ -275,36 +279,39 @@ export default function Home({ errors, timelineData, artists, remainingArtistsCo
 
                   <div className="space-y-3 flex flex-col h-full">
                     <Input
+                      id="artistName"
                       type="text"
                       name="artistName"
-                      label="Nom d'artiste / Équipe"
                       placeholder="ex: Don Snoop"
                       value={artistForm.data.artistName}
                       onChange={(e) => artistForm.setData('artistName', e.target.value)}
-                      error={fieldErrors?.artistName?.message}
+                      error={artistForm?.errors?.artistName}
+                      required
                     />
                     <Input
+                      id="role"
                       type="text"
                       name="role"
                       label="Role du contact"
                       placeholder="ex: Artiste, Manager, Attaché de presse..."
                       value={artistForm.data.role}
                       onChange={(e) => artistForm.setData('role', e.target.value)}
-                      error={fieldErrors?.role?.message}
+                      error={artistForm?.errors?.role}
+                      required
                     />
                     <Input
+                      id="artistEmail"
                       type="email"
                       name="email"
-                      label="Email de contact"
                       placeholder="gel@ayo.gwo"
                       value={artistForm.data.email}
                       onChange={(e) => artistForm.setData('email', e.target.value)}
-                      error={fieldErrors?.email?.message}
-                      required
+                      error={artistForm?.errors?.email}
+                      // required
                     />
-                    <Button 
-                      type="submit" 
-                      variant="secondary" 
+                    <Button
+                      type="submit"
+                      variant="secondary"
                       disabled={artistForm.processing}
                       data-umami-event="newsletter-submit"
                       data-umami-event-type="artist"

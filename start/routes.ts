@@ -22,7 +22,7 @@ router
   .prefix('/cron')
 
 // Web routes
-router.get('/', '#controllers/home_controller.index')
+router.get('/', '#controllers/home_controller.index').as('home')
 
 // Newsletter routes
 router.post('/newsletter', '#controllers/home_controller.subscribe')
@@ -39,7 +39,7 @@ router
         router.post('/spotify/artists/create', [SpotifyArtistsController, 'create'])
       })
       .use(middleware.auth({ guards: ['api'] }))
-    
+
     // Public routes
     //     router.get('/artists', 'artists_controller.index')
     //     router.get('/artists/:id', 'artists_controller.show')
