@@ -70,6 +70,7 @@
     "@adonisjs/vite": "^4.0.0",
     "@getbrevo/brevo": "^2.2.0",
     "@inertiajs/react": "^2.0.11",
+    "@radix-ui/react-slot": "^1.2.3",
     "@radix-ui/react-tooltip": "^1.2.7",
     "@tailwindcss/vite": "^4.1.8",
     "@vinejs/vine": "^3.0.1",
@@ -89,12 +90,13 @@
   "hotHook": {
     "boundaries": [
       "./app/controllers/**/*.ts",
-      "./app/middleware/*.ts"
+      "./app/middleware/*.ts",
+      "./app/services/*.ts"
     ]
   },
   "prettier": "@adonisjs/prettier-config",
   "optionalDependencies": {
-    "@swc/core-linux-x64-gnu": "^1.12.7",
-    "@swc/core-linux-arm64-musl": "^1.12.7"
+    "@swc/core-linux-arm64-musl": "^1.12.7",
+    "@swc/core-linux-x64-gnu": "^1.12.7"
   }
 }

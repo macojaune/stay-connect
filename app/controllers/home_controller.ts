@@ -5,8 +5,6 @@ import { ContactsApi, ContactsApiApiKeys } from '@getbrevo/brevo'
 import Release from '#models/release'
 import Artist from '#models/artist'
 import { DateTime } from 'luxon'
-import logger from '@adonisjs/core/services/logger'
-import { objectify } from 'radash'
 
 export default class HomeController {
   async index({ inertia, session }: HttpContext) {
@@ -21,8 +19,8 @@ export default class HomeController {
       .where('isSecret', false)
       .preload('artist')
       .preload('categories')
+      .preload('features')
       .orderBy('date', 'desc')
-
     // Get artists for the tag list (limit to 30)
     const allArtists = await Artist.query().select('name')
 
@@ -105,6 +103,9 @@ export default class HomeController {
         type: release.type || 'release',
         category: release.categories?.[0]?.name || 'Musique',
         imageUrl: release.cover,
+        featuredArtists: release.features.map(
+          (feature) => feature.artistName || feature.artist?.name!
+        ),
       }
 
       groups[weekKey!].news.push(newsItem)

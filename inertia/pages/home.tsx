@@ -246,6 +246,7 @@ export default function Home({ errors, timelineData, artists, remainingArtistsCo
                       error={userForm.errors?.email}
                       required
                     />
+
                     <Button
                       type="submit"
                       className="mt-auto"
@@ -307,8 +308,9 @@ export default function Home({ errors, timelineData, artists, remainingArtistsCo
                       value={artistForm.data.email}
                       onChange={(e) => artistForm.setData('email', e.target.value)}
                       error={artistForm?.errors?.email}
-                      // required
+                       required
                     />
+
                     <Button
                       type="submit"
                       variant="secondary"

@@ -19,8 +19,11 @@ export default class Feature extends BaseModel {
   @column()
   declare releaseId: string
 
-  @column()
-  declare artistId: string
+  @column({ columnName: 'artist_id' })
+  declare artistId: string | null
+
+  @column({ columnName: 'artist_name' })
+  declare artistName: string | null
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
@@ -31,6 +34,8 @@ export default class Feature extends BaseModel {
   @belongsTo(() => Release)
   declare release: BelongsTo<typeof Release>
 
-  @belongsTo(() => Artist)
+  @belongsTo(() => Artist, {
+    foreignKey: 'artistId',
+  })
   declare artist: BelongsTo<typeof Artist>
 }

@@ -91,8 +91,8 @@
   <script defer src="{{env.get('UMAMI_SCRIPT_URL')}}" data-website-id="{{env.get('UMAMI_WEBSITE_ID')}}" />
   @endif
 
-  @viteReactRefresh()
   @inertiaHead()
+  @viteReactRefresh()
   @vite(['inertia/app/app.tsx', `inertia/pages/${page.component}.tsx`])
   @stack('dumper')
 </head>

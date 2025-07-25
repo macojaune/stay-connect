@@ -1,27 +1,16 @@
 import { Tooltip, TooltipContent, TooltipTrigger } from '~/components/ui/tooltip'
+import type { NewsItem } from './Timeline'
 
 interface NewsCardProps {
-  title: string
-  artist: string
-  date: string
-  type: string // single, album, event
-  category: string // genre or event type
-  imageUrl?: string
+  item: NewsItem
   isUpcoming?: boolean
 }
 
-export default function NewsCard({
-  title,
-  artist,
-  date,
-  type,
-  category,
-  imageUrl,
-  isUpcoming = false,
-}: NewsCardProps) {
+export default function NewsCard({ item, isUpcoming = false }: NewsCardProps) {
+  const { title, artist, date, type, category, imageUrl, featuredArtists } = item
   return (
     <Tooltip>
-      <TooltipTrigger  asChild>
+      <TooltipTrigger asChild>
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow duration-300 cursor-pointer">
           <div className="flex items-center p-2 gap-4">
             {/* Square Album Cover */}
@@ -44,7 +33,11 @@ export default function NewsCard({
             {/* Title and Artist */}
             <div className="flex-grow min-w-0">
               <h3 className="text-base font-semibold text-gray-900 truncate">
-                {artist} - <span className="text-sm text-gray-500">{title}</span>
+                {artist}
+                {featuredArtists && featuredArtists.length > 0 && (
+                  <span className="text-sm text-gray-500"> ft. {featuredArtists.join(', ')}</span>
+                )}
+                <span> - {title}</span>
               </h3>
               <span
                 className={`px-2 py-1 text-xs font-medium rounded-full ${
