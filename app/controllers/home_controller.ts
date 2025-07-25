@@ -5,10 +5,9 @@ import { ContactsApi, ContactsApiApiKeys } from '@getbrevo/brevo'
 import Release from '#models/release'
 import Artist from '#models/artist'
 import { DateTime } from 'luxon'
-import logger from '@adonisjs/core/services/logger'
 
 export default class HomeController {
-  async index({ inertia }: HttpContext) {
+  async index({ inertia, session }: HttpContext) {
     // Get releases from the last 4 weeks and next week
     const now = DateTime.now()
     const fourWeeksAgo = now.minus({ weeks: 4 })
@@ -34,14 +33,19 @@ export default class HomeController {
 
     // Group releases by week
     const groupedReleases = this.groupReleasesByWeek(releases, now)
+    
+    // Get flashed errors and old input from session
+    const errors = session.flashMessages.get('errors', undefined)
+    const old = session.flashMessages.get('old', {})
 
     return inertia.render(
       'home',
       {
-        errors: undefined,
         timelineData: groupedReleases,
         artists: shuffledArtists.map((artist) => artist.name),
         remainingArtistsCount: remainingArtists,
+        errors,
+        old,
       },
       { title: 'Accueil' }
     )
@@ -147,25 +151,40 @@ export default class HomeController {
     }
   }
 
-  async subscribe({ inertia, request }: HttpContext) {
+  async subscribe({ request, inertia, response, session }: HttpContext) {
     const data = request.all()
     const [errors, payload] = await createLeadValidator.tryValidate(data)
-    if (!errors) {
+    let errorMessage = ''
+    if (!errors && payload) {
       const contactsApi = new ContactsApi()
       contactsApi.setApiKey(ContactsApiApiKeys.apiKey, env.get('BREVO_API_KEY'))
-
-      await contactsApi.createContact({
-        email: payload?.email,
-        listIds: [3],
-        attributes: {
-          IS_ARTIST: payload.type === 'artist',
-          ARTIST_NAME: payload.artistName,
-          ROLE: payload.role,
-          USERNAME: payload.username,
-        },
-      })
+      try {
+        await contactsApi.createContact({
+          email: payload?.email,
+          listIds: [3],
+          attributes: {
+            IS_ARTIST: payload.type === 'artist',
+            ARTIST_NAME: payload.artistName,
+            ROLE: payload.role,
+            USERNAME: payload.username,
+          },
+        })
+      } catch (e) {
+        errorMessage =
+          "Une erreur est survenue lors de l'enregistrement de ton inscription : " +
+          e.response.body.message
+        session.flash('errors', errorMessage)
+        session.flash('old', payload)
+        return response.redirect().toRoute('home')
+      }
+    } else {
+      const reducedErrors = errors.messages.reduce((acc, curr) => {
+        acc[curr.field] = curr.message
+        return acc
+      }, {})
+      session.flash('errors', reducedErrors)
     }
 
-    return inertia.render('home', { errors: errors?.messages }, { title: 'Accueil' })
+    return response.redirect().toRoute('/')
   }
 }

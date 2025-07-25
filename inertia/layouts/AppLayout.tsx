@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { Head } from '@inertiajs/react'
 import { Navigation } from '~/components/Navigation'
 import { usePage } from '@inertiajs/react'
@@ -18,7 +18,7 @@ export default function AppLayout({ children, description }: AppLayoutProps) {
       </Head>
 
       <div className="min-h-screen bg-gray-50 flex flex-col">
-        <Navigation isLandingPage={usePage().url === '/'} />
+        {/* <Navigation isLandingPage={usePage().url.startsWith('/')} /> */}
         <main className="flex-1">{children}</main>
         <Footer />
       </div>
