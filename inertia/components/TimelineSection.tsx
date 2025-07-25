@@ -22,7 +22,6 @@ const TimelineSection: React.FC<TimelineSectionProps> = ({
   getDayOrder,
 }) => {
   const [showMore, toggleMore] = useState(false)
-  console.log(showMore + ' showMore')
   const newsToShow = useMemo(() => {
     if (isCurrentWeek) {
       return section.news // Current week always shows all news, grouped by day

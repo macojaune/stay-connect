@@ -37,7 +37,7 @@ export default function NewsCard({ item, isUpcoming = false }: NewsCardProps) {
                 {featuredArtists && featuredArtists.length > 0 && (
                   <span className="text-sm text-gray-500"> ft. {featuredArtists.join(', ')}</span>
                 )}
-                <span className="text-sm text-gray-500"> - {title}</span>
+                <span> - {title}</span>
               </h3>
               <span
                 className={`px-2 py-1 text-xs font-medium rounded-full ${

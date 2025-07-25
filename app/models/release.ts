@@ -1,6 +1,7 @@
 import Artist from '#models/artist'
 import Category from '#models/category'
 import Vote from '#models/vote'
+import Feature from '#models/feature'
 import {
   BaseModel,
   column,
@@ -84,12 +85,9 @@ export default class Release extends BaseModel {
   })
   declare artist: BelongsTo<typeof Artist>
 
-  @manyToMany(() => Artist, {
-    pivotTable: 'features',
+  @hasMany(() => Feature, {
     localKey: 'id',
-    pivotForeignKey: 'release_id',
-    relatedKey: 'id',
-    pivotRelatedForeignKey: 'artist_id',
+    foreignKey: 'releaseId',
   })
-  declare featurings: ManyToMany<typeof Artist>
+  declare features: HasMany<typeof Feature>
 }
