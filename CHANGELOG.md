@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/macojaune/stay-connect/compare/v1.1.0...v1.2.0) (2025-07-25)
+
+
+### Features
+
+* features ([ff30038](https://github.com/macojaune/stay-connect/commit/ff30038b9452cfdf8aaff47da8cc2ad3e42b876f))
+
 ## [1.1.0](https://github.com/macojaune/stay-connect/compare/v1.0.0...v1.1.0) (2025-07-20)
 
 
