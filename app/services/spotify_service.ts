@@ -174,7 +174,10 @@ export default class SpotifyService {
   /**
    * Check for new releases for all artists with Spotify IDs
    */
-  async checkForNewReleases(artistId?: Artist['id']): Promise<{
+  async checkForNewReleases(
+    artistId?: Artist['id'],
+    nbDays: number = 4
+  ): Promise<{
     processed: number
     newReleases: number
     errors: number
@@ -187,7 +190,7 @@ export default class SpotifyService {
         if (!artist) {
           throw new Error(`Artist with ID ${artistId} not found`)
         }
-        await this.checkArtistForNewReleases(artist, stats)
+        await this.checkArtistForNewReleases(artist, stats, nbDays)
         stats.processed++
         return stats
       }
@@ -198,7 +201,7 @@ export default class SpotifyService {
 
       for (const artist of artists) {
         try {
-          await this.checkArtistForNewReleases(artist, stats)
+          await this.checkArtistForNewReleases(artist, stats, nbDays)
           stats.processed++
 
           // Add delay to respect rate limits
@@ -224,15 +227,16 @@ export default class SpotifyService {
    */
   private async checkArtistForNewReleases(
     artist: Artist,
-    stats: { processed: number; newReleases: number; errors: number }
+    stats: { processed: number; newReleases: number; errors: number },
+    nbDays: number = 4
   ): Promise<void> {
     if (!artist.spotifyId) {
       return
     }
 
     try {
-      // Get recent albums (last 3days)
-      const daysAgo = DateTime.now().minus({ days: 4 })
+      // Get recent albums
+      const daysAgo = DateTime.now().minus({ days: nbDays })
       const albums = await this.getArtistAlbums(artist.spotifyId, {
         includeGroups: ['album', 'single'],
         // limit: 10,
@@ -241,7 +245,7 @@ export default class SpotifyService {
       for (const album of albums.items) {
         const releaseDate = DateTime.fromISO(album.release_date)
 
-        // Only check releases from the last 4 days
+        // Only check releases from the specified number of days
         if (releaseDate < daysAgo) {
           continue
         }
