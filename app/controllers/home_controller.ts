@@ -132,7 +132,40 @@ export default class HomeController {
       })
     }
 
-    return sortedGroups
+    const currentWeekStart = now.startOf('week')
+    const previousWeekStart = now.minus({ weeks: 1 }).startOf('week')
+
+    const findGroupByWeekStart = (weekStart: DateTime) =>
+      sortedGroups.find((group: any) => group.weekStart === weekStart.toISODate())
+
+    const limitedSections = []
+    const upcomingSection = findGroupByWeekStart(nextWeekStart)
+
+    limitedSections.push({
+      ...(upcomingSection ?? {
+        news: [],
+        weekStart: nextWeekStart.toISODate(),
+      }),
+      title: 'À venir',
+      subtitle:
+        upcomingSection?.subtitle ?? 'Inscris-toi pour voir les sorties en avance',
+      isUpcoming: true,
+    })
+
+    const currentWeekSection = findGroupByWeekStart(currentWeekStart)
+    if (currentWeekSection && currentWeekSection.news.length > 0) {
+      limitedSections.push(currentWeekSection)
+    }
+
+    const previousWeekSection = findGroupByWeekStart(previousWeekStart)
+    if (previousWeekSection && previousWeekSection.news.length > 0) {
+      limitedSections.push({
+        ...previousWeekSection,
+        title: 'La semaine passée',
+      })
+    }
+
+    return limitedSections
   }
 
   private formatReleaseDate(releaseDate: DateTime, now: DateTime): string {
