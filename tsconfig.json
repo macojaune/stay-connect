@@ -5,7 +5,9 @@
     "outDir": "./build",
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./inertia/*"]
+      "@/*": ["./inertia/*"],
+      "#contracts/*": ["./app/contracts/*.ts", "./app/contracts/*.js"],
+      "#constants/*": ["./app/constants/*.ts", "./app/constants/*.js"]
     }
   },
   "exclude": [

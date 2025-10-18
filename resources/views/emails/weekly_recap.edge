@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ brandName }} · Récapitulatif hebdo</title>
+  </head>
+  <body style="margin:0;padding:0;background:#f6f5f9;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;">
+    <table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="background:#f6f5f9;padding:32px 0;">
+      <tr>
+        <td align="center">
+          <table width="640" cellpadding="0" cellspacing="0" role="presentation" style="background:#ffffff;border-radius:20px;overflow:hidden;box-shadow:0 14px 40px rgba(24,9,45,0.08);">
+            <tr>
+              <td style="padding:40px 36px 24px 36px;">
+                <div style="text-align:center;">
+                  <div style="font-size:46px;font-weight:700;letter-spacing:-0.02em;color:{{ brandColor }};margin:0;">
+                    {{ brandName }}
+                  </div>
+                  <p style="margin:18px 0 0 0;color:#1f1a33;font-size:20px;font-weight:600;line-height:1.4;">
+                    Les sorties de la semaine · {{ payload.period.label }}
+                  </p>
+                  <p style="margin:16px 0 0 0;color:#615b75;font-size:15px;line-height:1.6;">
+                    Salut {{ payload.user.fullName || payload.user.email }}, voilà un aperçu des sorties à découvrir cette semaine.
+                  </p>
+                  <div style="display:inline-block;margin-top:20px;padding:10px 18px;border-radius:999px;font-size:13px;font-weight:600;color:{{ brandColor }};background-color:#ffe4d6;text-transform:uppercase;letter-spacing:0.3px;">
+                    {{ payload.summary.totalNewReleases }} sortie{{ payload.summary.totalNewReleases > 1 ? 's' : '' }} répertoriée{{ payload.summary.totalNewReleases > 1 ? 's' : '' }}
+                  </div>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:0 36px 36px 36px;">
+                @if(payload.releases.length)
+                <table width="100%" cellpadding="0" cellspacing="0" role="presentation">
+                  @each(release in payload.releases)
+                  <tr>
+                    <td style="padding:0 0 16px 0;">
+                      <table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="border:1px solid #efeaf7;border-left:6px solid {{ brandColor }};border-radius:14px;">
+                        <tr>
+                          <td style="padding:18px 20px;">
+                            <table width="100%" cellpadding="0" cellspacing="0" role="presentation">
+                              <tr>
+                                <td width="72" valign="top" style="padding:0 16px 0 0;">
+                                  <img src="{{ release.coverUrl }}" alt="{{ release.title }}" style="width:64px;height:64px;object-fit:cover;border-radius:14px;display:block;" />
+                                </td>
+                                <td valign="top">
+                                  <div style="font-size:15px;font-weight:600;color:#1f1a33;line-height:1.4;margin:0 0 6px 0;">
+                                    {{ release.artistName || 'Artiste' }}
+                                    <span style="font-weight:500;color:#756f86;">— {{ release.title }}</span>
+                                  </div>
+                                  <div style="font-size:12px;color:#756f86;line-height:1.5;margin:0 0 12px 0;">
+                                    @if(release.type)
+                                      <span style="display:inline-block;margin-right:8px;padding:4px 10px;border-radius:999px;background-color:#ffe4d6;color:{{ brandColor }};font-weight:600;text-transform:uppercase;letter-spacing:0.4px;">
+                                        {{ release.type }}
+                                      </span>
+                                    @endif
+                                    @if(release.categories && release.categories.length)
+                                      <span>{{ release.categories.join(', ') }}</span>
+                                    @endif
+                                    @if(release.releaseDateLabel)
+                                      <span style="display:block;margin-top:6px;color:#a39cb9;">Sortie le {{ release.releaseDateLabel }}</span>
+                                    @endif
+                                  </div>
+                                  <div style="text-align:right;">
+                                    <a href="{{ release.detailUrl }}" style="display:inline-block;margin-left:auto;padding:10px 18px;border-radius:999px;background-color:{{ brandColor }};color:#ffffff;font-size:13px;font-weight:600;text-decoration:none;">
+                                      Découvrir
+                                    </a>
+                                  </div>
+                                </td>
+                              </tr>
+                            </table>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                  @endeach
+                </table>
+                @else
+                <div style="border:1px dashed #d8d1f0;border-radius:14px;padding:32px 24px;text-align:center;color:#756f86;font-size:14px;">
+                  Pas de nouvelle sortie cette semaine, mais on reste à l'écoute. Reste branché sur {{ brandName }} !
+                </div>
+                @endif
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:0 36px 40px 36px;text-align:center;">
+                <a href="{{ appUrl }}" style="display:inline-block;padding:14px 28px;border-radius:999px;background-color:#1f1a33;color:#ffffff;font-size:14px;font-weight:600;text-decoration:none;">
+                  Voir plus sur {{ brandName }}
+                </a>
+              </td>
+            </tr>
+          </table>
+          <div style="margin-top:18px;font-size:12px;color:#8f8a98;text-align:center;max-width:560px;">
+            Tu reçois cet email parce que tu suis {{ brandName }}. Pas intéressé ? Tu pourras te désinscrire dès que l'espace membre sera en ligne.
+          </div>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>
