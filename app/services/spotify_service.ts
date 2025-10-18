@@ -6,6 +6,7 @@ import logger from '@adonisjs/core/services/logger'
 import ky from 'ky'
 import Feature from '#models/feature'
 import ArtistService from '#services/artist_service'
+import SonglinkService from '#services/songlink_service'
 import type {
   CreateArtistOptions,
   SearchAndCreateResult,
@@ -22,9 +23,11 @@ export default class SpotifyService {
   private readonly AUTH_URL = 'https://accounts.spotify.com/api/token'
   private api: typeof ky
   private artistService: ArtistService
+  private songlinkService: SonglinkService
 
   constructor() {
     this.artistService = new ArtistService()
+    this.songlinkService = new SonglinkService()
     this.api = ky.create({
       retry: {
         limit: 3,
@@ -312,6 +315,8 @@ export default class SpotifyService {
           })
         }
       }
+
+      await this.songlinkService.syncReleaseLinks(release)
 
       return release
     } catch (error) {

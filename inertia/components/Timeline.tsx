@@ -5,6 +5,7 @@ import NewsCard from '~/components/NewsCard'
 export interface NewsItem {
   id: string
   title: string
+  slug: string
   artist: string
   date: string
   type: string

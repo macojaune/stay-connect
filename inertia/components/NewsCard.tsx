@@ -1,3 +1,4 @@
+import { Link } from '@inertiajs/react'
 import { Tooltip, TooltipContent, TooltipTrigger } from '~/components/ui/tooltip'
 import type { NewsItem } from './Timeline'
 
@@ -7,11 +8,16 @@ interface NewsCardProps {
 }
 
 export default function NewsCard({ item, isUpcoming = false }: NewsCardProps) {
-  const { title, artist, date, type, category, imageUrl, featuredArtists } = item
+  const { title, artist, date, type, category, imageUrl, featuredArtists, slug } = item
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow duration-300 cursor-pointer">
+        <Link
+          href={`/sorties/${slug}`}
+          className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow duration-300 cursor-pointer block"
+          data-umami-event="timeline-release-click"
+          data-umami-event-release={slug}
+        >
           <div className="flex items-center p-2 gap-4">
             {/* Square Album Cover */}
             <div className="w-16 h-16 bg-gray-200 rounded-md overflow-hidden flex-shrink-0">
@@ -64,7 +70,7 @@ export default function NewsCard({ item, isUpcoming = false }: NewsCardProps) {
               </span>
             </div>
           </div>
-        </div>
+        </Link>
       </TooltipTrigger>
       <TooltipContent>
         <p>Plus de fonctionnalités à venir !</p>

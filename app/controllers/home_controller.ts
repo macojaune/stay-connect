@@ -98,6 +98,7 @@ export default class HomeController {
       const newsItem = {
         id: release.id,
         title: release.title,
+        slug: release.slug,
         artist: release.artist?.name || 'Artiste inconnu',
         date: this.formatReleaseDate(DateTime.fromJSDate(release.date.toJSDate()), now),
         type: release.type || 'release',

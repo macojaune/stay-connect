@@ -23,6 +23,7 @@ router
 
 // Web routes
 router.get('/', '#controllers/home_controller.index').as('home')
+router.get('/sorties/:slug', '#controllers/release_pages_controller.show').as('releases.show')
 
 // Newsletter routes
 router.post('/newsletter', '#controllers/home_controller.subscribe')
