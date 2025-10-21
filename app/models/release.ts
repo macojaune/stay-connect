@@ -2,11 +2,11 @@ import Artist from '#models/artist'
 import Category from '#models/category'
 import Feature from '#models/feature'
 import Vote from '#models/vote'
+import string from '@adonisjs/core/helpers/string'
 import { BaseModel, beforeCreate, beforeSave, belongsTo, column, hasMany, manyToMany } from '@adonisjs/lucid/orm'
 import type { BelongsTo, HasMany, ManyToMany } from '@adonisjs/lucid/types/relations'
 import type { DateTime } from 'luxon'
 import { randomUUID } from 'node:crypto'
-import string from '@adonisjs/core/helpers/string'
 
 export default class Release extends BaseModel {
   static selfAssignPrimaryKey = true
@@ -97,12 +97,12 @@ export default class Release extends BaseModel {
     if (!release.slug || release.$dirty.title || release.$dirty.artistId) {
       const artistName = release.artistId
         ? await release
-            .related('artist')
-            .query()
-            .where('id', release.artistId)
-            .select('name')
-            .first()
-            .then((artist) => artist?.name)
+          .related('artist')
+          .query()
+          .where('id', release.artistId)
+          .select('name')
+          .first()
+          .then((artist) => artist?.name)
         : null
 
       let featureRecords: Feature[] = []
