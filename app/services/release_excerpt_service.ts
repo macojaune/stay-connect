@@ -136,16 +136,16 @@ export default class ReleaseExcerptService {
       <div style="display:flex;flex-wrap:wrap;gap:8px;">
         <span style="background:#ffeaf1;color:#da2a63;font-size:.90em;padding:.15em .75em;border-radius:99px;">${type}</span>
         ${categories
-          ? `<span style="background:#f3eafc;color:#8120a3;font-size:.87em;padding:.13em .7em;border-radius:99px;">${categories}</span>`
-          : ''}
+        ? `<span style="background:#f3eafc;color:#8120a3;font-size:.87em;padding:.13em .7em;border-radius:99px;">${categories}</span>`
+        : ''
+      }
       </div>
       <div style="margin-top:5px;font-size:.89em;color:#8F8A98;">
         Sortie le ${date}
       </div>
-      ${
-        includeLinks && detailUrl
-          ? `<div style="margin-top:12px;"><a href="${detailUrl}" style="display:inline-block;background:#da2a63;color:#fff;font-size:.88em;font-weight:600;padding:.45em 1.25em;border-radius:999px;text-decoration:none;">Écouter</a></div>`
-          : ''
+      ${includeLinks && detailUrl
+        ? `<div style="margin-top:12px;"><a href="${detailUrl}" style="display:inline-block;background:#da2a63;color:#fff;font-size:.88em;font-weight:600;padding:.45em 1.25em;border-radius:999px;text-decoration:none;">Écouter</a></div>`
+        : ''
       }
     </div>
   </div>

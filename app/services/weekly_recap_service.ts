@@ -27,18 +27,19 @@ export default class WeeklyRecapService {
   constructor(
     private readonly appBaseUrl: string = env.get('APP_URL'),
     private readonly excerptService: ReleaseExcerptService = new ReleaseExcerptService()
-  ) {}
+  ) { }
 
   /**
    * Prepare the recap dataset for the most recent 7-day window.
    */
   async buildDataset(reference: DateTime = DateTime.now()): Promise<WeeklyRecapDataset> {
-    const periodStart = reference.startOf('week')
-    const periodEnd = reference.endOf('week')
+    const previousWeekReference = reference.minus({ weeks: 1 })
+    const periodStart = previousWeekReference.startOf('week')
+    const periodEnd = previousWeekReference.endOf('week')
 
     const releaseExcerpt = await this.excerptService.generate({
       period: 'week',
-      referenceDate: reference,
+      referenceDate: previousWeekReference,
       number: 5,
       sort: 'date_desc',
       includeLinks: true,

@@ -30,21 +30,21 @@
               </td>
             </tr>
             <tr>
-              <td style="padding:0 36px 36px 36px;">
+              <td style="padding:0 36px 36px 36px;" align="center" width="100%">
                 @if(payload.releases.length)
-                <table width="100%" cellpadding="0" cellspacing="0" role="presentation">
+                <table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="width:100%;border-collapse:collapse;">
                   @each(release in payload.releases)
                   <tr>
-                    <td style="padding:0 0 16px 0;">
-                      <table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="border:1px solid #efeaf7;border-left:6px solid {{ brandColor }};border-radius:14px;">
+                    <td style="padding:0 0 16px 0;" width="100%">
+                      <table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="width:100%!important;max-width:100%;border-collapse:separate;border-spacing:0;border:1px solid #efeaf7;border-left:6px solid {{ brandColor }};border-radius:14px;table-layout:fixed;mso-table-lspace:0;mso-table-rspace:0;">
                         <tr>
-                          <td style="padding:18px 20px;">
+                          <td width="100%" style="padding:18px 20px;width:100%;">
                             <table width="100%" cellpadding="0" cellspacing="0" role="presentation">
                               <tr>
                                 <td width="72" valign="top" style="padding:0 16px 0 0;">
                                   <img src="{{ release.coverUrl }}" alt="{{ release.title }}" style="width:64px;height:64px;object-fit:cover;border-radius:14px;display:block;" />
                                 </td>
-                                <td valign="top">
+                                <td width="100%" valign="top">
                                   <div style="font-size:15px;font-weight:600;color:#1f1a33;line-height:1.4;margin:0 0 6px 0;">
                                     {{ release.artistName || 'Artiste' }}
                                     <span style="font-weight:500;color:#756f86;">— {{ release.title }}</span>
@@ -62,10 +62,16 @@
                                       <span style="display:block;margin-top:6px;color:#a39cb9;">Sortie le {{ release.releaseDateLabel }}</span>
                                     @endif
                                   </div>
-                                  <div style="text-align:right;">
-                                    <a href="{{ release.detailUrl }}" style="display:inline-block;margin-left:auto;padding:10px 18px;border-radius:999px;background-color:{{ brandColor }};color:#ffffff;font-size:13px;font-weight:600;text-decoration:none;">
+                                  <div style="width:100%;text-align:right;">
+                                    <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin-left:auto;">
+                                      <tr>
+                                        <td>
+                                          <a href="{{ release.detailUrl }}" style="display:inline-block;padding:10px 18px;border-radius:999px;background-color:{{ brandColor }};color:#ffffff;font-size:13px;font-weight:600;text-decoration:none;">
                                       Découvrir
                                     </a>
+                                        </td>
+                                      </tr>
+                                    </table>
                                   </div>
                                 </td>
                               </tr>
@@ -93,7 +99,7 @@
             </tr>
           </table>
           <div style="margin-top:18px;font-size:12px;color:#8f8a98;text-align:center;max-width:560px;">
-            Tu reçois cet email parce que tu suis {{ brandName }}. Pas intéressé ? Tu pourras te désinscrire dès que l'espace membre sera en ligne.
+            Tu reçois cet email parce que tu es abonné·e à la newsletter {{ brandName }}. Pas intéressé·e ? Dis le moi en répondant à cet email et je te retire de la liste.
           </div>
         </td>
       </tr>

@@ -44,6 +44,15 @@ export default class SendWeeklyRecap extends BaseCommand {
 
     const dataset = await weeklyRecapService.buildDataset()
 
+    if (dataset.totalNewReleases === 0) {
+      const start = dataset.periodStart.toISODate() ?? '[unknown]'
+      const end = dataset.periodEnd.toISODate() ?? '[unknown]'
+      this.logger.info(
+        `Skipping weekly recap: no new releases found for the period ${start} → ${end}.`
+      )
+      return
+    }
+
     if (this.email) {
       await this.sendPreview(emailService, weeklyRecapService, dataset, this.email)
       this.logger.info('Weekly recap preview sent.')
