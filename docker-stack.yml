@@ -11,9 +11,9 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
-      - '5433:5432'
+      - "5433:5432"
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U ${DB_USER} -d ${DB_DATABASE}']
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_DATABASE}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -27,7 +27,7 @@ services:
     environment:
       NODE_ENV: production
     ports:
-      - '3333:3333'
+      - "3333:3333"
     depends_on:
       - postgres
     volumes:
@@ -35,17 +35,17 @@ services:
     deploy:
       update_config:
         order: start-first
-      restart_policy:
-        condition: on-failure
-        delay: 5s
-        max_attempts: 3
-        window: 120s
-    healthcheck:
-      test: ['CMD', 'wget', '--no-verbose', '--tries=1', '--spider', 'http://127.0.0.1:3333/health']
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 40s
+    #   restart_policy:
+    #     condition: on-failure
+    #     delay: 5s
+    #     max_attempts: 3
+    #     window: 120s
+    # healthcheck:
+    #   test: ['CMD', 'wget', '--no-verbose', '--tries=1', '--spider', 'http://127.0.0.1:3333/health']
+    #   interval: 10s
+    #   timeout: 5s
+    #   retries: 5
+    #   start_period: 40s
   # Migration and Command Runner Service
   adonis_migrations:
     image: ghcr.io/macojaune/stay-connect:latest
@@ -62,13 +62,13 @@ services:
       replicas: 0 # Don't run by default
       restart_policy:
         condition: none
-    command: ['tail', '-f', '/dev/null'] # Keep container alive
+    command: ["tail", "-f", "/dev/null"] # Keep container alive
 
   # Development Database Admin (optional)
   adminer:
     image: adminer:latest
     ports:
-      - '8088:8080'
+      - "8088:8080"
     environment:
       ADMINER_DEFAULT_DB_DRIVER: pgsql
       ADMINER_DESIGN: dracula
