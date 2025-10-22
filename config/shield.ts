@@ -18,8 +18,8 @@ const shieldConfig = defineConfig({
   csrf: {
     enabled: true,
     exceptRoutes: [
-      '/cron/*',
       '/cron/spotify-releases',
+      '/cron/weekly-recap',
       '/cron/health',
       '/api/spotify/artists/create',
     ],

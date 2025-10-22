@@ -17,6 +17,7 @@ router.get('/health', '#controllers/health_checks_controller')
 router
   .group(() => {
     router.post('/spotify-releases', '#controllers/cron_controller.spotifyReleases')
+    router.post('/weekly-recap', '#controllers/cron_controller.weeklyRecap')
     router.get('/health', '#controllers/cron_controller.health')
   })
   .prefix('/cron')
