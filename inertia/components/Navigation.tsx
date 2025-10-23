@@ -1,4 +1,4 @@
-import  { useState } from 'react';
+import { useState } from 'react';
 import { Link, usePage } from '@inertiajs/react';
 import { Button } from '~/components/ui/Button';
 
@@ -24,9 +24,6 @@ export function Navigation({ isLandingPage }: NavigationProps) {
 
   const navigationItems = [
     { name: 'Home', href: '/' },
-    { name: 'Artists', href: '/artists' },
-    { name: 'Releases', href: '/releases' },
-    { name: 'Discover', href: '/discover' },
   ];
 
   if (isLandingPage) {
@@ -36,11 +33,11 @@ export function Navigation({ isLandingPage }: NavigationProps) {
   return (
     <nav className="bg-white shadow-sm border-b border-gray-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
+        <div className="flex justify-start h-16">
           {/* Logo */}
-          <div className="flex items-center">
+          <div className="flex items-center md:mr-5">
             <Link href="/" className="flex-shrink-0">
-              <h1 className="text-2xl font-bold text-brand">StayConnect</h1>
+              <h1 className="text-2xl font-bold text-brand">#StayConnect</h1>
             </Link>
           </div>
 
@@ -58,8 +55,8 @@ export function Navigation({ isLandingPage }: NavigationProps) {
           </div>
 
           {/* User Menu */}
-          <div className="hidden md:flex items-center space-x-4">
-            {auth?.user ? (
+          <div className="hidden md:flex items-center ml-auto space-x-4">
+            {/*{auth?.user ? (
               <div className="flex items-center space-x-4">
                 <span className="text-sm text-gray-700">
                   Welcome, {auth.user.fullName || auth.user.email}
@@ -88,11 +85,19 @@ export function Navigation({ isLandingPage }: NavigationProps) {
                   </Button>
                 </Link>
               </div>
-            )}
+            )}*/}
+            <div className="flex items-center space-x-2">
+
+              <Link href="/#newsletter-section">
+                <Button size="sm">
+                  S'inscrire à la newsletter
+                </Button>
+              </Link>
+            </div>
           </div>
 
           {/* Mobile menu button */}
-          <div className="md:hidden flex items-center">
+          <div className="md:hidden flex ml-auto items-center">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="text-gray-700 hover:text-brand focus:outline-none focus:text-brand"
@@ -117,56 +122,17 @@ export function Navigation({ isLandingPage }: NavigationProps) {
               <Link
                 key={item.name}
                 href={item.href}
-                className="text-gray-700 hover:text-brand block px-3 py-2 rounded-md text-base font-medium"
+                className="text-gray-700 hover:text-brand block px-3 py-2 text-center rounded-md text-base font-medium"
                 onClick={() => setIsMenuOpen(false)}
               >
                 {item.name}
               </Link>
             ))}
-            
-            <div className="border-t border-gray-200 pt-4 pb-3">
-              {auth?.user ? (
-                <div className="space-y-2">
-                  <div className="px-3 py-2">
-                    <span className="text-sm text-gray-700">
-                      {auth.user.fullName || auth.user.email}
-                    </span>
-                  </div>
-                  <Link
-                    href="/profile"
-                    className="block px-3 py-2 text-gray-700 hover:text-brand"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Profile
-                  </Link>
-                  <Link
-                    href="/logout"
-                    method="post"
-                    className="block px-3 py-2 text-gray-700 hover:text-brand"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Logout
-                  </Link>
-                </div>
-              ) : (
-                <div className="space-y-2">
-                  <Link
-                    href="/login"
-                    className="block px-3 py-2 text-gray-700 hover:text-brand"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Connexion
-                  </Link>
-                  <Link
-                    href="/register"
-                    className="block px-3 py-2 text-gray-700 hover:text-brand"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Sign Up
-                  </Link>
-                </div>
-              )}
-            </div>
+            <Link href="/#newsletter-section" className='items-center w-full'>
+              <Button size="lg" className='w-full'>
+                S'inscrire à la newsletter
+              </Button>
+            </Link>
           </div>
         </div>
       )}

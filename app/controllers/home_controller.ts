@@ -33,7 +33,7 @@ export default class HomeController {
 
     // Group releases by week
     const groupedReleases = this.groupReleasesByWeek(releases, now)
-    
+
     // Get flashed errors and old input from session
     const errors = session.flashMessages.get('errors', undefined)
     const old = session.flashMessages.get('old', {})
@@ -154,8 +154,20 @@ export default class HomeController {
     })
 
     const currentWeekSection = findGroupByWeekStart(currentWeekStart)
-    if (currentWeekSection && currentWeekSection.news.length > 0) {
-      limitedSections.push(currentWeekSection)
+    if (currentWeekSection) {
+      limitedSections.push({
+        ...currentWeekSection,
+        title: 'Cette semaine',
+        subtitle: currentWeekSection.subtitle || 'Les sorties de la semaine',
+      })
+    } else {
+      limitedSections.push({
+        title: 'Cette semaine',
+        subtitle: 'Les sorties de la semaine',
+        isUpcoming: false,
+        news: [],
+        weekStart: currentWeekStart.toISODate(),
+      })
     }
 
     const previousWeekSection = findGroupByWeekStart(previousWeekStart)

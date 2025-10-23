@@ -133,6 +133,10 @@ const TimelineSection: React.FC<TimelineSectionProps> = ({
             newsToShow.map((newsItem) => (
               <NewsCard key={newsItem.id} item={newsItem} isUpcoming={section.isUpcoming} />
             ))
+          ) : isCurrentWeek ? (
+            <div className="bg-white border border-dashed border-gray-300 rounded-lg px-4 py-6 text-center text-gray-500">
+              Pas encore de sortie répertoriée cette semaine.
+            </div>
           ) : (
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow duration-300 opacity-35 w-full">
               <div className="flex items-center p-2 gap-4">
@@ -151,12 +155,12 @@ const TimelineSection: React.FC<TimelineSectionProps> = ({
                   <div className="flex gap-2">
                     <div className="w-16 h-4 bg-gray-900/50  rounded-md" />
                     <div
-                      className={`w-24 h-4 px-2 py-1 font-medium rounded-md bg-gray-500/50  
+                      className={`w-24 h-4 px-2 py-1 font-medium rounded-md bg-gray-500/50
                         `}
                     />
                   </div>
                   <div
-                    className={`w-12 h-4 px-2 py-1 font-medium rounded-full bg-brand/10  
+                    className={`w-12 h-4 px-2 py-1 font-medium rounded-full bg-brand/10
                         `}
                   />
                 </div>

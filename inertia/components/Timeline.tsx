@@ -30,7 +30,6 @@ interface GroupedByDay {
 }
 
 export default function Timeline({ sections = [] }: TimelineProps) {
-  const hasCurrentWeekSection = sections.some((section) => section.title === 'Cette semaine')
   // Helper function to group news by day
   const groupNewsByDay = (news: NewsItem[]): GroupedByDay => {
     const grouped: GroupedByDay = {}
@@ -96,20 +95,6 @@ export default function Timeline({ sections = [] }: TimelineProps) {
           )
         })}
 
-        {!hasCurrentWeekSection && (
-          <div className="relative mb-4 md:mb-8 transition-opacity duration-300">
-            <div className="absolute -left-2 md:left-6 w-4 h-4 mt-2 rounded-full border-4 border-white shadow-lg z-10 bg-brand" />
-            <div className="ml-4 md:ml-16">
-              <div className="mb-2">
-                <h3 className="text-2xl font-bold text-gray-900">Cette semaine</h3>
-                <p className="text-sm text-gray-600">Les sorties de la semaine</p>
-              </div>
-              <div className="bg-white border border-dashed border-gray-300 rounded-lg px-4 py-6 text-center text-gray-500">
-                Pas encore de sortie répertoriée cette semaine.
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   )

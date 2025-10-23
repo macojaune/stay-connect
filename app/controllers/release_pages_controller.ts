@@ -9,9 +9,15 @@ const looksLikeUuid = (value: string): boolean => UUID_REGEX.test(value)
 export default class ReleasePagesController {
   public async show({ params, inertia, request, response }: HttpContext) {
     const releaseQuery = Release.query()
-      .preload('artist')
+      .preload('artist', (artistQuery) => {
+        artistQuery.preload('categories').withCount('releases')
+      })
       .preload('categories')
-      .preload('features', (featureQuery) => featureQuery.preload('artist'))
+      .preload('features', (featureQuery) => {
+        featureQuery.preload('artist', (artistQuery) => {
+          artistQuery.withCount('releases')
+        })
+      })
 
     if (looksLikeUuid(params.slug)) {
       releaseQuery.where('id', params.slug)
@@ -31,14 +37,21 @@ export default class ReleasePagesController {
     const parsedUrls = Array.isArray(urlsValue)
       ? urlsValue
       : (() => {
-          try {
-            return JSON.parse((urlsValue as unknown as string) ?? '[]')
-          } catch {
-            return []
-          }
-        })()
+        try {
+          return JSON.parse((urlsValue as unknown as string) ?? '[]')
+        } catch {
+          return []
+        }
+      })()
 
     const shareUrl = request.completeUrl()
+
+    const serializedArtist = release.artist
+      ? {
+        ...release.artist.serialize(),
+        releaseCount: release.artist.releaseCount ?? null,
+      }
+      : null
 
     return inertia.render(
       'releases/show',
@@ -53,12 +66,14 @@ export default class ReleasePagesController {
           cover: release.cover,
           spotifyId: release.spotifyId,
           urls: parsedUrls,
-          artist: release.artist,
+          artist: serializedArtist,
           categories: release.categories,
           featuredArtists: release.features.map((feature) => ({
             id: feature.id,
             artistName: feature.artistName || feature.artist?.name,
             artistId: feature.artistId,
+            releaseCount: feature.artist?.releaseCount ?? null,
+            profilePicture: feature.artist?.profilePicture ?? null,
           })),
         },
         shareUrl,

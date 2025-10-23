@@ -27,6 +27,7 @@ type ReleaseShowProps = {
       id: string
       name: string
       profilePicture?: string | null
+      releaseCount?: number | string | null
     } | null
     categories: Array<{
       id: string
@@ -37,6 +38,8 @@ type ReleaseShowProps = {
       id: string
       artistName?: string | null
       artistId?: string | null
+      releaseCount?: number | string | null
+      profilePicture?: string | null
     }>
   }
   shareUrl: string
@@ -249,6 +252,62 @@ const ReleaseShow: React.FC<ReleaseShowProps> = ({ release, shareUrl }) => {
   const primaryLinks = useMemo(() => streamingLinks.slice(0, 3), [streamingLinks])
   const extraLinks = useMemo(() => streamingLinks.slice(3), [streamingLinks])
 
+  const relatedArtists = useMemo(() => {
+    const normalizeReleaseCount = (
+      value: number | string | null | undefined
+    ): number | null => {
+      if (typeof value === 'number' && Number.isFinite(value)) {
+        return value
+      }
+      if (typeof value === 'string') {
+        const parsed = Number.parseInt(value, 10)
+        return Number.isFinite(parsed) ? parsed : null
+      }
+      return null
+    }
+
+    const artists: Array<{
+      id: string | null | undefined
+      name: string
+      picture?: string | null
+      releaseCount: number | null
+    }> = []
+
+    if (release.artist?.name) {
+      const primaryCount = normalizeReleaseCount(release.artist.releaseCount)
+
+      artists.push({
+        id: release.artist.id,
+        name: release.artist.name,
+        picture: release.artist.profilePicture,
+        releaseCount: primaryCount,
+      })
+    }
+
+    release.featuredArtists.forEach((artist) => {
+      if (!artist.artistName) {
+        return
+      }
+      const alreadyAdded = artists.some(
+        (entry) => entry.id && artist.artistId && entry.id === artist.artistId
+      )
+      if (alreadyAdded) {
+        return
+      }
+
+      const featuredCount = normalizeReleaseCount(artist.releaseCount)
+
+      artists.push({
+        id: artist.artistId,
+        name: artist.artistName ?? 'Artiste invité',
+        picture: artist.profilePicture ?? null,
+        releaseCount: featuredCount,
+      })
+    })
+
+    return artists
+  }, [release.artist, release.featuredArtists])
+
   useEffect(() => {
     if (extraLinks.length === 0) {
       setShowMorePlatforms(false)
@@ -303,164 +362,132 @@ const ReleaseShow: React.FC<ReleaseShowProps> = ({ release, shareUrl }) => {
           </Link>
         </div>
 
-        <article className="bg-white rounded-3xl shadow-lg border border-zinc-100 overflow-hidden">
-          <div className="grid md:grid-cols-[280px_1fr] gap-8 md:gap-10 items-stretch">
-            <div className="relative md:h-full">
-              <div className="md:h-full">
-                {release.cover ? (
-                  <img
-                    src={release.cover}
-                    alt={`Couverture de ${release.title}`}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full bg-gradient-to-br from-brand/20 to-brand/40 flex items-center justify-center text-brand font-semibold text-xl">
-                    {release.title[0]?.toUpperCase() ?? '#'}
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <div className="flex flex-col gap-6 p-6 md:pr-10 md:py-8 md:min-h-full">
-              <header className="space-y-3">
-                <h1 className="text-3xl md:text-4xl font-bold text-zinc-900 leading-tight">
-                  {release.title}
-                </h1>
-                {subtitleParts.length > 0 && (
-                  <p className="text-sm md:text-base text-zinc-600">{subtitleParts.join(' · ')}</p>
-                )}
-
-                {release.categories.length > 0 && (
-                  <div className="flex flex-wrap gap-2">
-                    {release.categories.map((category) => (
-                      <span
-                        key={category.id}
-                        className="inline-flex px-3 py-1 rounded-full text-xs font-medium bg-brand/10 text-brand"
-                      >
-                        {category.name}
-                      </span>
-                    ))}
-                  </div>
-                )}
-              </header>
-
-              {release.description && (
-                <p className="text-sm md:text-base text-zinc-700 leading-relaxed whitespace-pre-line">
-                  {release.description}
-                </p>
-              )}
-
-              {release.featuredArtists.length > 0 && (
-                <div className="text-sm text-zinc-600">
-                  <span className="font-semibold text-zinc-800">Featuring :</span>{' '}
-                  {release.featuredArtists
-                    .map((artist) => artist.artistName ?? 'Artiste invité')
-                    .join(', ')}
-                </div>
-              )}
-
-              <div className="flex flex-wrap items-center gap-3">
-                <button
-                  onClick={handleShare}
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-brand text-white rounded-full text-sm font-medium hover:bg-brand-dark transition"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth={1.8}
-                    className="w-4 h-4"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M7.5 8.25a3 3 0 10-2.9 3.605l10.17 5.086a3 3 0 105.147-.441l-10.17-5.086a3.002 3.002 0 00-2.247-3.164z"
+        <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_240px] items-start">
+          <article className="bg-white rounded-3xl shadow-lg border border-zinc-100 overflow-hidden">
+            <div className="grid md:grid-cols-[280px_1fr] gap-8 md:gap-10 items-stretch">
+              <div className="relative md:h-full">
+                <div className="md:h-full">
+                  {release.cover ? (
+                    <img
+                      src={release.cover}
+                      alt={`Couverture de ${release.title}`}
+                      className="w-full h-full object-cover"
                     />
-                  </svg>
-                  Partager
-                </button>
-                {shareStatus === 'copied' && (
-                  <span className="text-xs text-green-600 font-medium">Lien copié ✅</span>
-                )}
-                {shareStatus === 'error' && (
-                  <span className="text-xs text-red-600 font-medium">
-                    Impossible de partager, réessaie.
-                  </span>
-                )}
+                  ) : (
+                    <div className="w-full h-full bg-gradient-to-br from-brand/20 to-brand/40 flex items-center justify-center text-brand font-semibold text-xl">
+                      {release.title[0]?.toUpperCase() ?? '#'}
+                    </div>
+                  )}
+                </div>
               </div>
 
-              {streamingLinks.length > 0 && (
-                <div className="mt-6 w-full flex flex-col items-center gap-3 pt-4 md:mt-auto md:w-auto md:items-end">
-                  <span className="text-xs uppercase tracking-wide text-zinc-400">
-                    Disponible sur
-                  </span>
-                  <div className="flex w-full flex-wrap items-center justify-center gap-3 md:w-auto md:justify-end">
-                    {primaryLinks.map((link) => {
-                      const ringStyle = {
-                        boxShadow: `0 0 0 4px ${hexToRgba(link.accent, 0.25)}`,
-                        borderColor: hexToRgba(link.accent, 0.4),
-                      }
+              <div className="flex flex-col gap-6 p-6 md:py-8 md:pr-10 md:min-h-full">
+                <header className="space-y-3">
+                  <h1 className="text-3xl md:text-4xl font-bold text-zinc-900 leading-tight">
+                    {release.title}
+                  </h1>
+                  {subtitleParts.length > 0 && (
+                    <p className="text-sm md:text-base text-zinc-600">{subtitleParts.join(' · ')}</p>
+                  )}
 
-                      const IconComponent = link.Icon
-                      const isLucideFallback = IconComponent === Link2
+                  {release.categories.length > 0 && (
+                    <div className="flex flex-wrap gap-2">
+                      {release.categories.map((category) => (
+                        <span
+                          key={category.id}
+                          className="inline-flex px-3 py-1 rounded-full text-xs font-medium bg-brand/10 text-brand"
+                        >
+                          {category.name}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </header>
 
-                      return (
-                        <Tooltip key={link.url}>
-                          <TooltipTrigger asChild>
-                            <a
-                              href={link.url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              aria-label={`Écouter sur ${link.label}`}
-                              className="group inline-flex min-w-[64px] flex-col items-center justify-center gap-1"
-                            >
-                              <span
-                                className="inline-flex h-11 w-11 items-center justify-center rounded-full border bg-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
-                                style={ringStyle}
+                {release.description && (
+                  <p className="text-sm md:text-base text-zinc-700 leading-relaxed whitespace-pre-line">
+                    {release.description}
+                  </p>
+                )}
+
+                {release.featuredArtists.length > 0 && (
+                  <div className="text-sm text-zinc-600">
+                    <span className="font-semibold text-zinc-800">Featuring :</span>{' '}
+                    {release.featuredArtists
+                      .map((artist) => artist.artistName ?? 'Artiste invité')
+                      .join(', ')}
+                  </div>
+                )}
+
+                {streamingLinks.length > 0 && (
+                  <div className="mt-6 w-full flex flex-col items-center gap-3 pt-4 md:mt-auto md:w-auto md:items-end">
+                    <span className="text-xs uppercase tracking-wide text-zinc-400">
+                      Disponible sur
+                    </span>
+                    <div className="flex w-full flex-wrap items-center justify-center gap-3 md:w-auto md:justify-end">
+                      {primaryLinks.map((link) => {
+                        const ringStyle = {
+                          boxShadow: `0 0 0 4px ${hexToRgba(link.accent, 0.25)}`,
+                          borderColor: hexToRgba(link.accent, 0.4),
+                        }
+
+                        const IconComponent = link.Icon
+                        const isLucideFallback = IconComponent === Link2
+
+                        return (
+                          <Tooltip key={link.url}>
+                            <TooltipTrigger asChild>
+                              <a
+                                href={link.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                aria-label={`Écouter sur ${link.label}`}
+                                className="group inline-flex min-w-[64px] flex-col items-center justify-center gap-1"
                               >
-                                <IconComponent
-                                  className="h-7 w-7"
-                                  {...(isLucideFallback ? { color: link.accent } : {})}
-                                />
-                              </span>
-                              <span className="text-[11px] font-medium text-zinc-500 md:hidden">
-                                {link.label}
-                              </span>
-                            </a>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p className="font-medium">{link.label}</p>
-                            <p className="text-xs text-zinc-400">{link.domain}</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      )
-                    })}
+                                <span
+                                  className="inline-flex h-11 w-11 items-center justify-center rounded-full border bg-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
+                                  style={ringStyle}
+                                >
+                                  <IconComponent
+                                    className="h-7 w-7"
+                                    {...(isLucideFallback ? { color: link.accent } : {})}
+                                  />
+                                </span>
+                                <span className="text-[11px] font-medium text-zinc-500 md:hidden">
+                                  {link.label}
+                                </span>
+                              </a>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p className="font-medium">{link.label}</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        )
+                      })}
 
-                    {extraLinks.length > 0 && (
-                      <>
-                        <button
-                          type="button"
-                          onClick={() => setShowMorePlatforms((prev) => !prev)}
-                          className="inline-flex min-w-[64px] flex-col items-center justify-center gap-1 text-zinc-600 transition-colors hover:text-zinc-800 focus-visible:outline-none focus-visible:ring focus-visible:ring-brand/40"
-                          aria-expanded={showMorePlatforms}
-                          aria-label="Voir plus de plateformes"
-                        >
-                          <span className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-zinc-200 bg-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
-                            <span className="text-xl font-semibold">…</span>
-                          </span>
-                          <span className="text-[11px] font-medium text-zinc-500 md:hidden">
-                            Plus
-                          </span>
-                        </button>
-                        <div
-                          className={`flex w-full flex-wrap items-center justify-center gap-3 md:justify-end ${
-                            showMorePlatforms ? '' : 'hidden'
-                          }`}
-                          role="region"
-                          aria-hidden={!showMorePlatforms}
-                        >
-                          {extraLinks.map((link) => {
+                      {extraLinks.length > 0 && (
+                        <>
+                          <button
+                            type="button"
+                            onClick={() => setShowMorePlatforms((prev) => !prev)}
+                            className="inline-flex min-w-[64px] flex-col items-center justify-center gap-1 text-zinc-600 transition-colors hover:text-zinc-800 focus-visible:outline-none focus-visible:ring focus-visible:ring-brand/40"
+                            aria-expanded={showMorePlatforms}
+                            aria-label="Voir plus de plateformes"
+                          >
+                            <span className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-zinc-200 bg-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
+                              <span className="text-xl font-semibold">…</span>
+                            </span>
+                            <span className="text-[11px] font-medium text-zinc-500 md:hidden">
+                              Plus
+                            </span>
+                          </button>
+                          <div
+                            className={`flex w-full flex-wrap items-center justify-center gap-3 md:justify-end ${showMorePlatforms ? '' : 'hidden'
+                              }`}
+                            role="region"
+                            aria-hidden={!showMorePlatforms}
+                          >
+                            {extraLinks.map((link) => {
                               const ringStyle = {
                                 boxShadow: `0 0 0 4px ${hexToRgba(link.accent, 0.25)}`,
                                 borderColor: hexToRgba(link.accent, 0.4),
@@ -495,20 +522,140 @@ const ReleaseShow: React.FC<ReleaseShowProps> = ({ release, shareUrl }) => {
                                   </TooltipTrigger>
                                   <TooltipContent>
                                     <p className="font-medium">{link.label}</p>
-                                    <p className="text-xs text-zinc-400">{link.domain}</p>
                                   </TooltipContent>
                                 </Tooltip>
                               )
-                          })}
-                        </div>
-                      </>
-                    )}
+                            })}
+                          </div>
+                        </>
+                      )}
+                    </div>
                   </div>
-                </div>
+                )}
+              </div>
+            </div>
+          </article>
+
+          <aside className="bg-white rounded-3xl shadow-lg border border-zinc-100 overflow-hidden p-6 md:py-8">
+            <div className="relative overflow-hidden rounded-2xl border border-dashed border-brand/40 bg-brand/10 p-6 text-center">
+              <div
+                className="absolute inset-0 bg-gradient-to-br from-brand/40 via-white/40 to-brand-dark/40 blur-xl opacity-60"
+                aria-hidden="true"
+              />
+              <div className="relative space-y-3">
+                <h2 className="text-sm font-semibold uppercase tracking-wide text-brand">
+                  Votes
+                </h2>
+                <p className="text-sm text-zinc-600 leading-relaxed">
+                  Ici prochainement tu pourras voter pour cette sortie.
+                </p>
+              </div>
+            </div>
+            <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+              <button
+                onClick={handleShare}
+                className="inline-flex items-center gap-2 px-4 py-2 bg-brand text-white rounded-full text-sm font-medium hover:bg-brand-dark transition"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth={1.8}
+                  className="w-4 h-4"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M7.5 8.25a3 3 0 10-2.9 3.605l10.17 5.086a3 3 0 105.147-.441l-10.17-5.086a3.002 3.002 0 00-2.247-3.164z"
+                  />
+                </svg>
+                Partager
+              </button>
+              {shareStatus === 'copied' && (
+                <span className="text-xs text-green-600 font-medium">Lien copié ✅</span>
+              )}
+              {shareStatus === 'error' && (
+                <span className="text-xs text-red-600 font-medium">
+                  Impossible de partager, réessaie.
+                </span>
               )}
             </div>
+          </aside>
+
+        </div>
+
+
+
+        {relatedArtists.length > 0 && (
+          <section className="space-y-6">
+            <h2 className="text-xl font-semibold text-zinc-900 text-start">Artistes liés</h2>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {relatedArtists.map((artist) => {
+                const href = artist.id ? `/artists/${artist.id}` : '/artists/bientot'
+
+                return (
+                  <Tooltip key={`${artist.id ?? artist.name}`}>
+                    <TooltipTrigger asChild>
+                      <Link
+                        href={href}
+                        onClick={(event) => event.preventDefault()}
+                        aria-disabled="true"
+                        className="group relative flex items-center gap-4 rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md cursor-default"
+                      >
+                        <div className="relative h-14 w-14 overflow-hidden rounded-full border border-zinc-200 bg-zinc-100">
+                          {artist.picture ? (
+                            <img
+                              src={artist.picture}
+                              alt={artist.name}
+                              className="h-full w-full object-cover"
+                            />
+                          ) : (
+                            <div className="flex h-full w-full items-center justify-center text-xl font-semibold text-brand">
+                              {artist.name[0]?.toUpperCase() ?? '?'}
+                            </div>
+                          )}
+                        </div>
+                        <div className="min-w-0">
+                          <p className="truncate text-sm font-semibold text-zinc-900">{artist.name}</p>
+                          {artist.releaseCount !== null && artist.releaseCount !== undefined && (
+                            <p className="text-xs text-zinc-500">
+                              {artist.releaseCount === 1
+                                ? '1 sortie'
+                                : `${artist.releaseCount} sorties`}
+                            </p>
+                          )}
+                        </div>
+                        <span className="pointer-events-none absolute inset-0 rounded-2xl border border-transparent transition group-hover:border-brand/40" />
+                      </Link>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p className="max-w-[220px] text-sm">
+                        Bientôt tu pourras découvrir sa page artiste complète.
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
+                )
+              })}
+            </div>
+          </section>
+        )}
+
+        <section className="bg-white rounded-3xl shadow-lg border border-zinc-100 overflow-hidden">
+          <div className="relative px-6 py-10">
+            <div
+              className="absolute inset-0 bg-gradient-to-br from-brand/20 via-white to-brand-dark/30 blur-xl opacity-60"
+              aria-hidden="true"
+            />
+            <div className="relative space-y-3 text-center">
+              <h2 className="text-xl text-center font-semibold text-zinc-900">Description</h2>
+              <p className="text-sm text-zinc-600 leading-relaxed">
+                Prochainement l'artiste et son équipe pourront ajouter une description du
+                projet en détail, les crédits et les informations de production.
+              </p>
+            </div>
           </div>
-        </article>
+        </section>
 
         {/* TODO: Restore Spotify embed when embed issues are resolved */}
         {/* {spotifyEmbedUrl && (
@@ -540,6 +687,21 @@ const ReleaseShow: React.FC<ReleaseShowProps> = ({ release, shareUrl }) => {
             </div>
           </section>
         )}
+
+        <section className="bg-white rounded-3xl shadow-lg border border-zinc-100 overflow-hidden">
+          <div className="relative px-6 py-10">
+            <div
+              className="absolute inset-0 bg-gradient-to-br from-zinc-200 via-white to-brand/40 blur-xl opacity-60"
+              aria-hidden="true"
+            />
+            <div className="relative space-y-3 text-center">
+              <h2 className="text-xl font-semibold text-zinc-900">Commentaires & avis</h2>
+              <p className="text-sm text-zinc-600 leading-relaxed">
+                Ici prochainement tu pourras partager tes retours et donner ton avis.
+              </p>
+            </div>
+          </div>
+        </section>
       </div>
     </AppLayout>
   )

@@ -6,6 +6,7 @@ import {
   manyToMany,
   belongsTo,
   beforeCreate,
+  computed,
 } from '@adonisjs/lucid/orm'
 import type { HasMany, ManyToMany, BelongsTo } from '@adonisjs/lucid/types/relations'
 import { randomUUID } from 'node:crypto'
@@ -84,4 +85,28 @@ export default class Artist extends BaseModel {
     pivotTimestamps: true,
   })
   declare featured: ManyToMany<typeof Release>
+
+  @computed()
+  get releaseCount(): number | null {
+    const raw = (this.$extras?.releases_count ?? this.$extras?.release_count) as
+      | number
+      | string
+      | null
+      | undefined
+
+    if (raw === null || raw === undefined) {
+      return null
+    }
+
+    if (typeof raw === 'number') {
+      return Number.isFinite(raw) ? raw : null
+    }
+
+    if (typeof raw === 'string') {
+      const parsed = Number.parseInt(raw, 10)
+      return Number.isFinite(parsed) ? parsed : null
+    }
+
+    return null
+  }
 }
