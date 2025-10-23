@@ -16,7 +16,7 @@ export default class HomeController {
     const releases = await Release.query()
       .where('date', '>=', fourWeeksAgo.toSQL())
       .where('date', '<=', nextWeek.toSQL())
-      .where('isSecret', false)
+      .where('is_secret', false)
       .preload('artist')
       .preload('categories')
       .preload('features')

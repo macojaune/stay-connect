@@ -10,7 +10,8 @@ interface AppLayoutProps {
 
 export default function AppLayout({ children, description }: AppLayoutProps) {
   const { url } = usePage()
-  const isLandingPage = url === '/'
+  const landingPagePath = url.split('#')[0]?.split('?')[0] || url
+  const isLandingPage = landingPagePath === '/' || landingPagePath === ''
 
   return (
     <>
