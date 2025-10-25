@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import AppLayout from '~/layouts/AppLayout'
 import { Head, Link } from '@inertiajs/react'
-import { Link2 } from 'lucide-react'
+import { Copy, Link2 } from 'lucide-react'
 import { Tooltip, TooltipContent, TooltipTrigger } from '~/components/ui/tooltip'
 import {
   AppleMusicLogo,
@@ -11,6 +11,14 @@ import {
   TidalLogo,
   YoutubeLogo,
 } from '~/components/icons/StreamingPlatformIcons'
+import {
+  LinkedinIcon,
+  LinkedinShareButton,
+  TwitterIcon,
+  TwitterShareButton,
+  WhatsappIcon,
+  WhatsappShareButton,
+} from 'react-share'
 
 type ReleaseShowProps = {
   release: {
@@ -69,6 +77,14 @@ type PlatformConfig = {
   key: string
   Icon: StreamingLink['Icon']
   accent: string
+}
+
+type ShareButtonConfig = {
+  key: string
+  label: string
+  Button: React.ComponentType<React.PropsWithChildren<Record<string, unknown>>>
+  Icon: React.ComponentType<{ size?: number; round?: boolean; borderRadius?: number }>
+  buttonProps?: Record<string, unknown>
 }
 
 const PLATFORM_CONFIGS: PlatformConfig[] = [
@@ -183,7 +199,7 @@ const PLATFORM_CONFIGS: PlatformConfig[] = [
 // }
 
 const ReleaseShow: React.FC<ReleaseShowProps> = ({ release, shareUrl }) => {
-  const [shareStatus, setShareStatus] = useState<'idle' | 'copied' | 'error'>('idle')
+  const [copyStatus, setCopyStatus] = useState<'idle' | 'copied' | 'error'>('idle')
   const [showMorePlatforms, setShowMorePlatforms] = useState(false)
 
   const releaseDate = release.date ? new Date(release.date) : null
@@ -322,24 +338,65 @@ const ReleaseShow: React.FC<ReleaseShowProps> = ({ release, shareUrl }) => {
   //   return `https://open.spotify.com/embed/${parsed.type}/${parsed.id}`
   // }, [release.spotifyId, release.type])
 
-  const handleShare = async () => {
-    try {
-      if (navigator.share) {
-        await navigator.share({
-          title: `${release.title} · ${release.artist?.name ?? ''}`,
-          text: `Découvre "${release.title}" sur #StayConnect`,
-          url: shareUrl,
-        })
-        setShareStatus('idle')
-        return
-      }
+  const shareTitle = useMemo(() => {
+    const parts = [release.title, release.artist?.name].filter(Boolean)
+    return parts.join(' · ')
+  }, [release.artist?.name, release.title])
 
+  const shareMessage = useMemo(
+    () => `Découvre "${release.title}" sur #StayConnect`,
+    [release.title]
+  )
+
+  const seoDescription = useMemo(() => {
+    const raw = release.description?.replace(/\s+/g, ' ').trim() ?? ''
+    const base = raw.length > 0 ? raw : shareMessage
+
+    if (base.length <= 160) {
+      return base
+    }
+
+    return `${base.slice(0, 157).trimEnd()}…`
+  }, [release.description, shareMessage])
+
+  const shareButtons = useMemo<ShareButtonConfig[]>(
+    () => [
+      {
+        key: 'twitter',
+        label: 'X',
+        Button: TwitterShareButton,
+        Icon: TwitterIcon,
+        buttonProps: { title: shareMessage, hashtags: ['StayConnect'] },
+      },
+      {
+        key: 'whatsapp',
+        label: 'WhatsApp',
+        Button: WhatsappShareButton,
+        Icon: WhatsappIcon,
+        buttonProps: { title: shareMessage, separator: ' – ' },
+      },
+      {
+        key: 'linkedin',
+        label: 'LinkedIn',
+        Button: LinkedinShareButton,
+        Icon: LinkedinIcon,
+        buttonProps: { title: shareTitle, summary: shareMessage, source: 'StayConnect' },
+      },
+    ],
+    [shareMessage, shareTitle]
+  )
+
+  const ogImage = release.cover ?? null
+  const twitterCardType = ogImage ? 'summary_large_image' : 'summary'
+
+  const handleCopyLink = async () => {
+    try {
       await navigator.clipboard.writeText(shareUrl)
-      setShareStatus('copied')
-      setTimeout(() => setShareStatus('idle'), 3500)
+      setCopyStatus('copied')
     } catch {
-      setShareStatus('error')
-      setTimeout(() => setShareStatus('idle'), 3500)
+      setCopyStatus('error')
+    } finally {
+      setTimeout(() => setCopyStatus('idle'), 3000)
     }
   }
 
@@ -351,7 +408,20 @@ const ReleaseShow: React.FC<ReleaseShowProps> = ({ release, shareUrl }) => {
 
   return (
     <AppLayout>
-      <Head title={`${release.title} · ${release.artist?.name ?? 'Sortie musicale'}`} />
+      <Head title={shareTitle}>
+        <meta name="description" content={seoDescription} />
+        <meta property="og:title" content={shareTitle} />
+        <meta property="og:description" content={seoDescription} />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={shareUrl} />
+        {ogImage ? <meta property="og:image" content={ogImage} /> : null}
+        <meta name="twitter:card" content={twitterCardType} />
+        <meta name="twitter:title" content={shareTitle} />
+        <meta name="twitter:description" content={seoDescription} />
+        {ogImage ? <meta name="twitter:image" content={ogImage} /> : null}
+        <meta name="twitter:url" content={shareUrl} />
+        <link rel="canonical" href={shareUrl} />
+      </Head>
       <div className="max-w-5xl mx-auto px-6 py-12 space-y-10">
         <div>
           <Link
@@ -465,69 +535,63 @@ const ReleaseShow: React.FC<ReleaseShowProps> = ({ release, shareUrl }) => {
                         )
                       })}
 
-                      {extraLinks.length > 0 && (
-                        <>
-                          <button
-                            type="button"
-                            onClick={() => setShowMorePlatforms((prev) => !prev)}
-                            className="inline-flex min-w-[64px] flex-col items-center justify-center gap-1 text-zinc-600 transition-colors hover:text-zinc-800 focus-visible:outline-none focus-visible:ring focus-visible:ring-brand/40"
-                            aria-expanded={showMorePlatforms}
-                            aria-label="Voir plus de plateformes"
-                          >
-                            <span className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-zinc-200 bg-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
-                              <span className="text-xl font-semibold">…</span>
-                            </span>
-                            <span className="text-[11px] font-medium text-zinc-500 md:hidden">
-                              Plus
-                            </span>
-                          </button>
-                          <div
-                            className={`flex w-full flex-wrap items-center justify-center gap-3 md:justify-end ${showMorePlatforms ? '' : 'hidden'
-                              }`}
-                            role="region"
-                            aria-hidden={!showMorePlatforms}
-                          >
-                            {extraLinks.map((link) => {
-                              const ringStyle = {
-                                boxShadow: `0 0 0 4px ${hexToRgba(link.accent, 0.25)}`,
-                                borderColor: hexToRgba(link.accent, 0.4),
-                              }
-                              const IconComponent = link.Icon
-                              const isLucideFallback = IconComponent === Link2
+                      {extraLinks.length > 0 &&
+                        showMorePlatforms &&
+                        extraLinks.map((link) => {
+                          const ringStyle = {
+                            boxShadow: `0 0 0 4px ${hexToRgba(link.accent, 0.25)}`,
+                            borderColor: hexToRgba(link.accent, 0.4),
+                          }
+                          const IconComponent = link.Icon
+                          const isLucideFallback = IconComponent === Link2
 
-                              return (
-                                <Tooltip key={link.url}>
-                                  <TooltipTrigger asChild>
-                                    <a
-                                      href={link.url}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      aria-label={`Écouter sur ${link.label}`}
-                                      className="group inline-flex min-w-[56px] flex-col items-center justify-center gap-1"
-                                      onClick={() => setShowMorePlatforms(false)}
-                                    >
-                                      <span
-                                        className="inline-flex h-10 w-10 items-center justify-center rounded-full border bg-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
-                                        style={ringStyle}
-                                      >
-                                        <IconComponent
-                                          className="h-6 w-6"
-                                          {...(isLucideFallback ? { color: link.accent } : {})}
-                                        />
-                                      </span>
-                                      <span className="text-[10px] font-medium text-zinc-500">
-                                        {link.label}
-                                      </span>
-                                    </a>
-                                  </TooltipTrigger>
-                                  <TooltipContent>
-                                    <p className="font-medium">{link.label}</p>
-                                  </TooltipContent>
-                                </Tooltip>
-                              )
-                            })}
-                          </div>
-                        </>
+                          return (
+                            <Tooltip key={link.url}>
+                              <TooltipTrigger asChild>
+                                <a
+                                  href={link.url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  aria-label={`Écouter sur ${link.label}`}
+                                  className="group inline-flex min-w-[64px] flex-col items-center justify-center gap-1"
+                                  onClick={() => setShowMorePlatforms(false)}
+                                >
+                                  <span
+                                    className="inline-flex h-11 w-11 items-center justify-center rounded-full border bg-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
+                                    style={ringStyle}
+                                  >
+                                    <IconComponent
+                                      className="h-7 w-7"
+                                      {...(isLucideFallback ? { color: link.accent } : {})}
+                                    />
+                                  </span>
+                                  <span className="text-[11px] font-medium text-zinc-500 md:hidden">
+                                    {link.label}
+                                  </span>
+                                </a>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p className="font-medium">{link.label}</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          )
+                        })}
+
+                      {extraLinks.length > 0 && !showMorePlatforms && (
+                        <button
+                          type="button"
+                          onClick={() => setShowMorePlatforms(true)}
+                          className="inline-flex min-w-[64px] flex-col items-center justify-center gap-1 text-zinc-600 transition-colors hover:text-zinc-800 focus-visible:outline-none focus-visible:ring focus-visible:ring-brand/40"
+                          aria-expanded={showMorePlatforms}
+                          aria-label="Voir plus de plateformes"
+                        >
+                          <span className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-zinc-200 bg-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
+                            <span className="text-xl font-semibold">…</span>
+                          </span>
+                          <span className="text-[11px] font-medium text-zinc-500 md:hidden">
+                            Plus
+                          </span>
+                        </button>
                       )}
                     </div>
                   </div>
@@ -536,8 +600,8 @@ const ReleaseShow: React.FC<ReleaseShowProps> = ({ release, shareUrl }) => {
             </div>
           </article>
 
-          <aside className="bg-white rounded-3xl shadow-lg border border-zinc-100 overflow-hidden p-6 md:py-8">
-            <div className="relative overflow-hidden rounded-2xl border border-dashed border-brand/40 bg-brand/10 p-6 text-center">
+          <aside className="bg-white rounded-3xl shadow-lg border border-zinc-100 overflow-hidden md:py-8">
+            <div className="relative overflow-hidden rounded-2xl border border-dashed border-brand/40 bg-brand/10 p-6 text-center mx-6">
               <div
                 className="absolute inset-0 bg-gradient-to-br from-brand/40 via-white/40 to-brand-dark/40 blur-xl opacity-60"
                 aria-hidden="true"
@@ -551,34 +615,47 @@ const ReleaseShow: React.FC<ReleaseShowProps> = ({ release, shareUrl }) => {
                 </p>
               </div>
             </div>
-            <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-              <button
-                onClick={handleShare}
-                className="inline-flex items-center gap-2 px-4 py-2 bg-brand text-white rounded-full text-sm font-medium hover:bg-brand-dark transition"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth={1.8}
-                  className="w-4 h-4"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M7.5 8.25a3 3 0 10-2.9 3.605l10.17 5.086a3 3 0 105.147-.441l-10.17-5.086a3.002 3.002 0 00-2.247-3.164z"
-                  />
-                </svg>
+            <div className="mt-6 space-y-4">
+              <p className="text-center text-xs font-semibold uppercase tracking-wide text-brand">
                 Partager
-              </button>
-              {shareStatus === 'copied' && (
-                <span className="text-xs text-green-600 font-medium">Lien copié ✅</span>
-              )}
-              {shareStatus === 'error' && (
-                <span className="text-xs text-red-600 font-medium">
-                  Impossible de partager, réessaie.
-                </span>
+              </p>
+              <div className="flex flex-wrap items-center justify-center gap-2">
+                {shareButtons.map((config) => {
+                  const ButtonComponent = config.Button
+                  const IconComponent = config.Icon
+
+                  return (
+                    <ButtonComponent
+                      key={config.key}
+                      url={shareUrl}
+                      {...config.buttonProps}
+                      className="group inline-flex items-center justify-center focus:outline-none"
+                      aria-label={`Partager sur ${config.label}`}
+                    >
+                      <span className="inline-flex  items-center justify-center rounded-full border border-brand/20 bg-white shadow-sm transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:shadow-md">
+                        <IconComponent size={44} round />
+                      </span>
+                    </ButtonComponent>
+                  )
+                })}
+                <button
+                  type="button"
+                  onClick={handleCopyLink}
+                  className="group inline-flex items-center justify-center focus:outline-none"
+                  aria-label="Copier le lien"
+                >
+                  <span className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-brand/20 bg-white shadow-sm transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:shadow-md">
+                    <Copy className="h-5 w-5" />
+                  </span>
+                </button>
+              </div>
+              {(copyStatus === 'copied' || copyStatus === 'error') && (
+                <div className="min-h-[18px] text-center text-[11px] font-medium">
+                  {copyStatus === 'copied' && <span className="text-green-600">Lien copié ✅</span>}
+                  {copyStatus === 'error' && (
+                    <span className="text-red-600">Impossible de copier, réessaie.</span>
+                  )}
+                </div>
               )}
             </div>
           </aside>
