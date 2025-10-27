@@ -16,7 +16,7 @@ export default class HomeController {
     const releases = await Release.query()
       .where('date', '>=', fourWeeksAgo.toSQL())
       .where('date', '<=', nextWeek.toSQL())
-      .where('isSecret', false)
+      .where('is_secret', false)
       .preload('artist')
       .preload('categories')
       .preload('features')
@@ -33,7 +33,7 @@ export default class HomeController {
 
     // Group releases by week
     const groupedReleases = this.groupReleasesByWeek(releases, now)
-    
+
     // Get flashed errors and old input from session
     const errors = session.flashMessages.get('errors', undefined)
     const old = session.flashMessages.get('old', {})
@@ -98,6 +98,7 @@ export default class HomeController {
       const newsItem = {
         id: release.id,
         title: release.title,
+        slug: release.slug,
         artist: release.artist?.name || 'Artiste inconnu',
         date: this.formatReleaseDate(DateTime.fromJSDate(release.date.toJSDate()), now),
         type: release.type || 'release',
@@ -132,7 +133,52 @@ export default class HomeController {
       })
     }
 
-    return sortedGroups
+    const currentWeekStart = now.startOf('week')
+    const previousWeekStart = now.minus({ weeks: 1 }).startOf('week')
+
+    const findGroupByWeekStart = (weekStart: DateTime) =>
+      sortedGroups.find((group: any) => group.weekStart === weekStart.toISODate())
+
+    const limitedSections = []
+    const upcomingSection = findGroupByWeekStart(nextWeekStart)
+
+    limitedSections.push({
+      ...(upcomingSection ?? {
+        news: [],
+        weekStart: nextWeekStart.toISODate(),
+      }),
+      title: 'À venir',
+      subtitle:
+        upcomingSection?.subtitle ?? 'Inscris-toi pour voir les sorties en avance',
+      isUpcoming: true,
+    })
+
+    const currentWeekSection = findGroupByWeekStart(currentWeekStart)
+    if (currentWeekSection) {
+      limitedSections.push({
+        ...currentWeekSection,
+        title: 'Cette semaine',
+        subtitle: currentWeekSection.subtitle || 'Les sorties de la semaine',
+      })
+    } else {
+      limitedSections.push({
+        title: 'Cette semaine',
+        subtitle: 'Les sorties de la semaine',
+        isUpcoming: false,
+        news: [],
+        weekStart: currentWeekStart.toISODate(),
+      })
+    }
+
+    const previousWeekSection = findGroupByWeekStart(previousWeekStart)
+    if (previousWeekSection && previousWeekSection.news.length > 0) {
+      limitedSections.push({
+        ...previousWeekSection,
+        title: 'La semaine passée',
+      })
+    }
+
+    return limitedSections
   }
 
   private formatReleaseDate(releaseDate: DateTime, now: DateTime): string {

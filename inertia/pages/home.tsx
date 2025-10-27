@@ -283,6 +283,7 @@ export default function Home({ errors, timelineData, artists, remainingArtistsCo
                       id="artistName"
                       type="text"
                       name="artistName"
+                      label="Nom de l'artiste"
                       placeholder="ex: Don Snoop"
                       value={artistForm.data.artistName}
                       onChange={(e) => artistForm.setData('artistName', e.target.value)}
@@ -304,11 +305,12 @@ export default function Home({ errors, timelineData, artists, remainingArtistsCo
                       id="artistEmail"
                       type="email"
                       name="email"
+                      label='E-mail'
                       placeholder="gel@ayo.gwo"
                       value={artistForm.data.email}
                       onChange={(e) => artistForm.setData('email', e.target.value)}
                       error={artistForm?.errors?.email}
-                       required
+                      required
                     />
 
                     <Button

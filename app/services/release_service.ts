@@ -1,8 +1,11 @@
 import Release from '#models/release'
 import Category from '#models/category'
+import SonglinkService from '#services/songlink_service'
 import { ReleaseValidator } from '../validators/release'
 
 export default class ReleaseService {
+  private songlinkService = new SonglinkService()
+
   /**
    * Create a new release
    */
@@ -22,6 +25,8 @@ export default class ReleaseService {
       loader.load('categories').load('artist')
     })
 
+    await this.songlinkService.syncReleaseLinks(release)
+
     return release
   }
 
@@ -39,6 +44,10 @@ export default class ReleaseService {
     await release.load((loader) => {
       loader.load('categories').load('artist').load('votes')
     })
+
+    if (data.spotifyId || data.urls) {
+      await this.songlinkService.syncReleaseLinks(release)
+    }
 
     return release
   }

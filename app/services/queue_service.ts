@@ -52,6 +52,18 @@ export default class QueueService {
       enabled: true,
     })
 
+    this.addJob({
+      id: 'weekly-recap-email',
+      name: 'Send Weekly Recap Email',
+      command: 'node ace email:weekly-recap --send-later=false',
+      schedule: '0 9 * * 1', // Mondays at 09:00
+      nextRun: this.getNextRunTime('0 9 * * 1'),
+      isRunning: false,
+      retryCount: 0,
+      maxRetries: 3,
+      enabled: true,
+    })
+
     logger.info('Queue service initialized with Spotify jobs')
   }
 
@@ -192,6 +204,15 @@ export default class QueueService {
       let next = now.set({ hour: 2, minute: 0, second: 0, millisecond: 0 })
       if (next <= now) {
         next = next.plus({ days: 1 })
+      }
+      return next
+    }
+
+    if (schedule === '0 9 * * 1') {
+      // Mondays at 09:00
+      let next = now.set({ weekday: 1, hour: 9, minute: 0, second: 0, millisecond: 0 })
+      if (next <= now) {
+        next = next.plus({ weeks: 1 })
       }
       return next
     }

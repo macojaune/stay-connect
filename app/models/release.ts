@@ -1,17 +1,11 @@
 import Artist from '#models/artist'
 import Category from '#models/category'
-import Vote from '#models/vote'
 import Feature from '#models/feature'
-import {
-  BaseModel,
-  column,
-  hasMany,
-  manyToMany,
-  belongsTo,
-  beforeCreate,
-} from '@adonisjs/lucid/orm'
-import type { HasMany, ManyToMany, BelongsTo } from '@adonisjs/lucid/types/relations'
-import { DateTime } from 'luxon'
+import Vote from '#models/vote'
+import string from '@adonisjs/core/helpers/string'
+import { BaseModel, beforeCreate, beforeSave, belongsTo, column, hasMany, manyToMany } from '@adonisjs/lucid/orm'
+import type { BelongsTo, HasMany, ManyToMany } from '@adonisjs/lucid/types/relations'
+import type { DateTime } from 'luxon'
 import { randomUUID } from 'node:crypto'
 
 export default class Release extends BaseModel {
@@ -27,6 +21,9 @@ export default class Release extends BaseModel {
 
   @column()
   declare title: string
+
+  @column()
+  declare slug: string
 
   @column()
   declare description: string
@@ -90,4 +87,53 @@ export default class Release extends BaseModel {
     foreignKey: 'releaseId',
   })
   declare features: HasMany<typeof Feature>
+
+  @beforeSave()
+  public static async assignSlug(release: Release) {
+    if (!release.title) {
+      return
+    }
+
+    if (!release.slug || release.$dirty.title || release.$dirty.artistId) {
+      const artistName = release.artistId
+        ? await release
+          .related('artist')
+          .query()
+          .where('id', release.artistId)
+          .select('name')
+          .first()
+          .then((artist) => artist?.name)
+        : null
+
+      let featureRecords: Feature[] = []
+      if (release.$preloaded?.features) {
+        featureRecords = release.$preloaded.features
+      } else if (release.$isPersisted) {
+        featureRecords = await release
+          .related('features')
+          .query()
+          .preload('artist')
+      }
+
+      const featureNames = Array.from(
+        new Set(
+          featureRecords
+            .map((feature) => feature.artistName || feature.artist?.name)
+            .filter((name): name is string => !!name)
+        )
+      )
+
+      const slugSource = [artistName, ...featureNames, release.title].filter(Boolean).join(' ')
+      const baseSlugValue = slugSource || release.title
+      const baseSlug = (string.slug(baseSlugValue) || 'sortie').toLowerCase()
+      let slug = baseSlug
+      let attempt = 1
+      while (
+        await Release.query().where('slug', slug).whereNot('id', release.id).first()
+      ) {
+        slug = `${baseSlug}-${attempt++}`
+      }
+      release.slug = slug
+    }
+  }
 }

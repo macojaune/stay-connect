@@ -1,6 +1,9 @@
 import { HttpContext } from '@adonisjs/core/http'
 import Release from '#models/release'
 import Category from '#models/category'
+import SonglinkService from '#services/songlink_service'
+
+const songlinkService = new SonglinkService()
 
 export default class ReleasesController {
   /**
@@ -28,6 +31,7 @@ export default class ReleasesController {
     ])
 
     const release = await Release.create(data)
+    await songlinkService.syncReleaseLinks(release)
     await release.load('artist')
     await release.load('categories')
     return response.json(release)
@@ -61,6 +65,9 @@ export default class ReleasesController {
     ])
 
     await release.merge(data).save()
+    if (data.spotifyId || data.urls) {
+      await songlinkService.syncReleaseLinks(release)
+    }
     await release.load('artist')
     await release.load('categories')
     return response.json(release)

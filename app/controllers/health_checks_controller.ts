@@ -1,5 +1,5 @@
+import type { HttpContext } from '@adonisjs/core/http'
 import { healthChecks } from '#start/health'
-import { HttpContext } from '@adonisjs/core/http'
 
 export default class HealthChecksController {
   async handle({ response }: HttpContext) {

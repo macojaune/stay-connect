@@ -1,7 +1,6 @@
 import React from 'react'
-import { Head } from '@inertiajs/react'
+import { Head, usePage } from '@inertiajs/react'
 import { Navigation } from '~/components/Navigation'
-import { usePage } from '@inertiajs/react'
 import { Footer } from '~/components/Footer'
 interface AppLayoutProps {
   children: React.ReactNode
@@ -10,6 +9,10 @@ interface AppLayoutProps {
 }
 
 export default function AppLayout({ children, description }: AppLayoutProps) {
+  const { url } = usePage()
+  const landingPagePath = url.split('#')[0]?.split('?')[0] || url
+  const isLandingPage = landingPagePath === '/' || landingPagePath === ''
+
   return (
     <>
       <Head>
@@ -18,7 +21,7 @@ export default function AppLayout({ children, description }: AppLayoutProps) {
       </Head>
 
       <div className="min-h-screen bg-gray-50 flex flex-col">
-        {/* <Navigation isLandingPage={usePage().url.startsWith('/')} /> */}
+        <Navigation isLandingPage={isLandingPage} />
         <main className="flex-1">{children}</main>
         <Footer />
       </div>
