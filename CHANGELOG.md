@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.1](https://github.com/macojaune/stay-connect/compare/v1.3.0...v1.3.1) (2025-11-03)
+
+
+### Bug Fixes
+
+* weekly recap newsletter releases broken links ([fabcb98](https://github.com/macojaune/stay-connect/commit/fabcb9872926790fddbadc7b5783cd13ffed8c98))
+
 ## [1.3.0](https://github.com/macojaune/stay-connect/compare/v1.2.0...v1.3.0) (2025-10-31)
 
 
