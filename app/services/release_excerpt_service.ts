@@ -114,7 +114,7 @@ export default class ReleaseExcerptService {
       .join(', ')
 
     const baseUrl = linkBaseUrl ? linkBaseUrl.replace(/\/$/, '') : undefined
-    const detailUrl = baseUrl ? `${baseUrl}/releases/${release.slug}` : undefined
+    const detailUrl = baseUrl ? `${baseUrl}/sorties/${release.slug}` : undefined
 
     const titleContent = detailUrl
       ? `<a href="${detailUrl}" style="color:inherit;text-decoration:none;">${artist} <span style="font-weight:normal;color:#aaa;">–</span> ${release.title}</a>`
