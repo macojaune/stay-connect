@@ -162,6 +162,6 @@ export default class WeeklyRecapService {
 
   getReleaseUrl(slug: string): string {
     const base = this.appBaseUrl.replace(/\/$/, '')
-    return `${base}/releases/${slug}`
+    return `${base}/sorties/${slug}`
   }
 }

@@ -1,5 +1,29 @@
 # Changelog
 
+## [1.3.1](https://github.com/macojaune/stay-connect/compare/v1.3.0...v1.3.1) (2025-11-03)
+
+
+### Bug Fixes
+
+* weekly recap newsletter releases broken links ([fabcb98](https://github.com/macojaune/stay-connect/commit/fabcb9872926790fddbadc7b5783cd13ffed8c98))
+
+## [1.3.0](https://github.com/macojaune/stay-connect/compare/v1.2.0...v1.3.0) (2025-10-31)
+
+
+### Features
+
+* add days param on check spotify release command ([333888a](https://github.com/macojaune/stay-connect/commit/333888a154461b5e787cababd5b904c5e0b43186))
+* brevo emailing for weekly news excerpt ([4d3b782](https://github.com/macojaune/stay-connect/commit/4d3b7823979d3d2530afd1099d7d0fd2dd753767))
+* create weekly-recap cron endpoint ([6de27de](https://github.com/macojaune/stay-connect/commit/6de27de80e5297a299c58712bf69aed1f6625c6b))
+* update share on release page ([9cc8162](https://github.com/macojaune/stay-connect/commit/9cc81623bbd21071ec4d8d9686f63a8de3802984))
+* weekly email sent to brevo list ([ab7cf67](https://github.com/macojaune/stay-connect/commit/ab7cf67b2b12c86ef46d3ecf7420f4e3e2706786))
+
+
+### Bug Fixes
+
+* db healthcheck ([9af392e](https://github.com/macojaune/stay-connect/commit/9af392e3e9bb655b66e8d27171a9f25c7f1dfcdf))
+* homepage sql error ([bc31c30](https://github.com/macojaune/stay-connect/commit/bc31c30349fe9d19e008975b22b375190f910a02))
+
 ## [1.2.0](https://github.com/macojaune/stay-connect/compare/v1.1.0...v1.2.0) (2025-07-25)
 
 
