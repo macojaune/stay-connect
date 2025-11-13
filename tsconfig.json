@@ -5,9 +5,21 @@
     "outDir": "./build",
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./inertia/*"],
-      "#contracts/*": ["./app/contracts/*.ts", "./app/contracts/*.js"],
-      "#constants/*": ["./app/constants/*.ts", "./app/constants/*.js"]
+      "@/*": [
+        "./inertia/*"
+      ],
+      "#contracts/*": [
+        "./app/contracts/*.ts",
+        "./app/contracts/*.js"
+      ],
+      "#constants/*": [
+        "./app/constants/*.ts",
+        "./app/constants/*.js"
+      ],
+      "#jobs/*": [
+        "./app/jobs/*.ts",
+        "./app/jobs/*.js"
+      ]
     }
   },
   "exclude": [

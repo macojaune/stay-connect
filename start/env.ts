@@ -75,4 +75,13 @@ export default await Env.create(new URL('../', import.meta.url), {
   CRON_API_KEY: Env.schema.string.optional(),
   CRON_ALLOWED_IPS: Env.schema.string.optional(),
   API_KEY: Env.schema.string.optional(),
+
+  /*
+  |----------------------------------------------------------
+  | Variables for @rlanz/bull-queue
+  |----------------------------------------------------------
+  */
+  QUEUE_REDIS_HOST: Env.schema.string({ format: 'host' }),
+  QUEUE_REDIS_PORT: Env.schema.number(),
+  QUEUE_REDIS_PASSWORD: Env.schema.string.optional()
 })
