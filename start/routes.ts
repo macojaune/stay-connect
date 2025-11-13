@@ -79,11 +79,6 @@ router
     //         // Release-Category relationships
     //         router.post('/releases/:id/categories', 'releases_controller.addCategory')
     //         router.delete('/releases/:id/categories/:categoryId', 'releases_controller.removeCategory')
-    //         // Queue management routes
-    //         router.get('/queue/status', 'queue_controller.status')
-    //         router.post('/queue/trigger', 'queue_controller.trigger')
-    //         router.post('/queue/toggle', 'queue_controller.toggle')
-    //         router.get('/queue/health', 'queue_controller.health')
     //       })
     //       .use(middleware.auth())
   })

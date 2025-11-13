@@ -30,6 +30,7 @@ services:
       - "3333:3333"
     depends_on:
       - postgres
+      - redis
     volumes:
       - /home/ubuntu/stayConnect/uploads:/app/uploads
     deploy:
@@ -46,23 +47,39 @@ services:
     #   timeout: 5s
     #   retries: 5
     #   start_period: 40s
-  # Migration and Command Runner Service
-  adonis_migrations:
+  # Redis Queue Broker
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--save", "20", "1", "--loglevel", "warning"]
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6380:6379"
+
+  # Queue Worker
+  queue_worker:
     image: ghcr.io/macojaune/stay-connect:latest
     secrets:
       - source: stayconnect_env1
         target: /app/.env
     environment:
       NODE_ENV: production
+      QUEUE_ENABLED: "true"
+      QUEUE_REDIS_HOST: redis
+      QUEUE_REDIS_PORT: 6379
     depends_on:
+      - redis
       - postgres
     volumes:
       - /home/ubuntu/stayConnect/uploads:/app/uploads
+    command: ["node", "build/bin/console.js", "queue:listen"]
     deploy:
-      replicas: 0 # Don't run by default
+      replicas: 1
       restart_policy:
-        condition: none
-    command: ["tail", "-f", "/dev/null"] # Keep container alive
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
 
   # Development Database Admin (optional)
   adminer:
@@ -79,6 +96,8 @@ services:
 
 volumes:
   postgres_data:
+    driver: local
+  redis_data:
     driver: local
 secrets:
   stayconnect_env1:

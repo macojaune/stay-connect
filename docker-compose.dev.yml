@@ -13,11 +13,28 @@ services:
       - postgres_dev_data:/var/lib/postgresql/data
       - ./init-scripts:/docker-entrypoint-initdb.d
     ports:
-      - '5433:5432'
+      - "5434:5432"
     networks:
       - stayconnect_dev_network
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U stayconnect_user -d stayconnect_dev']
+      test: ["CMD-SHELL", "pg_isready -U stayconnect_user -d stayconnect_dev"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  # Redis Queue Broker
+  redis:
+    image: redis:7-alpine
+    container_name: stayconnect_redis_dev
+    restart: unless-stopped
+    command: ["redis-server", "--save", "20", "1", "--loglevel", "warning"]
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_dev_data:/data
+    networks:
+      - stayconnect_dev_network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -38,23 +55,25 @@ services:
       HOST: 0.0.0.0
       LOG_LEVEL: debug
       DB_HOST: postgres
-      # DB_PORT: 5433
+      DB_PORT: 5432
       DB_USER: stayconnect_user
       DB_PASSWORD: stayconnect_password
       DB_DATABASE: stayconnect_dev
       APP_KEY: ${APP_KEY:-your-32-character-secret-key-here}
       SESSION_DRIVER: cookie
+      QUEUE_REDIS_HOST: redis
+      QUEUE_REDIS_PORT: 6379
+      QUEUE_REDIS_PASSWORD:
     ports:
-      - '3333:3333'
-      - '9229:9229' # Node.js debugger port
+      - "3333:3333"
+      - "9229:9229" # Node.js debugger port
     depends_on:
       postgres:
         condition: service_healthy
+      redis:
+        condition: service_healthy
     networks:
       - stayconnect_dev_network
-    volumes:
-      - ./:/app
-      - /app/node_modules
     # command: npm run dev
 
   # Database Admin Interface
@@ -63,7 +82,7 @@ services:
     container_name: stayconnect_adminer_dev
     restart: unless-stopped
     ports:
-      - '8080:8080'
+      - "8080:8080"
     networks:
       - stayconnect_dev_network
     depends_on:
@@ -71,6 +90,8 @@ services:
 
 volumes:
   postgres_dev_data:
+    driver: local
+  redis_dev_data:
     driver: local
 networks:
   stayconnect_dev_network:

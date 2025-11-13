@@ -30,10 +30,16 @@ This adds:
 
 ### 3. Queue System
 
-Enable the queue system for automatic periodic tasks:
+The background jobs run on [BullMQ](https://docs.bullmq.io/) via the `@rlanz/bull-queue` integration and require a Redis instance.
+
+1. Ensure Redis is available (the development `docker-compose.dev.yml` exposes a `redis` service).
+2. Configure the queue environment variables:
 
 ```env
 QUEUE_ENABLED=true
+QUEUE_REDIS_HOST=redis
+QUEUE_REDIS_PORT=6379
+QUEUE_REDIS_PASSWORD=
 ```
 
 ## Usage
@@ -71,44 +77,35 @@ node ace spotify:sync-artists --batch-size=5
 
 ### Queue Management
 
-#### Start Queue Service
+#### Start the Queue Worker
 
 ```bash
-# Start queue in daemon mode (keeps running)
-node ace queue:manage --action=start --daemon
+# Listen to the default queue (runs indefinitely)
+node ace queue:listen
 
-# Start queue for one-time processing
-node ace queue:manage --action=start
+# Listen to specific queues (comma-separated)
+node ace queue:listen --queue=default
 ```
 
-#### Check Queue Status
+The worker stays alive until you stop it (`Ctrl+C`). In production you should use a process manager (see below).
+
+#### Manual Execution
+
+Jobs are scheduled automatically, but you can still execute the underlying Ace commands when you need to run something immediately:
 
 ```bash
-node ace queue:manage --action=status
-```
-
-#### Manually Trigger Jobs
-
-```bash
-# Trigger Spotify release check
-node ace queue:manage --action=trigger --job-id=spotify-check-releases
-
-# Trigger artist sync
-node ace queue:manage --action=trigger --job-id=spotify-sync-artists
-```
-
-#### Stop Queue Service
-
-```bash
-node ace queue:manage --action=stop
+node ace spotify:check-releases
+node ace spotify:sync-artists
+node ace email:weekly-recap
 ```
 
 ## Automatic Scheduling
 
-When the queue service is enabled, the following jobs run automatically:
+When the queue service is enabled, the following repeatable jobs are registered:
 
 - **Spotify Release Check**: Every 6 hours
 - **Artist Sync**: Daily at 2 AM
+- **Weekly Recap Email**: Mondays at 09:00 (local time)
 
 ### Production Setup
 
@@ -133,10 +130,11 @@ echo 'module.exports = {
   }, {
     name: "stayconnect-queue",
     script: "build/bin/console.js",
-    args: "queue:manage --action=start --daemon",
+    args: "queue:listen",
     instances: 1,
     env: {
-      NODE_ENV: "production"
+      NODE_ENV: "production",
+      QUEUE_ENABLED: "true"
     }
   }]
 }' > ecosystem.config.js
@@ -161,10 +159,11 @@ After=network.target
 Type=simple
 User=your-user
 WorkingDirectory=/path/to/your/app
-ExecStart=/usr/bin/node build/bin/console.js queue:manage --action=start --daemon
+ExecStart=/usr/bin/node build/bin/console.js queue:listen
 Restart=always
 RestartSec=10
 Environment=NODE_ENV=production
+Environment=QUEUE_ENABLED=true
 
 [Install]
 WantedBy=multi-user.target
@@ -184,12 +183,15 @@ Add to your `docker-compose.yml`:
 services:
   queue:
     build: .
-    command: node build/bin/console.js queue:manage --action=start --daemon
+    command: node build/bin/console.js queue:listen
     environment:
       - NODE_ENV=production
       - QUEUE_ENABLED=true
+      - QUEUE_REDIS_HOST=redis
+      - QUEUE_REDIS_PORT=6379
     depends_on:
       - postgres
+      - redis
     restart: unless-stopped
 ```
 
@@ -247,7 +249,7 @@ grep "Queue\|Spotify" storage/logs/app.log
 3. **High memory usage**:
    - Reduce batch sizes in commands
    - Increase processing intervals
-   - Monitor with `node ace queue:manage --action=status`
+   - Monitor the worker output (`node ace queue:listen`) or inspect Redis metrics
 
 ### Debug Mode
 
