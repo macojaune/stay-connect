@@ -36,17 +36,21 @@ services:
     deploy:
       update_config:
         order: start-first
-    #   restart_policy:
-    #     condition: on-failure
-    #     delay: 5s
-    #     max_attempts: 3
-    #     window: 120s
-    # healthcheck:
-    #   test: ['CMD', 'wget', '--no-verbose', '--tries=1', '--spider', 'http://127.0.0.1:3333/health']
-    #   interval: 10s
-    #   timeout: 5s
-    #   retries: 5
-    #   start_period: 40s
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          'node -e "fetch(''http://127.0.0.1:3333/health'').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"',
+        ]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 40s
   # Redis Queue Broker
   redis:
     image: redis:7-alpine
