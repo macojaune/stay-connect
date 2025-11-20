@@ -84,7 +84,7 @@ services:
       - postgres
     volumes:
       - /home/ubuntu/stayConnect/uploads:/app/uploads
-    command: ["node", "build/bin/console.js", "queue:listen"]
+    command: ["node", "bin/console.js", "queue:listen"]
     deploy:
       replicas: 1
       restart_policy:
