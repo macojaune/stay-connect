@@ -2,6 +2,7 @@ import env from '#start/env'
 import { createLeadValidator } from '#validators/newsletter'
 import type { HttpContext } from '@adonisjs/core/http'
 import { ContactsApi, ContactsApiApiKeys } from '@getbrevo/brevo'
+import logger from '@adonisjs/core/services/logger'
 import Release from '#models/release'
 import Artist from '#models/artist'
 import { DateTime } from 'luxon'
@@ -13,23 +14,40 @@ export default class HomeController {
     const fourWeeksAgo = now.minus({ weeks: 4 })
     const nextWeek = now.plus({ weeks: 1 })
 
-    const releases = await Release.query()
-      .where('date', '>=', fourWeeksAgo.toSQL())
-      .where('date', '<=', nextWeek.toSQL())
-      .where('is_secret', false)
-      .preload('artist')
-      .preload('categories')
-      .preload('features')
-      .orderBy('date', 'desc')
-    // Get artists for the tag list (limit to 30)
-    const allArtists = await Artist.query().select('name')
+    const releases = await this.withDbRetry(
+      'home_releases',
+      () =>
+        Release.query()
+          .where('date', '>=', fourWeeksAgo.toSQL())
+          .where('date', '<=', nextWeek.toSQL())
+          .where('is_secret', false)
+          .preload('artist')
+          .preload('categories')
+          .preload('features')
+          .orderBy('date', 'desc'),
+      []
+    )
+
+    const allArtists = await this.withDbRetry(
+      'home_artists',
+      () => Artist.query().select('name'),
+      []
+    )
 
     // Shuffle the artists array and take first 30
     const shuffledArtists = allArtists.sort(() => Math.random() - 0.5).slice(0, 30)
 
     // Get total artist count for the "et X autres" text
-    const totalArtistCount = await Artist.query().count('* as total')
-    const remainingArtists = Math.max(0, Number(totalArtistCount[0].$extras.total) - 30)
+    const totalArtistCount = await this.withDbRetry(
+      'home_artist_total_count',
+      () => Artist.query().count('* as total'),
+      []
+    )
+    const parsedTotalArtistCount = Number(totalArtistCount[0]?.$extras?.total ?? 0)
+    const remainingArtists = Math.max(
+      0,
+      (Number.isFinite(parsedTotalArtistCount) ? parsedTotalArtistCount : 0) - 30
+    )
 
     // Group releases by week
     const groupedReleases = this.groupReleasesByWeek(releases, now)
@@ -49,6 +67,71 @@ export default class HomeController {
       },
       { title: 'Accueil' }
     )
+  }
+
+  private isTransientDbError(error: unknown): boolean {
+    const message = (error as Error)?.message ?? ''
+    const code = (error as { code?: string })?.code ?? ''
+
+    const transientMessages = [
+      'Connection terminated unexpectedly',
+      'Connection ended unexpectedly',
+      'Connection terminated',
+      'Connection ended',
+      'read ECONNRESET',
+      'socket hang up',
+      'ETIMEDOUT',
+    ]
+
+    const transientCodes = new Set(['ECONNRESET', 'ETIMEDOUT', '57P01', '57P02', '57P03'])
+
+    return transientCodes.has(code) || transientMessages.some((entry) => message.includes(entry))
+  }
+
+  private async withDbRetry<T>(
+    operation: string,
+    execute: () => Promise<T>,
+    fallbackValue: T,
+    maxAttempts = 3
+  ): Promise<T> {
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+      try {
+        return await execute()
+      } catch (error) {
+        const canRetry = this.isTransientDbError(error) && attempt < maxAttempts
+
+        if (!canRetry) {
+          logger.error(
+            {
+              operation,
+              attempt,
+              maxAttempts,
+              message: (error as Error)?.message,
+              code: (error as { code?: string })?.code,
+            },
+            'Database operation failed'
+          )
+          return fallbackValue
+        }
+
+        const waitTimeMs = attempt * 150
+        logger.warn(
+          {
+            operation,
+            attempt,
+            maxAttempts,
+            waitTimeMs,
+            message: (error as Error)?.message,
+            code: (error as { code?: string })?.code,
+          },
+          'Transient database error detected, retrying operation'
+        )
+
+        await new Promise((resolve) => setTimeout(resolve, waitTimeMs))
+      }
+    }
+
+    return fallbackValue
   }
 
   private groupReleasesByWeek(releases: Release[], now: DateTime) {
@@ -105,7 +188,7 @@ export default class HomeController {
         category: release.categories?.[0]?.name || 'Musique',
         imageUrl: release.cover,
         featuredArtists: release.features.map(
-          (feature) => feature.artistName || feature.artist?.name!
+          (feature) => feature.artistName || feature.artist?.name || 'Artiste inconnu'
         ),
       }
 
@@ -148,8 +231,7 @@ export default class HomeController {
         weekStart: nextWeekStart.toISODate(),
       }),
       title: 'À venir',
-      subtitle:
-        upcomingSection?.subtitle ?? 'Inscris-toi pour voir les sorties en avance',
+      subtitle: upcomingSection?.subtitle ?? 'Inscris-toi pour voir les sorties en avance',
       isUpcoming: true,
     })
 
@@ -197,7 +279,7 @@ export default class HomeController {
     }
   }
 
-  async subscribe({ request, inertia, response, session }: HttpContext) {
+  async subscribe({ request, response, session }: HttpContext) {
     const data = request.all()
     const [errors, payload] = await createLeadValidator.tryValidate(data)
     let errorMessage = ''
@@ -209,12 +291,12 @@ export default class HomeController {
           email: payload?.email,
           listIds: [3],
           attributes: {
-            IS_ARTIST: payload.type === 'artist',
+            IS_ARTIST: payload.type === 'artist' ? 'true' : 'false',
             ARTIST_NAME: payload.artistName,
             ROLE: payload.role,
             USERNAME: payload.username,
           },
-        })
+        } as any)
       } catch (e) {
         errorMessage =
           "Une erreur est survenue lors de l'enregistrement de ton inscription : " +
@@ -224,7 +306,8 @@ export default class HomeController {
         return response.redirect().toRoute('home')
       }
     } else {
-      const reducedErrors = errors.messages.reduce((acc, curr) => {
+      const validationMessages = errors.messages as Array<{ field: string; message: string }>
+      const reducedErrors = validationMessages.reduce((acc: Record<string, string>, curr) => {
         acc[curr.field] = curr.message
         return acc
       }, {})

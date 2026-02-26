@@ -23,7 +23,14 @@ export default class HttpExceptionHandler extends ExceptionHandler {
    */
   protected statusPages: Record<StatusPageRange, StatusPageRenderer> = {
     '404': (error, { inertia }) => inertia.render('errors/not_found', { error }),
-    '500..599': (error, { inertia }) => inertia.render('errors/server_error', { error }),
+    '500..599': (error, { inertia, request }) =>
+      inertia.render('errors/server_error', {
+        message:
+          this.debug && typeof error.message === 'string'
+            ? error.message
+            : 'Une erreur serveur est survenue.',
+        requestId: request.id(),
+      }),
   }
 
   /**
@@ -36,7 +43,7 @@ export default class HttpExceptionHandler extends ExceptionHandler {
       return ctx.response.status(422).json({
         status: 'error',
         message: 'Validation failed',
-        errors: error.messages
+        errors: error.messages,
       })
     }
 
@@ -45,7 +52,7 @@ export default class HttpExceptionHandler extends ExceptionHandler {
       return ctx.response.status(401).json({
         status: 'error',
         message: 'Unauthorized access',
-        error: (error as Error).message
+        error: (error as Error).message,
       })
     }
 
@@ -54,7 +61,7 @@ export default class HttpExceptionHandler extends ExceptionHandler {
       return ctx.response.status(404).json({
         status: 'error',
         message: 'Resource not found',
-        error: (error as Error).message
+        error: (error as Error).message,
       })
     }
 
@@ -63,7 +70,7 @@ export default class HttpExceptionHandler extends ExceptionHandler {
       return ctx.response.status(500).json({
         status: 'error',
         message: 'Database error occurred',
-        error: this.debug ? (error as Error).message : 'Internal server error'
+        error: this.debug ? (error as Error).message : 'Internal server error',
       })
     }
 
@@ -72,7 +79,7 @@ export default class HttpExceptionHandler extends ExceptionHandler {
       return ctx.response.status(400).json({
         status: 'error',
         message: (error as Error).message,
-        error: (error as any).details
+        error: (error as any).details,
       })
     }
 
@@ -93,7 +100,7 @@ export default class HttpExceptionHandler extends ExceptionHandler {
       url: ctx.request.url(),
       method: ctx.request.method(),
       ip: ctx.request.ip(),
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     })
 
     return super.report(error, ctx)
