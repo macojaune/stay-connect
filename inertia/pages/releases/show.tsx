@@ -205,10 +205,10 @@ const ReleaseShow: React.FC<ReleaseShowProps> = ({ release, shareUrl }) => {
   const releaseDate = release.date ? new Date(release.date) : null
   const formattedDate = releaseDate
     ? releaseDate.toLocaleDateString('fr-FR', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
-    })
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+      })
     : null
 
   const streamingLinks = useMemo<StreamingLink[]>(() => {
@@ -267,11 +267,16 @@ const ReleaseShow: React.FC<ReleaseShowProps> = ({ release, shareUrl }) => {
 
   const primaryLinks = useMemo(() => streamingLinks.slice(0, 3), [streamingLinks])
   const extraLinks = useMemo(() => streamingLinks.slice(3), [streamingLinks])
+  const featuredArtistNames = useMemo(
+    () =>
+      release.featuredArtists
+        .map((artist) => artist.artistName?.trim())
+        .filter((artistName): artistName is string => !!artistName),
+    [release.featuredArtists]
+  )
 
   const relatedArtists = useMemo(() => {
-    const normalizeReleaseCount = (
-      value: number | string | null | undefined
-    ): number | null => {
+    const normalizeReleaseCount = (value: number | string | null | undefined): number | null => {
       if (typeof value === 'number' && Number.isFinite(value)) {
         return value
       }
@@ -457,7 +462,9 @@ const ReleaseShow: React.FC<ReleaseShowProps> = ({ release, shareUrl }) => {
                     {release.title}
                   </h1>
                   {subtitleParts.length > 0 && (
-                    <p className="text-sm md:text-base text-zinc-600">{subtitleParts.join(' · ')}</p>
+                    <p className="text-sm md:text-base text-zinc-600">
+                      {subtitleParts.join(' · ')}
+                    </p>
                   )}
 
                   {release.categories.length > 0 && (
@@ -480,12 +487,10 @@ const ReleaseShow: React.FC<ReleaseShowProps> = ({ release, shareUrl }) => {
                   </p>
                 )}
 
-                {release.featuredArtists.length > 0 && (
+                {featuredArtistNames.length > 0 && (
                   <div className="text-sm text-zinc-600">
                     <span className="font-semibold text-zinc-800">Featuring :</span>{' '}
-                    {release.featuredArtists
-                      .map((artist) => artist.artistName ?? 'Artiste invité')
-                      .join(', ')}
+                    {featuredArtistNames.join(', ')}
                   </div>
                 )}
 
@@ -607,9 +612,7 @@ const ReleaseShow: React.FC<ReleaseShowProps> = ({ release, shareUrl }) => {
                 aria-hidden="true"
               />
               <div className="relative space-y-3">
-                <h2 className="text-sm font-semibold uppercase tracking-wide text-brand">
-                  Votes
-                </h2>
+                <h2 className="text-sm font-semibold uppercase tracking-wide text-brand">Votes</h2>
                 <p className="text-sm text-zinc-600 leading-relaxed">
                   Ici prochainement tu pourras voter pour cette sortie.
                 </p>
@@ -659,10 +662,7 @@ const ReleaseShow: React.FC<ReleaseShowProps> = ({ release, shareUrl }) => {
               )}
             </div>
           </aside>
-
         </div>
-
-
 
         {relatedArtists.length > 0 && (
           <section className="space-y-6">
@@ -694,7 +694,9 @@ const ReleaseShow: React.FC<ReleaseShowProps> = ({ release, shareUrl }) => {
                           )}
                         </div>
                         <div className="min-w-0">
-                          <p className="truncate text-sm font-semibold text-zinc-900">{artist.name}</p>
+                          <p className="truncate text-sm font-semibold text-zinc-900">
+                            {artist.name}
+                          </p>
                           {artist.releaseCount !== null && artist.releaseCount !== undefined && (
                             <p className="text-xs text-zinc-500">
                               {artist.releaseCount === 1
@@ -727,8 +729,8 @@ const ReleaseShow: React.FC<ReleaseShowProps> = ({ release, shareUrl }) => {
             <div className="relative space-y-3 text-center">
               <h2 className="text-xl text-center font-semibold text-zinc-900">Description</h2>
               <p className="text-sm text-zinc-600 leading-relaxed">
-                Prochainement l'artiste et son équipe pourront ajouter une description du
-                projet en détail, les crédits et les informations de production.
+                Prochainement l'artiste et son équipe pourront ajouter une description du projet en
+                détail, les crédits et les informations de production.
               </p>
             </div>
           </div>

@@ -16,6 +16,11 @@ import type {
   SpotifyTokenResponse,
 } from '@/types/index.js'
 
+type SpotifyCreditArtist = {
+  id: string
+  name: string
+}
+
 export default class SpotifyService {
   private accessToken: string | null = null
   private tokenExpiresAt: DateTime | null = null
@@ -294,24 +299,21 @@ export default class SpotifyService {
 
       logger.info(`Created new release: ${album.name} by ${artist.name}`)
       // Create features for all artists on the album/track
-      for (const spotifyArtist of album.artists) {
-        // Exclude the main artist of the release from being added as a feature
-        if (spotifyArtist.id === artist.spotifyId) {
-          continue
-        }
-
+      for (const spotifyArtist of this.getFeaturedSpotifyArtists(album, artist.spotifyId)) {
         const existingArtist = await Artist.findBy('spotifyId', spotifyArtist.id)
         if (existingArtist) {
           await Feature.create({
             releaseId: release.id,
             artistId: existingArtist.id,
-            artistName: null,
+            artistName: spotifyArtist.name,
+            spotifyArtistId: spotifyArtist.id,
           })
         } else {
           await Feature.create({
             releaseId: release.id,
             artistId: null,
             artistName: spotifyArtist.name,
+            spotifyArtistId: spotifyArtist.id,
           })
         }
       }
@@ -323,6 +325,119 @@ export default class SpotifyService {
       logger.error(`Failed to create release for album ${album.name}: ${error.message}`)
       throw error
     }
+  }
+
+  async syncFeaturedArtistsForRelease(
+    release: Release
+  ): Promise<{ created: number; updated: number; skipped: number }> {
+    if (!release.spotifyId) {
+      return { created: 0, updated: 0, skipped: 1 }
+    }
+
+    if (release.artistId && !release.artist) {
+      await release.load('artist')
+    }
+
+    const album = await this.getAlbum(release.spotifyId)
+    const spotifyArtists = this.getFeaturedSpotifyArtists(album, release.artist?.spotifyId ?? null)
+
+    if (spotifyArtists.length === 0) {
+      return { created: 0, updated: 0, skipped: 1 }
+    }
+
+    let created = 0
+    let updated = 0
+    let skipped = 0
+    const anonymousFeatures = await Feature.query()
+      .where('release_id', release.id)
+      .whereNull('artist_id')
+      .where((query) => {
+        query.whereNull('artist_name').orWhereRaw("trim(artist_name) = ''")
+      })
+      .orderBy('created_at', 'asc')
+
+    for (const spotifyArtist of spotifyArtists) {
+      const existingArtist = await Artist.findBy('spotifyId', spotifyArtist.id)
+      const existingFeature =
+        (await Feature.query()
+          .where('release_id', release.id)
+          .where('spotify_artist_id', spotifyArtist.id)
+          .first()) ||
+        (existingArtist
+          ? await Feature.query()
+              .where('release_id', release.id)
+              .where('artist_id', existingArtist.id)
+              .first()
+          : await Feature.query()
+              .where('release_id', release.id)
+              .where('artist_name', spotifyArtist.name)
+              .first())
+
+      if (existingFeature) {
+        const nextArtistId = existingArtist?.id ?? existingFeature.artistId
+        if (
+          existingFeature.artistName !== spotifyArtist.name ||
+          existingFeature.artistId !== nextArtistId ||
+          existingFeature.spotifyArtistId !== spotifyArtist.id
+        ) {
+          existingFeature.merge({
+            artistId: nextArtistId,
+            artistName: spotifyArtist.name,
+            spotifyArtistId: spotifyArtist.id,
+          })
+          await existingFeature.save()
+          updated += 1
+        } else {
+          skipped += 1
+        }
+        continue
+      }
+
+      const reusableAnonymousFeature = anonymousFeatures.shift()
+      if (reusableAnonymousFeature) {
+        reusableAnonymousFeature.merge({
+          artistId: existingArtist?.id ?? null,
+          artistName: spotifyArtist.name,
+          spotifyArtistId: spotifyArtist.id,
+        })
+        await reusableAnonymousFeature.save()
+        updated += 1
+        continue
+      }
+
+      await Feature.create({
+        releaseId: release.id,
+        artistId: existingArtist?.id ?? null,
+        artistName: spotifyArtist.name,
+        spotifyArtistId: spotifyArtist.id,
+      })
+      created += 1
+    }
+
+    return { created, updated, skipped }
+  }
+
+  private getFeaturedSpotifyArtists(
+    album: SpotifyAlbum,
+    mainSpotifyArtistId?: string | null
+  ): SpotifyCreditArtist[] {
+    const firstTrackArtists = album.tracks?.items?.[0]?.artists ?? []
+    const sourceArtists = firstTrackArtists.length > 0 ? firstTrackArtists : album.artists
+    const artistsBySpotifyId = new Map<string, SpotifyCreditArtist>()
+
+    for (const spotifyArtist of [...sourceArtists, ...album.artists]) {
+      if (!spotifyArtist.id || !spotifyArtist.name || spotifyArtist.id === mainSpotifyArtistId) {
+        continue
+      }
+      if (!artistsBySpotifyId.has(spotifyArtist.id)) {
+        artistsBySpotifyId.set(spotifyArtist.id, {
+          id: spotifyArtist.id,
+          name: spotifyArtist.name,
+        })
+      }
+    }
+
+    return Array.from(artistsBySpotifyId.values())
   }
 
   /**
@@ -422,6 +537,14 @@ export default class SpotifyService {
       // Mark as checked
       artist.lastSpotifyCheck = DateTime.now()
       await artist.save()
+
+      await Feature.query()
+        .where('spotify_artist_id', spotifyResult.id)
+        .whereNull('artist_id')
+        .update({
+          artist_id: artist.id,
+          artist_name: spotifyResult.name,
+        })
 
       logger.info(`Created new artist: ${artist.name} with Spotify ID: ${artist.spotifyId}`)
 

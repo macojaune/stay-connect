@@ -1,8 +1,7 @@
 import Release from '#models/release'
 import type { HttpContext } from '@adonisjs/core/http'
 
-const UUID_REGEX =
-  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
 
 const looksLikeUuid = (value: string): boolean => UUID_REGEX.test(value)
 
@@ -37,20 +36,20 @@ export default class ReleasePagesController {
     const parsedUrls = Array.isArray(urlsValue)
       ? urlsValue
       : (() => {
-        try {
-          return JSON.parse((urlsValue as unknown as string) ?? '[]')
-        } catch {
-          return []
-        }
-      })()
+          try {
+            return JSON.parse((urlsValue as unknown as string) ?? '[]')
+          } catch {
+            return []
+          }
+        })()
 
     const shareUrl = request.completeUrl()
 
     const serializedArtist = release.artist
       ? {
-        ...release.artist.serialize(),
-        releaseCount: release.artist.releaseCount ?? null,
-      }
+          ...release.artist.serialize(),
+          releaseCount: release.artist.releaseCount ?? null,
+        }
       : null
 
     return inertia.render(
@@ -68,13 +67,15 @@ export default class ReleasePagesController {
           urls: parsedUrls,
           artist: serializedArtist,
           categories: release.categories,
-          featuredArtists: release.features.map((feature) => ({
-            id: feature.id,
-            artistName: feature.artistName || feature.artist?.name,
-            artistId: feature.artistId,
-            releaseCount: feature.artist?.releaseCount ?? null,
-            profilePicture: feature.artist?.profilePicture ?? null,
-          })),
+          featuredArtists: release.features
+            .map((feature) => ({
+              id: feature.id,
+              artistName: feature.artistName?.trim() || feature.artist?.name?.trim() || null,
+              artistId: feature.artistId,
+              releaseCount: feature.artist?.releaseCount ?? null,
+              profilePicture: feature.artist?.profilePicture ?? null,
+            }))
+            .filter((feature) => !!feature.artistName),
         },
         shareUrl,
       },
