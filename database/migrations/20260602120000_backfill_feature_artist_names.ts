@@ -3,9 +3,12 @@ import db from '@adonisjs/lucid/services/db'
 
 export default class extends BaseSchema {
   async up() {
-    await this.schema.alterTable('features', (table) => {
-      table.string('spotify_artist_id').nullable()
-    })
+    const hasSpotifyArtistIdColumn = await this.schema.hasColumn('features', 'spotify_artist_id')
+    if (!hasSpotifyArtistIdColumn) {
+      await this.schema.alterTable('features', (table) => {
+        table.string('spotify_artist_id').nullable()
+      })
+    }
 
     await db.rawQuery(`
       UPDATE features
@@ -23,8 +26,11 @@ export default class extends BaseSchema {
   }
 
   async down() {
-    await this.schema.alterTable('features', (table) => {
-      table.dropColumn('spotify_artist_id')
-    })
+    const hasSpotifyArtistIdColumn = await this.schema.hasColumn('features', 'spotify_artist_id')
+    if (hasSpotifyArtistIdColumn) {
+      await this.schema.alterTable('features', (table) => {
+        table.dropColumn('spotify_artist_id')
+      })
+    }
   }
 }

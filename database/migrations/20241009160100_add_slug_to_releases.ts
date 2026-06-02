@@ -7,11 +7,14 @@ export default class AddSlugToReleases extends BaseSchema {
   protected tableName = 'releases'
 
   public async up() {
-    // logger.info('[migration] Adding slug column to releases…')
-    // await this.schema.alterTable(this.tableName, (table) => {
-    //   table.string('slug').nullable()
-    // })
-    // logger.info('[migration] done!')
+    const hasSlugColumn = await this.schema.hasColumn(this.tableName, 'slug')
+    if (!hasSlugColumn) {
+      logger.info('[migration] Adding slug column to releases...')
+      await this.schema.alterTable(this.tableName, (table) => {
+        table.string('slug').nullable()
+      })
+      logger.info('[migration] Slug column added.')
+    }
 
     await db.transaction(async (trx) => {
       logger.info('[migration] start transaction…')
