@@ -19,7 +19,9 @@ export default class HomeController {
       .where('is_secret', false)
       .preload('artist')
       .preload('categories')
-      .preload('features')
+      .preload('features', (featureQuery) => {
+        featureQuery.preload('artist')
+      })
       .orderBy('date', 'desc')
     // Get artists for the tag list (limit to 30)
     const allArtists = await Artist.query().select('name')
