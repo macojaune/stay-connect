@@ -32,10 +32,16 @@ export default class CronController {
       logger.info(`Starting Spotify releases check via HTTP endpoint from IP: ${clientIP}`)
 
       // Execute the Spotify service
+      const requestedDays = Number(request.input('days', 4))
+      const nbDays =
+        Number.isInteger(requestedDays) && requestedDays >= 1 && requestedDays <= 90
+          ? requestedDays
+          : 4
       const spotifyService = new SpotifyService()
-      const stats = await spotifyService.checkForNewReleases()
+      const stats = await spotifyService.checkForNewReleases(undefined, nbDays)
 
       logger.info('Spotify releases check completed successfully via HTTP endpoint', {
+        nbDays,
         stats,
       })
 
@@ -43,6 +49,7 @@ export default class CronController {
         success: true,
         message: 'Spotify releases check completed successfully',
         stats: {
+          days: nbDays,
           processed: stats.processed,
           newReleases: stats.newReleases,
           errors: stats.errors,
