@@ -53,7 +53,7 @@ export default function Home({ errors, timelineData, artists, remainingArtistsCo
 
   return (
     <AppLayout>
-      <Head>{/* Page-specific meta tags can be added here if needed */}</Head>
+      <Head title="Accueil" />
       <div className="w-full">
         <div className="flex flex-col items-center">
           {/* Hero Section */}
