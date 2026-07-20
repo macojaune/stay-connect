@@ -1,7 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import AppLayout from '~/layouts/AppLayout'
-import { Head, Link } from '@inertiajs/react'
-import { Copy, Link2 } from 'lucide-react'
+import { Head, Link, router, usePage } from '@inertiajs/react'
+import { Copy, Link2, Star, Trash2 } from 'lucide-react'
+import { Button } from '~/components/ui/Button'
 import { Tooltip, TooltipContent, TooltipTrigger } from '~/components/ui/tooltip'
 import {
   AppleMusicLogo,
@@ -49,8 +50,35 @@ type ReleaseShowProps = {
       releaseCount?: number | string | null
       profilePicture?: string | null
     }>
+    votesSummary: {
+      average: number | null
+      total: number
+    }
+    reviews: Array<{
+      id: string
+      rating: number
+      comment: string | null
+      createdAt: string | null
+      user: {
+        id: string
+        displayName: string
+      }
+      isCurrentUser: boolean
+    }>
+    currentUserVote: {
+      id: string
+      rating: number
+      comment: string | null
+    } | null
   }
   shareUrl: string
+}
+
+type PageProps = {
+  auth?: {
+    user?: { id: string } | null
+  }
+  errors?: Record<string, string>
 }
 
 const hexToRgba = (hex: string, alpha: number) => {
@@ -86,6 +114,31 @@ type ShareButtonConfig = {
   Icon: React.ComponentType<{ size?: number; round?: boolean; borderRadius?: number }>
   buttonProps?: Record<string, unknown>
 }
+
+const RATING_OPTIONS = [
+  { value: 1, label: 'Bof' },
+  { value: 2, label: 'Pas mal' },
+  { value: 3, label: 'Solide' },
+  { value: 4, label: 'Lourd' },
+  { value: 5, label: 'En boucle' },
+] as const
+
+const StarRow = ({
+  value,
+  sizeClassName = 'h-4 w-4',
+}: {
+  value: number
+  sizeClassName?: string
+}) => (
+  <>
+    {[1, 2, 3, 4, 5].map((rating) => (
+      <Star
+        key={rating}
+        className={`${sizeClassName} ${rating <= value ? 'fill-amber-400 text-amber-400' : 'text-zinc-300'}`}
+      />
+    ))}
+  </>
+)
 
 const PLATFORM_CONFIGS: PlatformConfig[] = [
   { matcher: /spotify/, label: 'Spotify', key: 'spotify', Icon: SpotifyLogo, accent: '#1DB954' },
@@ -199,8 +252,12 @@ const PLATFORM_CONFIGS: PlatformConfig[] = [
 // }
 
 const ReleaseShow: React.FC<ReleaseShowProps> = ({ release, shareUrl }) => {
+  const { auth, errors } = usePage<PageProps>().props
   const [copyStatus, setCopyStatus] = useState<'idle' | 'copied' | 'error'>('idle')
   const [showMorePlatforms, setShowMorePlatforms] = useState(false)
+  const [voteComment, setVoteComment] = useState(release.currentUserVote?.comment ?? '')
+  const [voteFeedback, setVoteFeedback] = useState<'saved' | 'removed' | null>(null)
+  const [voteIsSubmitting, setVoteIsSubmitting] = useState(false)
 
   const releaseDate = release.date ? new Date(release.date) : null
   const formattedDate = releaseDate
@@ -352,6 +409,48 @@ const ReleaseShow: React.FC<ReleaseShowProps> = ({ release, shareUrl }) => {
     () => `Découvre "${release.title}" sur #StayConnect`,
     [release.title]
   )
+
+  const currentUserRating = release.currentUserVote?.rating ?? 0
+  const averageLabel =
+    release.votesSummary.average !== null
+      ? release.votesSummary.average.toFixed(1).replace('.', ',')
+      : 'Nouveau'
+  const reviewsCountLabel =
+    release.votesSummary.total === 1 ? '1 avis' : `${release.votesSummary.total} avis`
+
+  const submitVote = (rating: number) => {
+    setVoteFeedback(null)
+    const comment = voteComment.trim()
+    const data = comment ? { vote: rating, comment } : { vote: rating }
+    const options = {
+      preserveScroll: true,
+      preserveState: true,
+      onStart: () => setVoteIsSubmitting(true),
+      onSuccess: () => setVoteFeedback('saved'),
+      onFinish: () => setVoteIsSubmitting(false),
+    }
+
+    if (release.currentUserVote) {
+      router.put(`/sorties/${release.id}/avis`, data, options)
+      return
+    }
+
+    router.post(`/sorties/${release.id}/avis`, data, options)
+  }
+
+  const removeVote = () => {
+    setVoteFeedback(null)
+    router.delete(`/sorties/${release.id}/avis`, {
+      preserveScroll: true,
+      preserveState: true,
+      onStart: () => setVoteIsSubmitting(true),
+      onSuccess: () => {
+        setVoteComment('')
+        setVoteFeedback('removed')
+      },
+      onFinish: () => setVoteIsSubmitting(false),
+    })
+  }
 
   const seoDescription = useMemo(() => {
     const raw = release.description?.replace(/\s+/g, ' ').trim() ?? ''
@@ -605,20 +704,107 @@ const ReleaseShow: React.FC<ReleaseShowProps> = ({ release, shareUrl }) => {
             </div>
           </article>
 
-          <aside className="bg-white rounded-3xl shadow-lg border border-zinc-100 overflow-hidden md:py-8">
-            <div className="relative overflow-hidden rounded-2xl border border-dashed border-brand/40 bg-brand/10 p-6 text-center mx-6">
-              <div
-                className="absolute inset-0 bg-gradient-to-br from-brand/40 via-white/40 to-brand-dark/40 blur-xl opacity-60"
-                aria-hidden="true"
-              />
-              <div className="relative space-y-3">
-                <h2 className="text-sm font-semibold uppercase tracking-wide text-brand">Votes</h2>
-                <p className="text-sm text-zinc-600 leading-relaxed">
-                  Ici prochainement tu pourras voter pour cette sortie.
-                </p>
+          <aside className="space-y-6">
+            <section className="rounded-3xl border border-zinc-100 bg-white p-6 shadow-lg">
+              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-brand">Avis</p>
+              <div className="mt-3 flex items-end gap-3">
+                <span className="text-4xl font-bold text-zinc-900">{averageLabel}</span>
+                <div className="pb-1">
+                  <div className="flex gap-1">
+                    <StarRow
+                      value={Math.round(release.votesSummary.average ?? 0)}
+                      sizeClassName="h-5 w-5"
+                    />
+                  </div>
+                  <p className="mt-1 text-xs text-zinc-500">{reviewsCountLabel}</p>
+                </div>
               </div>
-            </div>
-            <div className="mt-6 space-y-4">
+
+              <div className="mt-5 rounded-2xl border border-zinc-200 bg-zinc-50 p-4">
+                {auth?.user ? (
+                  <div className="space-y-4">
+                    <div>
+                      <p className="text-sm font-semibold text-zinc-900">
+                        {release.currentUserVote ? 'Modifier mon avis' : 'Donner mon avis'}
+                      </p>
+                      <p className="mt-1 text-sm text-zinc-600">
+                        Choisis une note et ajoute un commentaire si tu le souhaites.
+                      </p>
+                    </div>
+                    <div className="grid grid-cols-5 gap-1.5">
+                      {RATING_OPTIONS.map((option) => {
+                        const isActive = currentUserRating === option.value
+                        return (
+                          <button
+                            key={option.value}
+                            type="button"
+                            disabled={voteIsSubmitting}
+                            onClick={() => submitVote(option.value)}
+                            aria-label={`Noter ${option.value} sur 5 : ${option.label}`}
+                            className={`rounded-lg border px-1 py-2 transition ${
+                              isActive
+                                ? 'border-brand bg-brand text-white'
+                                : 'border-zinc-200 bg-white text-zinc-700 hover:border-brand/40'
+                            }`}
+                          >
+                            <span className="flex justify-center">
+                              <Star
+                                className={`h-4 w-4 ${isActive ? 'fill-white text-white' : 'text-amber-400'}`}
+                              />
+                            </span>
+                            <span className="mt-1 block text-[10px] font-medium">
+                              {option.value}
+                            </span>
+                          </button>
+                        )
+                      })}
+                    </div>
+                    <textarea
+                      value={voteComment}
+                      onChange={(event) => setVoteComment(event.target.value)}
+                      maxLength={1000}
+                      placeholder="Ton commentaire (facultatif)"
+                      className="min-h-24 w-full resize-y rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 outline-none transition placeholder:text-zinc-400 focus:border-brand focus:ring-2 focus:ring-brand/20"
+                    />
+                    {(voteFeedback || errors?.vote) && (
+                      <p
+                        className={`text-sm font-medium ${errors?.vote ? 'text-red-600' : 'text-emerald-600'}`}
+                      >
+                        {errors?.vote ||
+                          (voteFeedback === 'saved' ? 'Avis enregistré.' : 'Avis supprimé.')}
+                      </p>
+                    )}
+                    {release.currentUserVote && (
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        className="w-full text-zinc-600 hover:text-red-600"
+                        disabled={voteIsSubmitting}
+                        onClick={removeVote}
+                      >
+                        <Trash2 className="h-4 w-4" /> Retirer mon avis
+                      </Button>
+                    )}
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    <p className="text-sm text-zinc-600">
+                      Connecte-toi pour noter cette sortie et laisser un commentaire.
+                    </p>
+                    <Link href="/login" className="block">
+                      <Button className="w-full">Se connecter</Button>
+                    </Link>
+                    <Link href="/register" className="block">
+                      <Button variant="outline" className="w-full">
+                        Créer un compte
+                      </Button>
+                    </Link>
+                  </div>
+                )}
+              </div>
+            </section>
+
+            <section className="rounded-3xl border border-zinc-100 bg-white p-6 shadow-lg">
               <p className="text-center text-xs font-semibold uppercase tracking-wide text-brand">
                 Partager
               </p>
@@ -660,7 +846,7 @@ const ReleaseShow: React.FC<ReleaseShowProps> = ({ release, shareUrl }) => {
                   )}
                 </div>
               )}
-            </div>
+            </section>
           </aside>
         </div>
 
@@ -669,51 +855,53 @@ const ReleaseShow: React.FC<ReleaseShowProps> = ({ release, shareUrl }) => {
             <h2 className="text-xl font-semibold text-zinc-900 text-start">Artistes liés</h2>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {relatedArtists.map((artist) => {
-                const href = artist.id ? `/artists/${artist.id}` : '/artists/bientot'
+                const content = (
+                  <>
+                    <div className="relative h-14 w-14 overflow-hidden rounded-full border border-zinc-200 bg-zinc-100">
+                      {artist.picture ? (
+                        <img
+                          src={artist.picture}
+                          alt={artist.name}
+                          className="h-full w-full object-cover"
+                        />
+                      ) : (
+                        <div className="flex h-full w-full items-center justify-center text-xl font-semibold text-brand">
+                          {artist.name[0]?.toUpperCase() ?? '?'}
+                        </div>
+                      )}
+                    </div>
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-semibold text-zinc-900">{artist.name}</p>
+                      {artist.releaseCount !== null && artist.releaseCount !== undefined && (
+                        <p className="text-xs text-zinc-500">
+                          {artist.releaseCount === 1
+                            ? '1 sortie'
+                            : `${artist.releaseCount} sorties`}
+                        </p>
+                      )}
+                    </div>
+                  </>
+                )
+
+                if (artist.id) {
+                  return (
+                    <Link
+                      key={artist.id}
+                      href={`/artistes/${artist.id}`}
+                      className="group flex items-center gap-4 rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:border-brand hover:shadow-md"
+                    >
+                      {content}
+                    </Link>
+                  )
+                }
 
                 return (
-                  <Tooltip key={`${artist.id ?? artist.name}`}>
-                    <TooltipTrigger asChild>
-                      <Link
-                        href={href}
-                        onClick={(event) => event.preventDefault()}
-                        aria-disabled="true"
-                        className="group relative flex items-center gap-4 rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md cursor-default"
-                      >
-                        <div className="relative h-14 w-14 overflow-hidden rounded-full border border-zinc-200 bg-zinc-100">
-                          {artist.picture ? (
-                            <img
-                              src={artist.picture}
-                              alt={artist.name}
-                              className="h-full w-full object-cover"
-                            />
-                          ) : (
-                            <div className="flex h-full w-full items-center justify-center text-xl font-semibold text-brand">
-                              {artist.name[0]?.toUpperCase() ?? '?'}
-                            </div>
-                          )}
-                        </div>
-                        <div className="min-w-0">
-                          <p className="truncate text-sm font-semibold text-zinc-900">
-                            {artist.name}
-                          </p>
-                          {artist.releaseCount !== null && artist.releaseCount !== undefined && (
-                            <p className="text-xs text-zinc-500">
-                              {artist.releaseCount === 1
-                                ? '1 sortie'
-                                : `${artist.releaseCount} sorties`}
-                            </p>
-                          )}
-                        </div>
-                        <span className="pointer-events-none absolute inset-0 rounded-2xl border border-transparent transition group-hover:border-brand/40" />
-                      </Link>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p className="max-w-[220px] text-sm">
-                        Bientôt tu pourras découvrir sa page artiste complète.
-                      </p>
-                    </TooltipContent>
-                  </Tooltip>
+                  <div
+                    key={artist.name}
+                    className="flex items-center gap-4 rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm"
+                  >
+                    {content}
+                  </div>
                 )
               })}
             </div>
@@ -767,19 +955,51 @@ const ReleaseShow: React.FC<ReleaseShowProps> = ({ release, shareUrl }) => {
           </section>
         )}
 
-        <section className="bg-white rounded-3xl shadow-lg border border-zinc-100 overflow-hidden">
-          <div className="relative px-6 py-10">
-            <div
-              className="absolute inset-0 bg-gradient-to-br from-zinc-200 via-white to-brand/40 blur-xl opacity-60"
-              aria-hidden="true"
-            />
-            <div className="relative space-y-3 text-center">
-              <h2 className="text-xl font-semibold text-zinc-900">Commentaires & avis</h2>
-              <p className="text-sm text-zinc-600 leading-relaxed">
-                Ici prochainement tu pourras partager tes retours et donner ton avis.
-              </p>
-            </div>
+        <section className="space-y-4">
+          <div>
+            <h2 className="text-xl font-semibold text-zinc-900">Avis de la communauté</h2>
+            <p className="mt-1 text-sm text-zinc-600">
+              {release.votesSummary.total > 0
+                ? `${reviewsCountLabel} sur cette sortie.`
+                : 'Aucun avis pour le moment. Sois le premier à noter cette sortie.'}
+            </p>
           </div>
+          {release.reviews.length > 0 && (
+            <div className="grid gap-4 md:grid-cols-2">
+              {release.reviews.map((review) => (
+                <article
+                  key={review.id}
+                  className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm"
+                >
+                  <div className="flex items-start justify-between gap-4">
+                    <div>
+                      <p className="font-semibold text-zinc-900">
+                        {review.user.displayName}
+                        {review.isCurrentUser ? ' · toi' : ''}
+                      </p>
+                      {review.createdAt && (
+                        <p className="mt-1 text-xs text-zinc-500">
+                          {new Date(review.createdAt).toLocaleDateString('fr-FR', {
+                            day: 'numeric',
+                            month: 'short',
+                            year: 'numeric',
+                          })}
+                        </p>
+                      )}
+                    </div>
+                    <div className="flex gap-0.5" aria-label={`${review.rating} sur 5`}>
+                      <StarRow value={review.rating} />
+                    </div>
+                  </div>
+                  {review.comment && (
+                    <p className="mt-4 whitespace-pre-wrap text-sm leading-6 text-zinc-700">
+                      {review.comment}
+                    </p>
+                  )}
+                </article>
+              ))}
+            </div>
+          )}
         </section>
       </div>
     </AppLayout>

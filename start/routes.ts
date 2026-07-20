@@ -10,6 +10,9 @@
 import { middleware } from '#start/kernel'
 import router from '@adonisjs/core/services/router'
 const SpotifyArtistsController = () => import('#controllers/spotify_artists_controller')
+const AuthController = () => import('#controllers/auth_controller')
+const ArtistPagesController = () => import('#controllers/artist_pages_controller')
+const ArtistSuggestionsController = () => import('#controllers/artist_suggestions_controller')
 //healthcheck
 router.get('/health', '#controllers/health_checks_controller')
 
@@ -25,6 +28,29 @@ router
 // Web routes
 router.get('/', '#controllers/home_controller.index').as('home')
 router.get('/sorties/:slug', '#controllers/release_pages_controller.show').as('releases.show')
+router.get('/artistes', [ArtistPagesController, 'index'])
+router.post('/artistes/suggestions', [ArtistSuggestionsController, 'store'])
+router.get('/artistes/:id', [ArtistPagesController, 'show'])
+router
+  .post('/sorties/:releaseId/avis', '#controllers/votes_controller.store')
+  .use(middleware.auth())
+router
+  .put('/sorties/:releaseId/avis', '#controllers/votes_controller.update')
+  .use(middleware.auth())
+router
+  .delete('/sorties/:releaseId/avis', '#controllers/votes_controller.destroy')
+  .use(middleware.auth())
+
+router
+  .group(() => {
+    router.get('/login', [AuthController, 'showLogin'])
+    router.post('/login', [AuthController, 'login'])
+    router.get('/register', [AuthController, 'showRegister'])
+    router.post('/register', [AuthController, 'register'])
+  })
+  .use(middleware.guest())
+
+router.post('/logout', [AuthController, 'logout']).use(middleware.auth())
 
 // Newsletter routes
 router.post('/newsletter', '#controllers/home_controller.subscribe')

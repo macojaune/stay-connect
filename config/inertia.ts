@@ -14,7 +14,23 @@ const inertiaConfig = defineConfig({
   sharedData: {
     umamiURL: env.get('UMAMI_SCRIPT_URL', ''),
     umamiID: env.get('UMAMI_WEBSITE_ID', ''),
-    // user: (ctx) => ctx.inertia.always(() => ctx.auth.user),
+    auth: (ctx) =>
+      ctx.inertia.always(() => {
+        const user = ctx.auth.user
+
+        if (!user || !('email' in user)) {
+          return { user: null }
+        }
+
+        return {
+          user: {
+            id: user.id,
+            email: user.email,
+            fullName: user.fullName,
+            username: user.username,
+          },
+        }
+      }),
   },
 
   /**
