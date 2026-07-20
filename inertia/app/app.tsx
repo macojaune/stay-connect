@@ -11,7 +11,7 @@ const appName = import.meta.env.VITE_APP_NAME || '#StayConnect'
 createInertiaApp({
   progress: { color: '#FD4F00' },
 
-  title: (title) => `${title} - ${appName}`,
+  title: (title) => (title ? `${title} - ${appName}` : appName),
 
   resolve: (name) => {
     return resolvePageComponent(`../pages/${name}.tsx`, import.meta.glob('../pages/**/*.tsx'))
