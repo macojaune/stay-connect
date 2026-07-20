@@ -57,6 +57,7 @@ EXPOSE 3333
 ENV NODE_ENV=production
 ENV HOST=0.0.0.0
 ENV PORT=3333
+ENV APP_ROLE=web
 
 # Accept build arguments for Umami in production stage
 ARG UMAMI_SCRIPT_URL
@@ -66,5 +67,5 @@ ARG UMAMI_WEBSITE_ID
 ENV UMAMI_SCRIPT_URL=$UMAMI_SCRIPT_URL
 ENV UMAMI_WEBSITE_ID=$UMAMI_WEBSITE_ID
 
-# Start the application using Node.js
-CMD ["node", "bin/server.js"]
+# Start the web server by default, or the queue listener for worker deployments.
+CMD ["sh", "-c", "if [ \"$APP_ROLE\" = \"worker\" ]; then exec node bin/console.js queue:listen; else exec node bin/server.js; fi"]
