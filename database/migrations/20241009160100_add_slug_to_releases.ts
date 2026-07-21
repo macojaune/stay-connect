@@ -6,113 +6,115 @@ export default class AddSlugToReleases extends BaseSchema {
   protected tableName = 'releases'
 
   public async up() {
-    const hasSlugColumn = await this.schema.hasColumn(this.tableName, 'slug')
-    if (!hasSlugColumn) {
-      logger.info('[migration] Adding slug column to releases...')
-      await this.schema.alterTable(this.tableName, (table) => {
-        table.string('slug').nullable()
+    this.defer(async (db) => {
+      const hasSlugColumn = await db.schema.hasColumn(this.tableName, 'slug')
+      if (!hasSlugColumn) {
+        logger.info('[migration] Adding slug column to releases...')
+        await db.schema.alterTable(this.tableName, (table) => {
+          table.string('slug').nullable()
+        })
+        logger.info('[migration] Slug column added.')
+      }
+
+      logger.info('[migration] Backfilling release slugs…')
+
+      const releases = await db
+        .from(this.tableName)
+        .select('id', 'title', 'artist_id')
+        .orderBy('created_at', 'asc')
+
+      const releaseIds = releases.map((release) => release.id)
+      const artistIds = releases
+        .map((release) => release.artist_id)
+        .filter((artistId): artistId is string => typeof artistId === 'string')
+
+      const artists = artistIds.length
+        ? await db.from('artists').select('id', 'name').whereIn('id', artistIds)
+        : []
+      const hasFeatureArtistName = await db.schema.hasColumn('features', 'artist_name')
+      const featuresQuery = db
+        .from('features')
+        .leftJoin('artists', 'features.artist_id', 'artists.id')
+        .select('features.release_id as releaseId', 'artists.name as artistName')
+
+      if (hasFeatureArtistName) {
+        featuresQuery.select('features.artist_name as featureName')
+      }
+
+      const features = releaseIds.length
+        ? await featuresQuery.whereIn('features.release_id', releaseIds)
+        : []
+      const artistMap = new Map<string, string>()
+      for (const artist of artists) {
+        if (artist?.id) {
+          artistMap.set(artist.id, artist.name)
+        }
+      }
+
+      const releaseFeaturesMap = new Map<string, string[]>()
+      for (const feature of features) {
+        const name = feature.featureName || feature.artistName
+        if (!name) {
+          continue
+        }
+        const previous = releaseFeaturesMap.get(feature.releaseId) || []
+        if (!previous.includes(name)) {
+          previous.push(name)
+          releaseFeaturesMap.set(feature.releaseId, previous)
+        }
+      }
+
+      if (releases.length === 0) {
+        logger.info('[migration] No releases found, skipping slug backfill.')
+      } else {
+        const usedSlugs = new Set<string>()
+        logger.info(`[migration] Backfilling slugs for ${releases.length} releases…`)
+
+        for (const [index, release] of releases.entries()) {
+          const artistName =
+            release.artist_id && artistMap.has(release.artist_id)
+              ? artistMap.get(release.artist_id)!
+              : null
+          const featureNames = releaseFeaturesMap.get(release.id) || []
+          const slugSource = [artistName, ...featureNames, release.title].filter(Boolean).join(' ')
+          const baseSlug = string.slug(slugSource).toLowerCase()
+          let candidate = baseSlug
+          let attempt = 1
+
+          while (usedSlugs.has(candidate)) {
+            candidate = `${baseSlug}-${attempt++}`
+          }
+
+          usedSlugs.add(candidate)
+
+          await db.from(this.tableName).where('id', release.id).update({ slug: candidate })
+
+          if ((index + 1) % 50 === 0 || index === releases.length - 1) {
+            logger.info(
+              `[migration] Processed ${index + 1}/${releases.length} releases (latest slug: ${candidate}).`
+            )
+          }
+        }
+      }
+
+      logger.info('[migration] Finalizing slug column constraints…')
+      await db.schema.alterTable(this.tableName, (table) => {
+        table.string('slug').notNullable().alter()
       })
-      logger.info('[migration] Slug column added.')
-    }
+      const existingConstraint = await db
+        .from('pg_constraint')
+        .where('conname', 'releases_slug_unique')
+        .first()
 
-    logger.info('[migration] Backfilling release slugs…')
-
-    const releases = await this.db
-      .from(this.tableName)
-      .select('id', 'title', 'artist_id')
-      .orderBy('created_at', 'asc')
-
-    const releaseIds = releases.map((release) => release.id)
-    const artistIds = releases
-      .map((release) => release.artist_id)
-      .filter((artistId): artistId is string => typeof artistId === 'string')
-
-    const artists = artistIds.length
-      ? await this.db.from('artists').select('id', 'name').whereIn('id', artistIds)
-      : []
-    const hasFeatureArtistName = await this.schema.hasColumn('features', 'artist_name')
-    const featuresQuery = this.db
-      .from('features')
-      .leftJoin('artists', 'features.artist_id', 'artists.id')
-      .select('features.release_id as releaseId', 'artists.name as artistName')
-
-    if (hasFeatureArtistName) {
-      featuresQuery.select('features.artist_name as featureName')
-    }
-
-    const features = releaseIds.length
-      ? await featuresQuery.whereIn('features.release_id', releaseIds)
-      : []
-    const artistMap = new Map<string, string>()
-    for (const artist of artists) {
-      if (artist?.id) {
-        artistMap.set(artist.id, artist.name)
+      if (!existingConstraint) {
+        await db.schema.alterTable(this.tableName, (table) => {
+          table.unique(['slug'], 'releases_slug_unique')
+        })
+      } else {
+        logger.info('[migration] Unique constraint releases_slug_unique already exists, skipping.')
       }
-    }
-
-    const releaseFeaturesMap = new Map<string, string[]>()
-    for (const feature of features) {
-      const name = feature.featureName || feature.artistName
-      if (!name) {
-        continue
-      }
-      const previous = releaseFeaturesMap.get(feature.releaseId) || []
-      if (!previous.includes(name)) {
-        previous.push(name)
-        releaseFeaturesMap.set(feature.releaseId, previous)
-      }
-    }
-
-    if (releases.length === 0) {
-      logger.info('[migration] No releases found, skipping slug backfill.')
-    } else {
-      const usedSlugs = new Set<string>()
-      logger.info(`[migration] Backfilling slugs for ${releases.length} releases…`)
-
-      for (const [index, release] of releases.entries()) {
-        const artistName =
-          release.artist_id && artistMap.has(release.artist_id)
-            ? artistMap.get(release.artist_id)!
-            : null
-        const featureNames = releaseFeaturesMap.get(release.id) || []
-        const slugSource = [artistName, ...featureNames, release.title].filter(Boolean).join(' ')
-        const baseSlug = string.slug(slugSource).toLowerCase()
-        let candidate = baseSlug
-        let attempt = 1
-
-        while (usedSlugs.has(candidate)) {
-          candidate = `${baseSlug}-${attempt++}`
-        }
-
-        usedSlugs.add(candidate)
-
-        await this.db.from(this.tableName).where('id', release.id).update({ slug: candidate })
-
-        if ((index + 1) % 50 === 0 || index === releases.length - 1) {
-          logger.info(
-            `[migration] Processed ${index + 1}/${releases.length} releases (latest slug: ${candidate}).`
-          )
-        }
-      }
-    }
-
-    logger.info('[migration] Finalizing slug column constraints…')
-    await this.schema.alterTable(this.tableName, (table) => {
-      table.string('slug').notNullable().alter()
+      logger.info('[migration] Slug migration finished successfully.')
     })
-    const existingConstraint = await this.db
-      .from('pg_constraint')
-      .where('conname', 'releases_slug_unique')
-      .first()
-
-    if (!existingConstraint) {
-      await this.schema.alterTable(this.tableName, (table) => {
-        table.unique(['slug'], 'releases_slug_unique')
-      })
-    } else {
-      logger.info('[migration] Unique constraint releases_slug_unique already exists, skipping.')
-    }
-    logger.info('[migration] Slug migration finished successfully.')
   }
 
   public async down() {
