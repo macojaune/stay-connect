@@ -68,5 +68,5 @@ ENV UMAMI_SCRIPT_URL=$UMAMI_SCRIPT_URL
 ENV UMAMI_WEBSITE_ID=$UMAMI_WEBSITE_ID
 
 # Start the web server by default, or the queue listener for worker deployments.
-# Migrations are run as a one-off operation to avoid concurrent web containers racing for the lock.
-CMD ["sh", "-c", "if [ \"$APP_ROLE\" = \"worker\" ]; then exec node bin/console.js queue:listen; else exec node bin/server.js; fi"]
+# RUN_MIGRATIONS_ONCE is enabled only for an isolated maintenance deployment.
+CMD ["sh", "-c", "if [ \"$APP_ROLE\" = \"worker\" ]; then exec node bin/console.js queue:listen; elif [ \"$RUN_MIGRATIONS_ONCE\" = \"true\" ]; then node ace.js migration:run --force --disable-locks && exec node bin/server.js; else exec node bin/server.js; fi"]
