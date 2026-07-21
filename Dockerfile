@@ -67,5 +67,6 @@ ARG UMAMI_WEBSITE_ID
 ENV UMAMI_SCRIPT_URL=$UMAMI_SCRIPT_URL
 ENV UMAMI_WEBSITE_ID=$UMAMI_WEBSITE_ID
 
-# Start the web server by default, or the queue listener for worker deployments.
-CMD ["sh", "-c", "if [ \"$APP_ROLE\" = \"worker\" ]; then exec node bin/console.js queue:listen; else exec node bin/server.js; fi"]
+# The Dockerfile command takes precedence over Coolify's start command for this image.
+# Run pending migrations in the web process before accepting traffic; workers only consume jobs.
+CMD ["sh", "-c", "if [ \"$APP_ROLE\" = \"worker\" ]; then exec node bin/console.js queue:listen; else node ace.js migration:run --force && exec node bin/server.js; fi"]
