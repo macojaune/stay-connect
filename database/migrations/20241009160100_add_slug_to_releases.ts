@@ -1,5 +1,4 @@
 import { BaseSchema } from '@adonisjs/lucid/schema'
-import db from '@adonisjs/lucid/services/db'
 import string from '@adonisjs/core/helpers/string'
 import logger from '@adonisjs/core/services/logger'
 
@@ -16,60 +15,57 @@ export default class AddSlugToReleases extends BaseSchema {
       logger.info('[migration] Slug column added.')
     }
 
-    await db.transaction(async (trx) => {
-      logger.info('[migration] start transaction…')
+    logger.info('[migration] Backfilling release slugs…')
 
-      const releases = await trx
-        .from(this.tableName)
-        .select('id', 'title', 'artist_id')
-        .orderBy('created_at', 'asc')
+    const releases = await this.db
+      .from(this.tableName)
+      .select('id', 'title', 'artist_id')
+      .orderBy('created_at', 'asc')
 
-      const releaseIds = releases.map((release) => release.id)
-      const artistIds = releases
-        .map((release) => release.artist_id)
-        .filter((artistId): artistId is string => typeof artistId === 'string')
+    const releaseIds = releases.map((release) => release.id)
+    const artistIds = releases
+      .map((release) => release.artist_id)
+      .filter((artistId): artistId is string => typeof artistId === 'string')
 
-      const artists = artistIds.length
-        ? await trx.from('artists').select('id', 'name').whereIn('id', artistIds)
-        : []
-      const hasFeatureArtistName = await this.schema.hasColumn('features', 'artist_name')
-      const featuresQuery = trx
-        .from('features')
-        .leftJoin('artists', 'features.artist_id', 'artists.id')
-        .select('features.release_id as releaseId', 'artists.name as artistName')
+    const artists = artistIds.length
+      ? await this.db.from('artists').select('id', 'name').whereIn('id', artistIds)
+      : []
+    const hasFeatureArtistName = await this.schema.hasColumn('features', 'artist_name')
+    const featuresQuery = this.db
+      .from('features')
+      .leftJoin('artists', 'features.artist_id', 'artists.id')
+      .select('features.release_id as releaseId', 'artists.name as artistName')
 
-      if (hasFeatureArtistName) {
-        featuresQuery.select('features.artist_name as featureName')
+    if (hasFeatureArtistName) {
+      featuresQuery.select('features.artist_name as featureName')
+    }
+
+    const features = releaseIds.length
+      ? await featuresQuery.whereIn('features.release_id', releaseIds)
+      : []
+    const artistMap = new Map<string, string>()
+    for (const artist of artists) {
+      if (artist?.id) {
+        artistMap.set(artist.id, artist.name)
       }
+    }
 
-      const features = releaseIds.length
-        ? await featuresQuery.whereIn('features.release_id', releaseIds)
-        : []
-      const artistMap = new Map<string, string>()
-      for (const artist of artists) {
-        if (artist?.id) {
-          artistMap.set(artist.id, artist.name)
-        }
+    const releaseFeaturesMap = new Map<string, string[]>()
+    for (const feature of features) {
+      const name = feature.featureName || feature.artistName
+      if (!name) {
+        continue
       }
-
-      const releaseFeaturesMap = new Map<string, string[]>()
-      for (const feature of features) {
-        const name = feature.featureName || feature.artistName
-        if (!name) {
-          continue
-        }
-        const previous = releaseFeaturesMap.get(feature.releaseId) || []
-        if (!previous.includes(name)) {
-          previous.push(name)
-          releaseFeaturesMap.set(feature.releaseId, previous)
-        }
+      const previous = releaseFeaturesMap.get(feature.releaseId) || []
+      if (!previous.includes(name)) {
+        previous.push(name)
+        releaseFeaturesMap.set(feature.releaseId, previous)
       }
+    }
 
-      if (releases.length === 0) {
-        logger.info('[migration] No releases found, skipping slug backfill.')
-        return
-      }
-
+    if (releases.length === 0) {
+      logger.info('[migration] No releases found, skipping slug backfill.')
+    } else {
       const usedSlugs = new Set<string>()
       logger.info(`[migration] Backfilling slugs for ${releases.length} releases…`)
 
@@ -90,7 +86,7 @@ export default class AddSlugToReleases extends BaseSchema {
 
         usedSlugs.add(candidate)
 
-        await trx.from(this.tableName).where('id', release.id).update({ slug: candidate })
+        await this.db.from(this.tableName).where('id', release.id).update({ slug: candidate })
 
         if ((index + 1) % 50 === 0 || index === releases.length - 1) {
           logger.info(
@@ -98,13 +94,13 @@ export default class AddSlugToReleases extends BaseSchema {
           )
         }
       }
-    })
+    }
 
     logger.info('[migration] Finalizing slug column constraints…')
     await this.schema.alterTable(this.tableName, (table) => {
       table.string('slug').notNullable().alter()
     })
-    const existingConstraint = await db
+    const existingConstraint = await this.db
       .from('pg_constraint')
       .where('conname', 'releases_slug_unique')
       .first()
