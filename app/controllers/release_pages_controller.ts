@@ -50,15 +50,9 @@ export default class ReleasePagesController {
     const shareUrl = request.completeUrl()
     const aggregates = await Vote.query()
       .where('release_id', release.id)
-      .avg('vote as average_vote')
       .count('* as total_votes')
       .first()
     const totalVotes = Number(aggregates?.$extras.total_votes ?? release.voteCount ?? 0)
-    const averageVoteValue = Number(aggregates?.$extras.average_vote ?? 0)
-    const averageVote =
-      totalVotes > 0 && Number.isFinite(averageVoteValue)
-        ? Number(averageVoteValue.toFixed(1))
-        : null
     const viewerVote = auth.user
       ? await Vote.query().where('release_id', release.id).where('user_id', auth.user.id).first()
       : null
@@ -95,12 +89,10 @@ export default class ReleasePagesController {
             }))
             .filter((feature) => !!feature.artistName),
           votesSummary: {
-            average: averageVote,
             total: totalVotes,
           },
           reviews: release.votes.map((vote) => ({
             id: vote.id,
-            rating: vote.vote,
             comment: vote.comment,
             createdAt: vote.createdAt.toISO(),
             user: {
@@ -116,7 +108,6 @@ export default class ReleasePagesController {
           currentUserVote: viewerVote
             ? {
                 id: viewerVote.id,
-                rating: viewerVote.vote,
                 comment: viewerVote.comment,
               }
             : null,

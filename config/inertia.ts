@@ -14,9 +14,9 @@ const inertiaConfig = defineConfig({
   sharedData: {
     umamiURL: env.get('UMAMI_SCRIPT_URL', ''),
     umamiID: env.get('UMAMI_WEBSITE_ID', ''),
-    auth: (ctx) =>
-      ctx.inertia.always(() => {
-        const user = ctx.auth.user
+    auth: (ctx) => {
+      const serializeAuth = () => {
+        const user = ctx?.auth?.user
 
         if (!user || !('email' in user)) {
           return { user: null }
@@ -30,7 +30,11 @@ const inertiaConfig = defineConfig({
             username: user.username,
           },
         }
-      }),
+      }
+
+      // Inertia also resolves shared props while rendering an error page, without a request context.
+      return ctx?.inertia ? ctx.inertia.always(serializeAuth) : serializeAuth()
+    },
   },
 
   /**

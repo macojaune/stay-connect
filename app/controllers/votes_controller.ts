@@ -23,7 +23,7 @@ export default class VotesController {
     }
 
     const data = {
-      vote: payload.vote,
+      vote: 1,
       comment: payload.comment || null,
       userId: user.id,
       releaseId: release.id,
@@ -56,7 +56,6 @@ export default class VotesController {
 
     await vote
       .merge({
-        vote: payload.vote,
         comment: payload.comment || null,
       })
       .save()
