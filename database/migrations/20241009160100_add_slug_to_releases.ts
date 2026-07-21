@@ -32,16 +32,18 @@ export default class AddSlugToReleases extends BaseSchema {
       const artists = artistIds.length
         ? await trx.from('artists').select('id', 'name').whereIn('id', artistIds)
         : []
+      const hasFeatureArtistName = await this.schema.hasColumn('features', 'artist_name')
+      const featuresQuery = trx
+        .from('features')
+        .leftJoin('artists', 'features.artist_id', 'artists.id')
+        .select('features.release_id as releaseId', 'artists.name as artistName')
+
+      if (hasFeatureArtistName) {
+        featuresQuery.select('features.artist_name as featureName')
+      }
+
       const features = releaseIds.length
-        ? await trx
-          .from('features')
-          .leftJoin('artists', 'features.artist_id', 'artists.id')
-          .select(
-            'features.release_id as releaseId',
-            'features.artist_name as featureName',
-            'artists.name as artistName'
-          )
-          .whereIn('features.release_id', releaseIds)
+        ? await featuresQuery.whereIn('features.release_id', releaseIds)
         : []
       const artistMap = new Map<string, string>()
       for (const artist of artists) {

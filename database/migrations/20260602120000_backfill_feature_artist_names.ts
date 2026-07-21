@@ -3,6 +3,13 @@ import db from '@adonisjs/lucid/services/db'
 
 export default class extends BaseSchema {
   async up() {
+    const hasArtistNameColumn = await this.schema.hasColumn('features', 'artist_name')
+    if (!hasArtistNameColumn) {
+      await this.schema.alterTable('features', (table) => {
+        table.string('artist_name').nullable()
+      })
+    }
+
     const hasSpotifyArtistIdColumn = await this.schema.hasColumn('features', 'spotify_artist_id')
     if (!hasSpotifyArtistIdColumn) {
       await this.schema.alterTable('features', (table) => {
