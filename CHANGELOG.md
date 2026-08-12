@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.5.0](https://github.com/macojaune/stay-connect/compare/v1.4.0...v1.5.0) (2026-08-12)
+
+
+### Features
+
+* configure Spotify cron lookback ([4dadd89](https://github.com/macojaune/stay-connect/commit/4dadd89b0c5fe1d226e391a74f9e29526fd19288))
+
+
+### Bug Fixes
+
+* **docker:** queue worker command ([8ed5c28](https://github.com/macojaune/stay-connect/commit/8ed5c28e4fcb4209ba304c8a1a1101a05a8b19db))
+* **home:** handle transient DB disconnects without leaking errors ([17dba41](https://github.com/macojaune/stay-connect/commit/17dba41d27f672c787d377dbf7b5887664d90424))
+* honor worker role in docker image ([3be46d6](https://github.com/macojaune/stay-connect/commit/3be46d61e6a1e8666f4ec18de8172ff61126b3b1))
+* render release 404 page ([1527ba6](https://github.com/macojaune/stay-connect/commit/1527ba6c0116be17bb40f5b57e171a02a5cf4d74))
+* resolve featured artist names on home ([cddee1b](https://github.com/macojaune/stay-connect/commit/cddee1b427f5fa3dbdc23b0e58a995a7159c6970))
+* set home page title ([02bf235](https://github.com/macojaune/stay-connect/commit/02bf2356639007c135bb998d46cad0d8e7c2ac30))
+
 ## [1.4.0](https://github.com/macojaune/stay-connect/compare/v1.3.1...v1.4.0) (2025-11-13)
 
 
