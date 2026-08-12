@@ -28,8 +28,12 @@ export default class ReleasePagesController {
     const release = await releaseQuery.first()
 
     if (!release) {
-      return response.notFound({
-        error: 'Release introuvable',
+      response.status(404)
+
+      return inertia.render('errors/not_found', {
+        title: 'Cette sortie n’est plus disponible',
+        message:
+          'La sortie que tu cherches a peut-être été retirée ou son lien a changé. Retrouve les dernières nouveautés depuis l’accueil.',
       })
     }
 
