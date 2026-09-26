@@ -1,0 +1,662 @@
+.sc-release {
+  padding-top: 28px;
+  padding-bottom: 80px;
+  color: var(--sc-ink);
+}
+
+.sc-release-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  margin-bottom: 28px;
+  font-size: 14px;
+  font-weight: 650;
+}
+
+.sc-release-back:hover,
+.sc-release-text-button:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.sc-release-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.08fr);
+  grid-template-areas: 'cover heading' 'cover listening' 'cover description';
+  grid-template-rows: auto auto 1fr;
+  align-items: start;
+  column-gap: 56px;
+  row-gap: 28px;
+}
+
+.sc-release-heading {
+  grid-area: heading;
+  min-width: 0;
+}
+
+.sc-release-heading h1 {
+  margin: 0;
+  color: var(--sc-ink);
+}
+
+.sc-release-title {
+  display: block;
+  font-size: clamp(3rem, 5.8vw, 5.5rem);
+  font-weight: 400;
+  line-height: 1.04;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+  overflow-wrap: anywhere;
+}
+
+.sc-release-artist {
+  display: block;
+  margin-top: 14px;
+  font-size: clamp(1.375rem, 2.2vw, 1.75rem);
+  font-weight: 500;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.sc-release-artist a:hover {
+  text-decoration: underline;
+  text-underline-offset: 5px;
+}
+
+.sc-release-featuring {
+  margin: 12px 0 0;
+  color: #625448;
+  font-size: 16px;
+}
+
+.sc-release-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+  margin: 24px 0 0;
+  font-size: 14px;
+  line-height: 1.6;
+  font-variant-numeric: tabular-nums;
+}
+
+.sc-release-type {
+  font-weight: 750;
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 0.055em;
+}
+
+.sc-release-genres {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+  color: #625448;
+  font-size: 13px;
+}
+
+.sc-release-genres li + li::before {
+  content: '/';
+  margin-right: 12px;
+}
+
+.sc-release-artwork {
+  grid-area: cover;
+  width: 100%;
+  aspect-ratio: 1;
+  background: #e8ded0;
+}
+
+.sc-release-artwork > img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+  object-fit: cover;
+}
+
+.sc-release-cover-fallback {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  height: 100%;
+  background: var(--sc-orange);
+  font-size: 14px;
+}
+
+.sc-release-cover-fallback .sc-display {
+  font-size: 6rem;
+  line-height: 1;
+}
+
+.sc-release-listening {
+  grid-area: listening;
+  min-width: 0;
+  padding-top: 24px;
+  border-top: 1px solid var(--sc-line);
+}
+
+.sc-release-listening h2 {
+  margin: 0 0 14px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.sc-release-platforms {
+  display: grid;
+  gap: 10px;
+}
+
+.sc-release-platform {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 58px;
+  min-width: 0;
+  padding: 14px 18px;
+  border: 1px solid var(--sc-ink);
+  background: #fffdf8;
+  color: var(--sc-ink);
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 1.35;
+}
+
+.sc-release-platform:hover {
+  background: #efe6d7;
+}
+
+.sc-release-platform > span {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.sc-release-platform-logo {
+  width: 26px;
+  height: 26px;
+  flex: 0 0 26px;
+}
+
+.sc-release-platform > svg:last-child {
+  flex-shrink: 0;
+}
+
+.sc-release-text-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 8px 0;
+  background: none;
+  border: 0;
+  color: inherit;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.sc-release-listening .sc-release-text-button {
+  margin-top: 5px;
+}
+
+.sc-release-description {
+  grid-area: description;
+  max-width: 70ch;
+  margin: 0;
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+  font-size: 16px;
+  line-height: 1.65;
+}
+
+.sc-release-support {
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  gap: 56px;
+  align-items: center;
+  margin-top: 64px;
+  padding: 40px;
+  background: var(--sc-orange);
+}
+
+.sc-release-support-intro h2 {
+  margin: 0;
+  max-width: 12ch;
+  font-size: clamp(2rem, 3.5vw, 3.1rem);
+  line-height: 1.12;
+  font-weight: 400;
+}
+
+.sc-release-support-intro > p:last-child {
+  margin: 14px 0 0;
+  max-width: 34ch;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.sc-release-boost-count {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 24px 0 0;
+  font-size: 18px;
+  font-variant-numeric: tabular-nums;
+}
+
+.sc-release-support-action {
+  min-width: 0;
+}
+
+.sc-release-join > p {
+  margin: 0 0 20px;
+  max-width: 40ch;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.sc-release-vote-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px 20px;
+}
+
+.sc-release-vote-actions .sc-button,
+.sc-release-vote-actions .sc-button-light {
+  justify-content: center;
+  text-align: center;
+  gap: 8px;
+  white-space: normal;
+  line-height: 1.4;
+}
+
+.sc-release-vote-actions .sc-button > svg {
+  flex-shrink: 0;
+}
+
+.sc-release-vote-form label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.sc-release-vote-form label > span {
+  margin-left: 6px;
+  font-weight: 400;
+}
+
+.sc-release-vote-form textarea {
+  display: block;
+  width: 100%;
+  min-height: 106px;
+  margin-bottom: 14px;
+  padding: 14px;
+  border: 1px solid var(--sc-ink);
+  border-radius: 0;
+  background: var(--sc-paper);
+  color: var(--sc-ink);
+  resize: vertical;
+  font: inherit;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.sc-release-vote-form textarea::placeholder {
+  color: #695949;
+}
+
+.sc-release-boosted {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 20px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.sc-release-feedback {
+  margin: 14px 0 0;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.sc-release-feedback[role='alert'] {
+  padding: 10px 12px;
+  border: 1px solid var(--sc-ink);
+  background: var(--sc-paper);
+}
+
+.sc-release button:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+.sc-release-sharing {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px 32px;
+  padding: 24px 0;
+  border-bottom: 1px solid var(--sc-line);
+}
+
+.sc-release-sharing h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 750;
+}
+
+.sc-release-share-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 22px;
+}
+
+.sc-release-share-control {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  gap: 8px;
+  background: none;
+  color: var(--sc-ink);
+  border: 0;
+  padding: 0;
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.sc-release-share-control:hover > span {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.sc-release-copy-status {
+  flex-basis: 100%;
+  margin: 0;
+  font-size: 13px;
+}
+
+.sc-release-related,
+.sc-release-comments {
+  margin-top: 56px;
+}
+
+.sc-release-section-title {
+  margin: 0;
+  font-size: 36px;
+  font-weight: 400;
+  line-height: 1.15;
+}
+
+.sc-release-artists {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px 32px;
+  margin-top: 24px;
+}
+
+.sc-release-artist-link {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-width: 0;
+}
+
+a.sc-release-artist-link:hover .sc-release-related-name {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.sc-release-artist-picture {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 64px;
+  width: 64px;
+  height: 64px;
+  background: #e8ded0;
+  font-size: 28px;
+}
+
+.sc-release-artist-picture img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.sc-release-artist-link > div:nth-child(2) {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.sc-release-artist-link > svg {
+  flex-shrink: 0;
+}
+
+.sc-release-related-name {
+  margin: 0 0 4px;
+  font-size: 16px;
+  font-weight: 750;
+}
+
+.sc-release-artist-link .sc-muted {
+  margin: 0;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+
+.sc-release-comments-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.sc-release-comments-heading > span {
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+}
+
+.sc-release-comment {
+  display: grid;
+  grid-template-columns: minmax(0, 0.3fr) minmax(0, 0.7fr);
+  gap: 32px;
+  padding: 26px 0;
+  border-top: 1px solid var(--sc-line);
+}
+
+.sc-release-comment-author {
+  margin: 0 0 6px;
+  font-size: 15px;
+  font-weight: 750;
+  overflow-wrap: anywhere;
+}
+
+.sc-release-comment time {
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+
+.sc-release-comment-boost {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 12px;
+  font-size: 12px;
+  color: #625448;
+}
+
+.sc-release-comment-copy {
+  margin: 0;
+  max-width: 70ch;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 16px;
+  line-height: 1.65;
+}
+
+.sc-release-comments-empty {
+  margin: 0;
+  padding-top: 24px;
+  border-top: 1px solid var(--sc-line);
+  line-height: 1.6;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .sc-release-platform > svg:last-child {
+    transition: transform 180ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .sc-release-vote-actions .sc-button,
+  .sc-release-vote-actions .sc-button-light {
+    transition: transform 180ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .sc-release-platform:active > svg:last-child {
+    transform: translate(1px, -1px);
+  }
+
+  .sc-release-vote-actions .sc-button:active:not(:disabled),
+  .sc-release-vote-actions .sc-button-light:active:not(:disabled) {
+    transform: scale(0.985);
+  }
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .sc-release-platform:hover > svg:last-child {
+    transform: translate(3px, -3px);
+  }
+
+  .sc-release-vote-actions .sc-button:hover:not(:disabled),
+  .sc-release-vote-actions .sc-button-light:hover:not(:disabled) {
+    transform: translateY(-2px);
+  }
+
+  .sc-release-vote-actions .sc-button:active:not(:disabled),
+  .sc-release-vote-actions .sc-button-light:active:not(:disabled) {
+    transform: scale(0.985);
+  }
+}
+
+@media (max-width: 900px) {
+  .sc-release-hero {
+    column-gap: 32px;
+  }
+
+  .sc-release-support {
+    gap: 32px;
+    padding: 28px;
+  }
+
+  .sc-release-artists {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .sc-release {
+    padding-top: 14px;
+    padding-bottom: 48px;
+  }
+
+  .sc-release-back {
+    margin-bottom: 20px;
+  }
+
+  .sc-release-hero {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: 'heading' 'listening' 'cover' 'description';
+    gap: 24px;
+  }
+
+  .sc-release-title {
+    font-size: clamp(2.75rem, 12vw, 4rem);
+  }
+
+  .sc-release-artist {
+    margin-top: 10px;
+    font-size: 22px;
+  }
+
+  .sc-release-meta {
+    margin-top: 16px;
+    font-size: 13px;
+    gap: 6px 12px;
+  }
+
+  .sc-release-listening {
+    padding-top: 0;
+    border-top: 0;
+  }
+
+  .sc-release-support {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 26px;
+    margin-top: 36px;
+    padding: 24px 20px;
+  }
+
+  .sc-release-support-intro h2 {
+    max-width: none;
+    font-size: 36px;
+  }
+
+  .sc-release-boost-count {
+    margin-top: 18px;
+  }
+
+  .sc-release-vote-actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .sc-release-sharing {
+    display: block;
+  }
+
+  .sc-release-share-actions {
+    margin-top: 12px;
+    gap: 6px 20px;
+  }
+
+  .sc-release-related,
+  .sc-release-comments {
+    margin-top: 36px;
+  }
+
+  .sc-release-section-title {
+    font-size: 30px;
+  }
+
+  .sc-release-artists {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+  }
+
+  .sc-release-comment {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+  }
+
+  .sc-release-comment-boost {
+    margin-top: 8px;
+  }
+}

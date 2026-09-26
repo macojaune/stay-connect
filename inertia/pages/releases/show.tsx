@@ -1,9 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import AppLayout from '~/layouts/AppLayout'
+import EditorialLayout from '~/layouts/EditorialLayout'
+import '~/css/release-editorial.css'
 import { Head, Link, router, usePage } from '@inertiajs/react'
-import { Copy, Link2, Rocket, Trash2 } from 'lucide-react'
-import { Button } from '~/components/ui/Button'
-import { Tooltip, TooltipContent, TooltipTrigger } from '~/components/ui/tooltip'
+import { ArrowLeft, ArrowUpRight, Check, Copy, Link2, RotateCcw, Trash2 } from 'lucide-react'
 import {
   AppleMusicLogo,
   DeezerLogo,
@@ -78,15 +77,6 @@ type PageProps = {
   errors?: Record<string, string>
 }
 
-const hexToRgba = (hex: string, alpha: number) => {
-  const sanitized = hex.replace('#', '')
-  const bigint = Number.parseInt(sanitized.length === 3 ? sanitized.repeat(2) : sanitized, 16)
-  const r = (bigint >> 16) & 255
-  const g = (bigint >> 8) & 255
-  const b = bigint & 255
-  return `rgba(${r}, ${g}, ${b}, ${alpha})`
-}
-
 type StreamingLink = {
   url: string
   label: string
@@ -107,7 +97,7 @@ type PlatformConfig = {
 type ShareButtonConfig = {
   key: string
   label: string
-  Button: React.ComponentType<React.PropsWithChildren<Record<string, unknown>>>
+  Button: React.ComponentType<{ url: string; children: React.ReactNode; className?: string }>
   Icon: React.ComponentType<{ size?: number; round?: boolean; borderRadius?: number }>
   buttonProps?: Record<string, unknown>
 }
@@ -145,84 +135,6 @@ const PLATFORM_CONFIGS: PlatformConfig[] = [
   { matcher: /tidal\.com/, label: 'Tidal', key: 'tidal', Icon: TidalLogo, accent: '#18BFFF' },
 ]
 
-/*
- * Spotify embed helpers are temporarily disabled while the player is commented out.
- * Keeping the parsing logic here for future reuse when the player returns.
- */
-// type SpotifyEmbedConfig = {
-//   type: 'track' | 'album' | 'playlist' | 'episode' | 'show'
-//   id: string
-// }
-
-// const mapReleaseTypeToSpotify = (releaseType?: string | null): SpotifyEmbedConfig['type'] => {
-//   switch ((releaseType ?? '').toLowerCase()) {
-//     case 'album':
-//     case 'lp':
-//     case 'ep':
-//       return 'album'
-//     case 'playlist':
-//       return 'playlist'
-//     case 'podcast':
-//     case 'episode':
-//       return 'episode'
-//     default:
-//       return 'track'
-//   }
-// }
-
-// const SPOTIFY_ID_REGEX = /^[0-9A-Za-z]{22}$/
-
-// const parseSpotifyId = (
-//   raw: string | null,
-//   releaseType?: string | null
-// ): SpotifyEmbedConfig | null => {
-//   if (!raw) {
-//     return null
-//   }
-
-//   const trimmed = raw.trim()
-//  const lower = trimmed.toLowerCase()
-//  const fallbackType = mapReleaseTypeToSpotify(releaseType)
-
-//   if (lower.startsWith('spotify:')) {
-//     const parts = trimmed.split(':').filter(Boolean)
-//     if (parts.length >= 3) {
-//       const [, type, id] = parts
-//       if (id) {
-//         return {
-//           type: (type as SpotifyEmbedConfig['type']) ?? fallbackType,
-//           id,
-//         }
-//       }
-//     }
-//   }
-
-//   if (lower.includes('open.spotify.com')) {
-//     try {
-//       const url = new URL(trimmed)
-//       const segments = url.pathname.split('/').filter(Boolean)
-//       if (segments.length >= 2) {
-//         const [type, id] = segments
-//         return {
-//           type: (type as SpotifyEmbedConfig['type']) ?? fallbackType,
-//           id: id.split('?')[0],
-//         }
-//       }
-//     } catch {
-//       // fall through to generic parsing
-//     }
-//   }
-
-//   if (SPOTIFY_ID_REGEX.test(trimmed)) {
-//     return {
-//       type: fallbackType,
-//       id: trimmed,
-//     }
-//   }
-
-//   return null
-// }
-
 const ReleaseShow: React.FC<ReleaseShowProps> = ({ release, shareUrl }) => {
   const { auth, errors } = usePage<PageProps>().props
   const [copyStatus, setCopyStatus] = useState<'idle' | 'copied' | 'error'>('idle')
@@ -231,7 +143,7 @@ const ReleaseShow: React.FC<ReleaseShowProps> = ({ release, shareUrl }) => {
   const [voteFeedback, setVoteFeedback] = useState<'saved' | 'removed' | null>(null)
   const [voteIsSubmitting, setVoteIsSubmitting] = useState(false)
 
-  const releaseDate = release.date ? new Date(release.date) : null
+  const releaseDate = release.date ? new Date(`${release.date.slice(0, 10)}T12:00:00`) : null
   const formattedDate = releaseDate
     ? releaseDate.toLocaleDateString('fr-FR', {
         day: 'numeric',
@@ -364,14 +276,6 @@ const ReleaseShow: React.FC<ReleaseShowProps> = ({ release, shareUrl }) => {
     }
   }, [extraLinks.length])
 
-  // const spotifyEmbedUrl = useMemo(() => {
-  //   const parsed = parseSpotifyId(release.spotifyId, release.type)
-  //   if (!parsed) {
-  //     return null
-  //   }
-  //   return `https://open.spotify.com/embed/${parsed.type}/${parsed.id}`
-  // }, [release.spotifyId, release.type])
-
   const shareTitle = useMemo(() => {
     const parts = [release.title, release.artist?.name].filter(Boolean)
     return parts.join(' · ')
@@ -383,7 +287,7 @@ const ReleaseShow: React.FC<ReleaseShowProps> = ({ release, shareUrl }) => {
   )
 
   const boostsCountLabel =
-    release.votesSummary.total === 1 ? '1 boost' : `${release.votesSummary.total} boosts`
+    release.votesSummary.total === 1 ? '1 pull-up' : `${release.votesSummary.total} pull-ups`
   const comments = release.reviews.filter((review) => Boolean(review.comment))
 
   const submitVote = () => {
@@ -472,14 +376,11 @@ const ReleaseShow: React.FC<ReleaseShowProps> = ({ release, shareUrl }) => {
     }
   }
 
-  const subtitleParts = [
-    release.artist?.name ?? 'Artiste inconnu',
-    formattedDate ? `Sortie le ${formattedDate}` : null,
-    release.type ? release.type.charAt(0).toUpperCase() + release.type.slice(1) : null,
-  ].filter(Boolean)
+  const visibleLinks = showMorePlatforms ? streamingLinks : primaryLinks
+  const voteError = errors?.vote || errors?.comment
 
   return (
-    <AppLayout>
+    <EditorialLayout>
       <Head title={shareTitle}>
         <meta name="description" content={seoDescription} />
         <meta property="og:title" content={shareTitle} />
@@ -494,360 +395,275 @@ const ReleaseShow: React.FC<ReleaseShowProps> = ({ release, shareUrl }) => {
         <meta name="twitter:url" content={shareUrl} />
         <link rel="canonical" href={shareUrl} />
       </Head>
-      <div className="max-w-5xl mx-auto px-6 py-12 space-y-10">
-        <div>
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 text-sm text-brand hover:text-brand-dark transition-colors"
-          >
-            <span aria-hidden="true">←</span> Retour à l'accueil
-          </Link>
-        </div>
+      <div className="sc-shell sc-release">
+        <Link href="/" className="sc-release-back">
+          <ArrowLeft size={18} aria-hidden="true" /> Toutes les sorties
+        </Link>
 
-        <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_240px] items-start">
-          <article className="bg-white rounded-3xl shadow-lg border border-zinc-100 overflow-hidden">
-            <div className="grid md:grid-cols-[280px_1fr] gap-8 md:gap-10 items-stretch">
-              <div className="relative md:h-full">
-                <div className="md:h-full">
-                  {release.cover ? (
-                    <img
-                      src={release.cover}
-                      alt={`Couverture de ${release.title}`}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-gradient-to-br from-brand/20 to-brand/40 flex items-center justify-center text-brand font-semibold text-xl">
-                      {release.title[0]?.toUpperCase() ?? '#'}
-                    </div>
-                  )}
-                </div>
+        <article className="sc-release-hero">
+          <header className="sc-release-heading">
+            <h1>
+              <span className="sc-release-title sc-display">{release.title}</span>
+              <span className="sc-release-artist">
+                {release.artist?.id ? (
+                  <Link href={`/artistes/${release.artist.id}`}>{release.artist.name}</Link>
+                ) : (
+                  (release.artist?.name ?? 'Artiste inconnu')
+                )}
+              </span>
+            </h1>
+            {featuredArtistNames.length > 0 && (
+              <p className="sc-release-featuring">Avec {featuredArtistNames.join(', ')}</p>
+            )}
+            <p className="sc-release-meta">
+              {release.type && <span className="sc-release-type">{release.type}</span>}
+              {formattedDate && <time dateTime={release.date!}>Sortie le {formattedDate}</time>}
+            </p>
+            {release.categories.length > 0 && (
+              <ul className="sc-release-genres" aria-label="Genres musicaux">
+                {release.categories.map((category) => (
+                  <li key={category.id}>{category.name}</li>
+                ))}
+              </ul>
+            )}
+          </header>
+
+          <div className="sc-release-artwork">
+            {release.cover ? (
+              <img
+                src={release.cover}
+                alt={`Pochette de ${release.title}`}
+                width={640}
+                height={640}
+              />
+            ) : (
+              <div
+                className="sc-release-cover-fallback"
+                role="img"
+                aria-label="Pochette indisponible"
+              >
+                <span className="sc-display">{release.artist?.name[0]?.toUpperCase() ?? '#'}</span>
+                <span>Pochette indisponible</span>
               </div>
+            )}
+          </div>
 
-              <div className="flex flex-col gap-6 p-6 md:py-8 md:pr-10 md:min-h-full">
-                <header className="space-y-3">
-                  <h1 className="text-3xl md:text-4xl font-bold text-zinc-900 leading-tight">
-                    {release.title}
-                  </h1>
-                  {subtitleParts.length > 0 && (
-                    <p className="text-sm md:text-base text-zinc-600">
-                      {subtitleParts.join(' · ')}
-                    </p>
-                  )}
+          <section className="sc-release-listening" aria-labelledby="release-listening-title">
+            <h2 id="release-listening-title">Écouter sur ta plateforme</h2>
+            {streamingLinks.length > 0 ? (
+              <>
+                <div className="sc-release-platforms" id="release-platforms">
+                  {visibleLinks.map((link) => {
+                    const IconComponent = link.Icon
+                    return (
+                      <a
+                        key={link.url}
+                        href={link.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="sc-release-platform"
+                        aria-label={`Écouter sur ${link.label}, nouvel onglet`}
+                      >
+                        <IconComponent className="sc-release-platform-logo" aria-hidden="true" />
+                        <span>{link.label}</span>
+                        <ArrowUpRight size={20} aria-hidden="true" />
+                      </a>
+                    )
+                  })}
+                </div>
+                {extraLinks.length > 0 && (
+                  <button
+                    type="button"
+                    className="sc-release-text-button"
+                    onClick={() => setShowMorePlatforms(!showMorePlatforms)}
+                    aria-expanded={showMorePlatforms}
+                    aria-controls="release-platforms"
+                  >
+                    {showMorePlatforms
+                      ? 'Voir moins de plateformes'
+                      : extraLinks.length === 1
+                        ? "Voir l'autre plateforme"
+                        : `Voir les ${extraLinks.length} autres plateformes`}
+                  </button>
+                )}
+              </>
+            ) : (
+              <p className="sc-muted">
+                Aucun lien d'écoute n'est disponible pour cette sortie pour le moment.
+              </p>
+            )}
+          </section>
 
-                  {release.categories.length > 0 && (
-                    <div className="flex flex-wrap gap-2">
-                      {release.categories.map((category) => (
-                        <span
-                          key={category.id}
-                          className="inline-flex px-3 py-1 rounded-full text-xs font-medium bg-brand/10 text-brand"
-                        >
-                          {category.name}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                </header>
+          {release.description && <p className="sc-release-description">{release.description}</p>}
+        </article>
 
-                {release.description && (
-                  <p className="text-sm md:text-base text-zinc-700 leading-relaxed whitespace-pre-line">
-                    {release.description}
+        <section
+          id="soutenir"
+          className="sc-release-support"
+          aria-labelledby="release-support-title"
+        >
+          <div className="sc-release-support-intro">
+            <h2 id="release-support-title" className="sc-display">
+              Soutiens cette sortie.
+            </h2>
+            <p className="sc-release-boost-count">
+              <RotateCcw size={22} aria-hidden="true" />
+              <strong>{boostsCountLabel}</strong>
+            </p>
+            <p>Un pull-up pour soutenir cette sortie. Un commentaire si tu veux en parler.</p>
+          </div>
+          <div className="sc-release-support-action">
+            {auth?.user ? (
+              <div className="sc-release-vote-form">
+                {release.currentUserVote && (
+                  <p className="sc-release-boosted">
+                    <Check size={18} aria-hidden="true" /> Tu as donné un pull-up
                   </p>
                 )}
-
-                {featuredArtistNames.length > 0 && (
-                  <div className="text-sm text-zinc-600">
-                    <span className="font-semibold text-zinc-800">Featuring :</span>{' '}
-                    {featuredArtistNames.join(', ')}
-                  </div>
-                )}
-
-                {streamingLinks.length > 0 && (
-                  <div className="mt-6 w-full flex flex-col items-center gap-3 pt-4 md:mt-auto md:w-auto md:items-end">
-                    <span className="text-xs uppercase tracking-wide text-zinc-400">
-                      Disponible sur
-                    </span>
-                    <div className="flex w-full flex-wrap items-center justify-center gap-3 md:w-auto md:justify-end">
-                      {primaryLinks.map((link) => {
-                        const ringStyle = {
-                          boxShadow: `0 0 0 4px ${hexToRgba(link.accent, 0.25)}`,
-                          borderColor: hexToRgba(link.accent, 0.4),
-                        }
-
-                        const IconComponent = link.Icon
-                        const isLucideFallback = IconComponent === Link2
-
-                        return (
-                          <Tooltip key={link.url}>
-                            <TooltipTrigger asChild>
-                              <a
-                                href={link.url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                aria-label={`Écouter sur ${link.label}`}
-                                className="group inline-flex min-w-[64px] flex-col items-center justify-center gap-1"
-                              >
-                                <span
-                                  className="inline-flex h-11 w-11 items-center justify-center rounded-full border bg-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
-                                  style={ringStyle}
-                                >
-                                  <IconComponent
-                                    className="h-7 w-7"
-                                    {...(isLucideFallback ? { color: link.accent } : {})}
-                                  />
-                                </span>
-                                <span className="text-[11px] font-medium text-zinc-500 md:hidden">
-                                  {link.label}
-                                </span>
-                              </a>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p className="font-medium">{link.label}</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        )
-                      })}
-
-                      {extraLinks.length > 0 &&
-                        showMorePlatforms &&
-                        extraLinks.map((link) => {
-                          const ringStyle = {
-                            boxShadow: `0 0 0 4px ${hexToRgba(link.accent, 0.25)}`,
-                            borderColor: hexToRgba(link.accent, 0.4),
-                          }
-                          const IconComponent = link.Icon
-                          const isLucideFallback = IconComponent === Link2
-
-                          return (
-                            <Tooltip key={link.url}>
-                              <TooltipTrigger asChild>
-                                <a
-                                  href={link.url}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  aria-label={`Écouter sur ${link.label}`}
-                                  className="group inline-flex min-w-[64px] flex-col items-center justify-center gap-1"
-                                  onClick={() => setShowMorePlatforms(false)}
-                                >
-                                  <span
-                                    className="inline-flex h-11 w-11 items-center justify-center rounded-full border bg-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
-                                    style={ringStyle}
-                                  >
-                                    <IconComponent
-                                      className="h-7 w-7"
-                                      {...(isLucideFallback ? { color: link.accent } : {})}
-                                    />
-                                  </span>
-                                  <span className="text-[11px] font-medium text-zinc-500 md:hidden">
-                                    {link.label}
-                                  </span>
-                                </a>
-                              </TooltipTrigger>
-                              <TooltipContent>
-                                <p className="font-medium">{link.label}</p>
-                              </TooltipContent>
-                            </Tooltip>
-                          )
-                        })}
-
-                      {extraLinks.length > 0 && !showMorePlatforms && (
-                        <button
-                          type="button"
-                          onClick={() => setShowMorePlatforms(true)}
-                          className="inline-flex min-w-[64px] flex-col items-center justify-center gap-1 text-zinc-600 transition-colors hover:text-zinc-800 focus-visible:outline-none focus-visible:ring focus-visible:ring-brand/40"
-                          aria-expanded={showMorePlatforms}
-                          aria-label="Voir plus de plateformes"
-                        >
-                          <span className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-zinc-200 bg-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
-                            <span className="text-xl font-semibold">…</span>
-                          </span>
-                          <span className="text-[11px] font-medium text-zinc-500 md:hidden">
-                            Plus
-                          </span>
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          </article>
-
-          <aside className="space-y-6">
-            <section className="rounded-3xl border border-zinc-100 bg-white p-6 shadow-lg">
-              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-brand">Boosts</p>
-              <div className="mt-3 flex items-center gap-3">
-                <Rocket className="h-7 w-7 text-brand" aria-hidden="true" />
-                <div>
-                  <p className="text-3xl font-bold text-zinc-900">{release.votesSummary.total}</p>
-                  <p className="text-xs text-zinc-500">{boostsCountLabel}</p>
-                </div>
-              </div>
-
-              <div className="mt-5 rounded-2xl border border-zinc-200 bg-zinc-50 p-4">
-                {auth?.user ? (
-                  <div className="space-y-4">
-                    <div>
-                      <p className="text-sm font-semibold text-zinc-900">
-                        {release.currentUserVote
-                          ? 'Tu as boosté cette sortie'
-                          : 'Booster cette sortie'}
-                      </p>
-                      <p className="mt-1 text-sm text-zinc-600">
-                        Fais remonter cette sortie et ajoute un commentaire si tu le souhaites.
-                      </p>
-                    </div>
-                    <textarea
-                      value={voteComment}
-                      onChange={(event) => setVoteComment(event.target.value)}
-                      maxLength={1000}
-                      placeholder="Ton commentaire (facultatif)"
-                      className="min-h-24 w-full resize-y rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 outline-none transition placeholder:text-zinc-400 focus:border-brand focus:ring-2 focus:ring-brand/20"
-                    />
-                    <Button
-                      type="button"
-                      className="w-full"
-                      disabled={voteIsSubmitting}
-                      onClick={submitVote}
-                    >
-                      <Rocket className="h-4 w-4" />
-                      {release.currentUserVote
+                <label htmlFor="release-comment">
+                  Ton commentaire <span>facultatif</span>
+                </label>
+                <textarea
+                  id="release-comment"
+                  value={voteComment}
+                  onChange={(event) => setVoteComment(event.target.value)}
+                  maxLength={1000}
+                  rows={3}
+                  placeholder="Qu'est-ce qui te plaît dans cette sortie ?"
+                  aria-invalid={Boolean(voteError)}
+                  aria-describedby={voteError ? 'release-vote-feedback' : undefined}
+                />
+                <div className="sc-release-vote-actions">
+                  <button
+                    type="button"
+                    className="sc-button"
+                    disabled={voteIsSubmitting}
+                    onClick={submitVote}
+                  >
+                    <RotateCcw size={18} aria-hidden="true" />
+                    {voteIsSubmitting
+                      ? 'Enregistrement…'
+                      : release.currentUserVote
                         ? 'Mettre à jour mon commentaire'
-                        : 'Booster cette sortie'}
-                    </Button>
-                    {(voteFeedback || errors?.vote) && (
-                      <p
-                        className={`text-sm font-medium ${errors?.vote ? 'text-red-600' : 'text-emerald-600'}`}
-                      >
-                        {errors?.vote ||
-                          (voteFeedback === 'saved' ? 'Boost enregistré.' : 'Boost retiré.')}
-                      </p>
-                    )}
-                    {release.currentUserVote && (
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        className="w-full text-zinc-600 hover:text-red-600"
-                        disabled={voteIsSubmitting}
-                        onClick={removeVote}
-                      >
-                        <Trash2 className="h-4 w-4" /> Retirer mon boost
-                      </Button>
-                    )}
-                  </div>
-                ) : (
-                  <div className="space-y-3">
-                    <p className="text-sm text-zinc-600">
-                      Connecte-toi pour booster cette sortie et laisser un commentaire.
-                    </p>
-                    <Link href="/login" className="block">
-                      <Button className="w-full">Se connecter</Button>
-                    </Link>
-                    <Link href="/register" className="block">
-                      <Button variant="outline" className="w-full">
-                        Créer un compte
-                      </Button>
-                    </Link>
-                  </div>
-                )}
-              </div>
-            </section>
-
-            <section className="rounded-3xl border border-zinc-100 bg-white p-6 shadow-lg">
-              <p className="text-center text-xs font-semibold uppercase tracking-wide text-brand">
-                Partager
-              </p>
-              <div className="flex flex-wrap items-center justify-center gap-2">
-                {shareButtons.map((config) => {
-                  const ButtonComponent = config.Button
-                  const IconComponent = config.Icon
-
-                  return (
-                    <ButtonComponent
-                      key={config.key}
-                      url={shareUrl}
-                      {...config.buttonProps}
-                      className="group inline-flex items-center justify-center focus:outline-none"
-                      aria-label={`Partager sur ${config.label}`}
+                        : 'Pull-up'}
+                  </button>
+                  {release.currentUserVote && (
+                    <button
+                      type="button"
+                      className="sc-release-text-button"
+                      disabled={voteIsSubmitting}
+                      onClick={removeVote}
                     >
-                      <span className="inline-flex  items-center justify-center rounded-full border border-brand/20 bg-white shadow-sm transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:shadow-md">
-                        <IconComponent size={44} round />
-                      </span>
-                    </ButtonComponent>
-                  )
-                })}
-                <button
-                  type="button"
-                  onClick={handleCopyLink}
-                  className="group inline-flex items-center justify-center focus:outline-none"
-                  aria-label="Copier le lien"
-                >
-                  <span className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-brand/20 bg-white shadow-sm transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:shadow-md">
-                    <Copy className="h-5 w-5" />
-                  </span>
-                </button>
-              </div>
-              {(copyStatus === 'copied' || copyStatus === 'error') && (
-                <div className="min-h-[18px] text-center text-[11px] font-medium">
-                  {copyStatus === 'copied' && <span className="text-green-600">Lien copié ✅</span>}
-                  {copyStatus === 'error' && (
-                    <span className="text-red-600">Impossible de copier, réessaie.</span>
+                      <Trash2 size={16} aria-hidden="true" /> Retirer mon pull-up
+                    </button>
                   )}
                 </div>
-              )}
-            </section>
-          </aside>
-        </div>
+                {(voteFeedback || voteError) && (
+                  <p
+                    id="release-vote-feedback"
+                    className="sc-release-feedback"
+                    role={voteError ? 'alert' : 'status'}
+                  >
+                    {voteError ||
+                      (voteFeedback === 'saved' ? 'Pull-up enregistré.' : 'Pull-up retiré.')}
+                  </p>
+                )}
+              </div>
+            ) : (
+              <div className="sc-release-join">
+                <p>Connecte-toi pour donner un pull-up et laisser un commentaire.</p>
+                <div className="sc-release-vote-actions">
+                  <Link href="/login" className="sc-button">
+                    Se connecter
+                  </Link>
+                  <Link href="/register" className="sc-button-light">
+                    Créer un compte
+                  </Link>
+                </div>
+              </div>
+            )}
+          </div>
+        </section>
+
+        <section className="sc-release-sharing" aria-labelledby="release-sharing-title">
+          <h2 id="release-sharing-title">Fais tourner.</h2>
+          <div className="sc-release-share-actions">
+            {shareButtons.map((config) => {
+              const ButtonComponent = config.Button
+              const IconComponent = config.Icon
+              return (
+                <ButtonComponent
+                  key={config.key}
+                  url={shareUrl}
+                  {...config.buttonProps}
+                  className="sc-release-share-control"
+                  aria-label={`Partager sur ${config.label}`}
+                >
+                  <IconComponent size={24} round />
+                  <span>{config.label}</span>
+                </ButtonComponent>
+              )
+            })}
+            <button
+              type="button"
+              onClick={handleCopyLink}
+              className="sc-release-share-control"
+              aria-label="Copier le lien de cette sortie"
+            >
+              <Copy size={19} aria-hidden="true" />
+              <span>{copyStatus === 'copied' ? 'Lien copié' : 'Copier le lien'}</span>
+            </button>
+          </div>
+          {copyStatus !== 'idle' && (
+            <p className="sc-release-copy-status" role="status">
+              {copyStatus === 'copied'
+                ? 'Le lien est copié.'
+                : 'Impossible de copier le lien. Réessaie.'}
+            </p>
+          )}
+        </section>
 
         {relatedArtists.length > 0 && (
-          <section className="space-y-6">
-            <h2 className="text-xl font-semibold text-zinc-900 text-start">Artistes liés</h2>
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <section className="sc-release-related" aria-labelledby="release-artists-title">
+            <h2 id="release-artists-title" className="sc-release-section-title sc-display">
+              Les artistes
+            </h2>
+            <div className="sc-release-artists">
               {relatedArtists.map((artist) => {
                 const content = (
                   <>
-                    <div className="relative h-14 w-14 overflow-hidden rounded-full border border-zinc-200 bg-zinc-100">
+                    <div className="sc-release-artist-picture">
                       {artist.picture ? (
-                        <img
-                          src={artist.picture}
-                          alt={artist.name}
-                          className="h-full w-full object-cover"
-                        />
+                        <img src={artist.picture} alt="" width={64} height={64} loading="lazy" />
                       ) : (
-                        <div className="flex h-full w-full items-center justify-center text-xl font-semibold text-brand">
+                        <span className="sc-display" aria-hidden="true">
                           {artist.name[0]?.toUpperCase() ?? '?'}
-                        </div>
+                        </span>
                       )}
                     </div>
-                    <div className="min-w-0">
-                      <p className="truncate text-sm font-semibold text-zinc-900">{artist.name}</p>
+                    <div>
+                      <p className="sc-release-related-name">{artist.name}</p>
                       {artist.releaseCount !== null && artist.releaseCount !== undefined && (
-                        <p className="text-xs text-zinc-500">
+                        <p className="sc-muted">
                           {artist.releaseCount === 1
                             ? '1 sortie'
                             : `${artist.releaseCount} sorties`}
                         </p>
                       )}
                     </div>
+                    {artist.id && <ArrowUpRight size={20} aria-hidden="true" />}
                   </>
                 )
-
-                if (artist.id) {
-                  return (
-                    <Link
-                      key={artist.id}
-                      href={`/artistes/${artist.id}`}
-                      className="group flex items-center gap-4 rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:border-brand hover:shadow-md"
-                    >
-                      {content}
-                    </Link>
-                  )
-                }
-
-                return (
-                  <div
-                    key={artist.name}
-                    className="flex items-center gap-4 rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm"
+                return artist.id ? (
+                  <Link
+                    key={artist.id}
+                    href={`/artistes/${artist.id}`}
+                    className="sc-release-artist-link"
                   >
+                    {content}
+                  </Link>
+                ) : (
+                  <div key={artist.name} className="sc-release-artist-link">
                     {content}
                   </div>
                 )
@@ -856,99 +672,49 @@ const ReleaseShow: React.FC<ReleaseShowProps> = ({ release, shareUrl }) => {
           </section>
         )}
 
-        <section className="bg-white rounded-3xl shadow-lg border border-zinc-100 overflow-hidden">
-          <div className="relative px-6 py-10">
-            <div
-              className="absolute inset-0 bg-gradient-to-br from-brand/20 via-white to-brand-dark/30 blur-xl opacity-60"
-              aria-hidden="true"
-            />
-            <div className="relative space-y-3 text-center">
-              <h2 className="text-xl text-center font-semibold text-zinc-900">Description</h2>
-              <p className="text-sm text-zinc-600 leading-relaxed">
-                Prochainement l'artiste et son équipe pourront ajouter une description du projet en
-                détail, les crédits et les informations de production.
-              </p>
-            </div>
+        <section className="sc-release-comments" aria-labelledby="release-comments-title">
+          <div className="sc-release-comments-heading">
+            <h2 id="release-comments-title" className="sc-release-section-title sc-display">
+              Les commentaires
+            </h2>
+            <span className="sc-muted">
+              {comments.length} {comments.length === 1 ? 'commentaire' : 'commentaires'}
+            </span>
           </div>
-        </section>
-
-        {/* TODO: Restore Spotify embed when embed issues are resolved */}
-        {/* {spotifyEmbedUrl && (
-          <section className="bg-zinc-900/90 rounded-3xl overflow-hidden shadow-lg border border-zinc-800">
-            <div className="px-6 py-4">
-              <h2 className="text-lg font-semibold text-white mb-2">Écouter un extrait</h2>
-              <p className="text-sm text-zinc-300">
-                Profite d&apos;un aperçu du morceau directement depuis Spotify.
-              </p>
-            </div>
-            <iframe
-              src={spotifyEmbedUrl}
-              width="100%"
-              height="352"
-              allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-              loading="lazy"
-              className="min-h-[200px]"
-            />
-          </section>
-        )} */}
-
-        {streamingLinks.length === 0 && (
-          <section className="bg-white rounded-3xl shadow-lg border border-zinc-100 overflow-hidden">
-            <div className="px-6 py-8 space-y-3 text-center">
-              <h2 className="text-xl font-semibold text-zinc-900">Écouter sur ta plateforme</h2>
-              <p className="text-sm text-zinc-500">
-                Les liens de streaming seront ajoutés très bientôt. Reviens vite&nbsp;!
-              </p>
-            </div>
-          </section>
-        )}
-
-        <section className="space-y-4">
-          <div>
-            <h2 className="text-xl font-semibold text-zinc-900">Boosts et commentaires</h2>
-            <p className="mt-1 text-sm text-zinc-600">
-              {release.votesSummary.total > 0
-                ? `${boostsCountLabel} sur cette sortie.`
-                : 'Aucun boost pour le moment. Sois le premier à la soutenir.'}
-            </p>
-          </div>
-          {comments.length > 0 && (
-            <div className="grid gap-4 md:grid-cols-2">
+          {comments.length > 0 ? (
+            <div className="sc-release-comment-list">
               {comments.map((review) => (
-                <article
-                  key={review.id}
-                  className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm"
-                >
-                  <div className="flex items-start justify-between gap-4">
-                    <div>
-                      <p className="font-semibold text-zinc-900">
-                        {review.user.displayName}
-                        {review.isCurrentUser ? ' · toi' : ''}
-                      </p>
-                      {review.createdAt && (
-                        <p className="mt-1 text-xs text-zinc-500">
-                          {new Date(review.createdAt).toLocaleDateString('fr-FR', {
-                            day: 'numeric',
-                            month: 'short',
-                            year: 'numeric',
-                          })}
-                        </p>
-                      )}
-                    </div>
-                    <Rocket className="h-5 w-5 text-brand" aria-label="A boosté cette sortie" />
-                  </div>
-                  {review.comment && (
-                    <p className="mt-4 whitespace-pre-wrap text-sm leading-6 text-zinc-700">
-                      {review.comment}
+                <article key={review.id} className="sc-release-comment">
+                  <div>
+                    <p className="sc-release-comment-author">
+                      {review.user.displayName}
+                      {review.isCurrentUser ? ' · toi' : ''}
                     </p>
-                  )}
+                    {review.createdAt && (
+                      <time dateTime={review.createdAt} className="sc-muted">
+                        {new Date(review.createdAt).toLocaleDateString('fr-FR', {
+                          day: 'numeric',
+                          month: 'long',
+                          year: 'numeric',
+                        })}
+                      </time>
+                    )}
+                    <span className="sc-release-comment-boost">
+                      <RotateCcw size={14} aria-hidden="true" /> A donné un pull-up
+                    </span>
+                  </div>
+                  <p className="sc-release-comment-copy">{review.comment}</p>
                 </article>
               ))}
             </div>
+          ) : (
+            <p className="sc-release-comments-empty sc-muted">
+              Aucun commentaire pour le moment. Tu peux en ajouter avec ton pull-up.
+            </p>
           )}
         </section>
       </div>
-    </AppLayout>
+    </EditorialLayout>
   )
 }
 

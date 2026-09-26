@@ -186,6 +186,8 @@ export default class HomeController {
         slug: release.slug,
         artist: release.artist?.name || 'Artiste inconnu',
         date: this.formatReleaseDate(DateTime.fromJSDate(release.date.toJSDate()), now),
+        dateIso: release.date.toISODate(),
+        boostCount: release.voteCount ?? 0,
         type: release.type || 'release',
         category: release.categories?.[0]?.name || 'Musique',
         imageUrl: release.cover,

@@ -16,9 +16,9 @@ const inertiaConfig = defineConfig({
     umamiID: env.get('UMAMI_WEBSITE_ID', ''),
     auth: (ctx) => {
       const serializeAuth = () => {
-        const user = ctx?.auth?.user
+        const user = ctx?.auth?.use('web').user
 
-        if (!user || !('email' in user)) {
+        if (!user) {
           return { user: null }
         }
 

@@ -1,334 +1,440 @@
-import React from 'react'
-import { Head, useForm } from '@inertiajs/react'
-import AppLayout from '~/layouts/AppLayout'
-import Timeline from '~/components/Timeline'
-import type { InferPageProps } from '@adonisjs/inertia/types'
-import type HomeController from '#controllers/home_controller'
-import { Input } from '~/components/ui/Input'
-import { FormEvent, useMemo, useState } from 'react'
-import { objectify } from 'radash'
-import { Button } from '~/components/ui/Button'
+import { useState, type FormEvent, type InputHTMLAttributes } from 'react'
+import { Head, Link, useForm } from '@inertiajs/react'
+import { ArrowRight, ArrowUpRight, RotateCcw, ListOrdered, CalendarDays } from 'lucide-react'
+import PullUpRecord from '~/components/editorial/PullUpRecord'
+import { getDemoTerritories, territoryLabels } from '~/demo/territories'
+import EditorialLayout from '~/layouts/EditorialLayout'
 
-type HomeProps = InferPageProps<HomeController, 'index'> & {
-  errors?: { [key: string]: string }
-  artists: string[]
-  remainingArtistsCount: number
+type ReleaseItem = {
+  id: number
+  slug: string
+  title: string
+  artist: string
+  date: string
+  dateIso: string
+  type: string
+  imageUrl?: string | null
+  featuredArtists: string[]
+  boostCount: number
+}
+type Week = { title: string; weekStart: string; isUpcoming: boolean; news: ReleaseItem[] }
+type HomeProps = { timelineData: Week[]; errors?: string | Record<string, string> }
+const demoMode = import.meta.env.VITE_DEMO_MODE === 'true'
+const shortDate = new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'short' })
+const dayDate = new Intl.DateTimeFormat('fr-FR', {
+  weekday: 'long',
+  day: 'numeric',
+  month: 'short',
+})
+const dateOf = (value: string) => new Date(`${value.slice(0, 10)}T12:00:00`)
+const releaseType = (type: string) =>
+  ({ single: 'Single', album: 'Album', ep: 'EP' })[type.toLowerCase()] || 'Sortie'
+
+function Field({
+  id,
+  label,
+  error,
+  ...props
+}: InputHTMLAttributes<HTMLInputElement> & { id: string; label: string; error?: string }) {
+  return (
+    <div>
+      <label htmlFor={id}>{label}</label>
+      <input
+        id={id}
+        {...props}
+        aria-invalid={!!error}
+        aria-describedby={error ? `${id}-error` : undefined}
+      />
+      {error && (
+        <p className="sc-field-error" id={`${id}-error`}>
+          {error}
+        </p>
+      )}
+    </div>
+  )
 }
 
-export default function Home({ errors, timelineData, artists, remainingArtistsCount }: HomeProps) {
-  const [userSuccess, setUserSuccess] = useState(false)
-  const [artistSuccess, setArtistSuccess] = useState(false)
+function Newsletter({ errors }: Pick<HomeProps, 'errors'>) {
   const userForm = useForm({ type: 'user', username: '', email: '' })
-  const artistForm = useForm({ type: 'artist', email: '', artistName: '', role: '' })
-
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault()
+  const artistForm = useForm({ type: 'artist', artistName: '', role: '', email: '' })
+  const [userMessage, setUserMessage] = useState('')
+  const [artistMessage, setArtistMessage] = useState('')
+  const submitUser = (event: FormEvent) => {
+    event.preventDefault()
+    if (demoMode) {
+      setUserMessage('Aperçu local : aucune inscription ni aucun email envoyé.')
+      return
+    }
+    setUserMessage('')
     userForm.post('/newsletter', {
       preserveScroll: true,
-      onSuccess: () => {
-        userForm.reset()
-        setUserSuccess(true)
-        setTimeout(() => setUserSuccess(false), 5000)
-      },
-      onError: (e) => {
-        userForm.setError('email', e)
+      onSuccess: (page) => {
+        if (!page.props.errors || Object.keys(page.props.errors).length === 0) {
+          userForm.reset()
+          setUserMessage('Tu es inscrit·e. Rendez-vous au prochain récap !')
+        }
       },
     })
   }
-  const handleArtistSubmit = (e: FormEvent) => {
-    e.preventDefault()
+  const submitArtist = (event: FormEvent) => {
+    event.preventDefault()
+    if (demoMode) {
+      setArtistMessage('Aperçu local : aucune inscription ni aucun email envoyé.')
+      return
+    }
+    setArtistMessage('')
     artistForm.post('/newsletter', {
       preserveScroll: true,
-      onSuccess: () => {
-        artistForm.reset()
-        setArtistSuccess(true)
-        setTimeout(() => setArtistSuccess(false), 5000)
+      onSuccess: (page) => {
+        if (!page.props.errors || Object.keys(page.props.errors).length === 0) {
+          artistForm.reset()
+          setArtistMessage('Merci, ton inscription a bien été enregistrée.')
+        }
       },
     })
   }
-  // const fieldErrors = useMemo(() => {
-  //   if (!!errors) return objectify(errors, (e) => e?.field)
-  //   return errors
-  // }, [errors])
-
   return (
-    <AppLayout>
-      <Head title="Accueil" />
-      <div className="w-full">
-        <div className="flex flex-col items-center">
-          {/* Hero Section */}
-          <section className="flex flex-row w-full min-h-screen">
-            <div className="flex flex-col items-center justify-center px-4 md:px-12 w-full md:w-3/5 py-8 md:py-24 gap-4">
-              <h1 className="text-brand md:mt-10 flex items-center md:text-6xl font-semibold text-5xl leading-5 md:leading-6">
-                #StayConnect
-                <small className="bg-brand/5 text-xs ml-2 md:ml-3 rounded-full px-2 font-medium md:leading-6">
-                  ALPHA
-                </small>
-              </h1>
-              <p className="text-2xl text-center md:text-left md:text-3xl mt-4 font-semibold leading-6 tracking-tight md:leading-10 md:tracking-tighter text-zinc-900 text-balance">
-                Ne rate plus aucune sortie musicale aux Antilles-Guyane
+    <section className="sc-newsletter" id="newsletter-section" aria-labelledby="newsletter-title">
+      <div className="sc-shell sc-newsletter-inner">
+        <div>
+          <h2 id="newsletter-title" className="sc-display">
+            Les sorties.
+            <br />
+            <span>Dans ta boîte.</span>
+          </h2>
+          <p>
+            Le récap des nouveautés des Antilles-Guyane et de leurs diasporas, chaque semaine par
+            email. De quoi découvrir, écouter et soutenir les artistes d’ici.
+          </p>
+        </div>
+        <div>
+          {typeof errors === 'string' && <p role="alert">{errors}</p>}
+          <form className="sc-newsletter-form" onSubmit={submitUser}>
+            <Field
+              id="newsletter-username"
+              label="Ton pseudo"
+              name="username"
+              autoComplete="nickname"
+              placeholder="Ton pseudo"
+              value={userForm.data.username}
+              onChange={(e) => userForm.setData('username', e.target.value)}
+              error={userForm.errors.username}
+              required
+            />
+            <Field
+              id="newsletter-email"
+              label="Ton email"
+              name="email"
+              type="email"
+              autoComplete="email"
+              placeholder="toi@exemple.fr"
+              value={userForm.data.email}
+              onChange={(e) => userForm.setData('email', e.target.value)}
+              error={userForm.errors.email}
+              required
+            />
+            <button
+              className="sc-button"
+              type="submit"
+              disabled={userForm.processing}
+              data-umami-event="newsletter-submit"
+              data-umami-event-type="user"
+            >
+              {userForm.processing ? 'Inscription…' : 'Recevoir le récap'}
+              <ArrowRight size={17} aria-hidden="true" />
+            </button>
+            {userMessage && (
+              <p className="sc-form-message" role="status">
+                {userMessage}
               </p>
-              <p className="text-lg md:text-base md:leading-tight text-zinc-600">
-                Je sais pas pour toi, mais j'en avais marre, chaque vendredi, de chercher les
-                sorties 97 ou de louper les nouvelles pépites dès leurs débuts.
-                <br />
-                Et puis, j'ai grandi avec <b>KalottLyrikal</b> moi…
-                <br />
-                Du coup, j'ai décidé de créer ce site pour répertorier tout ça et aider les artistes
-                à promouvoir leurs sorties.
-                <br />
-                <br />
-                Ça devrait ressembler à ça :{' '}
-                <i className="text-sm">en moins laid, je ne suis pas UI designer 😅</i>
-              </p>
-              {/* Timeline Section in Hero */}
-              <div className="md:mt-8 w-full md:max-w-2xl">
-                <Timeline sections={timelineData} />
-              </div>
-
-              <button
-                onClick={() => {
-                  document.querySelector('#newsletter-section')?.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start',
-                  })
-                }}
-                className="md:mt-8 px-6 py-3 bg-brand text-white rounded-lg hover:bg-brand-dark transition-colors duration-200 font-medium"
-                data-umami-event="newsletter-cta-click"
-                data-umami-event-section="hero"
-              >
-                S'inscrire à la newsletter
-              </button>
-              <p className="text-sm text-center text-zinc-500 ">
-                Inscris-toi à la newsletter pour suivre l'évolution du projet.
-              </p>
-            </div>
-
-            <div className="grow bg-grain relative md:w-2/5 w-full hidden md:flex">
-              <div className="bg-gradient-to-br from-brand/25 to-brand/60 z-10 inset-0 absolute" />
-              <img
-                className="w-full h-full object-cover"
-                src="https://images.unsplash.com/photo-1587582140428-38110de9f434?q=80"
+            )}
+          </form>
+          <details className="sc-artist-invite">
+            <summary>Tu es artiste ou dans une équipe ?</summary>
+            <form className="sc-newsletter-form" onSubmit={submitArtist}>
+              <Field
+                id="artist-name"
+                label="Nom de l’artiste"
+                name="artistName"
+                value={artistForm.data.artistName}
+                onChange={(e) => artistForm.setData('artistName', e.target.value)}
+                error={artistForm.errors.artistName}
+                required
               />
-            </div>
-          </section>
-
-          {/* For Public Section */}
-          <section className="w-full py-20 bg-zinc-100">
-            <div className="max-w-6xl mx-auto px-6">
-              <h2 className="text-4xl font-bold text-center mb-12">Pour le Public</h2>
-              <div className="grid md:grid-cols-3 gap-8 mb-16">
-                <div>
-                  <h3 className="text-2xl font-semibold mb-4">
-                    Toutes les sorties musicales à un endroit
-                  </h3>
-                  <p className="text-zinc-600">
-                    Plus besoin de chercher sur plusieurs plateformes, retrouvez toutes les
-                    nouveautés musicales en un clic.
-                  </p>
-                </div>
-                <div>
-                  <h3 className="text-2xl font-semibold mb-4">Du contenu plus approfondi</h3>
-                  <p className="text-zinc-600">
-                    Découvre de nouveaux talents et suis tes artistes préférés facilement. Rentre
-                    plus en profondeur dans l'univers autour de chaque sortie des artistes.
-                  </p>
-                </div>
-                <div>
-                  <h3 className="text-2xl font-semibold mb-4">Et bien plus</h3>
-                  <p className="text-zinc-600">
-                    Partenariats, exclusivités et bien plus encore en préparation.
-                  </p>
-                </div>
+              <Field
+                id="artist-role"
+                label="Ton rôle"
+                name="role"
+                placeholder="Artiste, manager…"
+                value={artistForm.data.role}
+                onChange={(e) => artistForm.setData('role', e.target.value)}
+                error={artistForm.errors.role}
+                required
+              />
+              <div className="sc-form-full">
+                <Field
+                  id="artist-email"
+                  label="Ton email"
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  value={artistForm.data.email}
+                  onChange={(e) => artistForm.setData('email', e.target.value)}
+                  error={artistForm.errors.email}
+                  required
+                />
               </div>
-
-              {/* Artist Tags Section */}
-              <div className="text-center">
-                <h3 className="text-2xl font-semibold mb-6 text-zinc-800">
-                  Artistes présents sur la plateforme
-                </h3>
-                <div className="flex flex-wrap justify-center gap-2 mb-4">
-                  {artists.map((artistName, index) => (
-                    <span
-                      key={index}
-                      className="inline-block bg-white px-3 py-1 rounded-full text-sm font-medium text-zinc-700 shadow-sm border border-zinc-200 hover:bg-zinc-50 transition-colors duration-200"
-                    >
-                      {artistName}
-                    </span>
-                  ))}
-                  {remainingArtistsCount > 0 && (
-                    <span className="inline-block bg-brand/10 px-3 py-1 rounded-full text-sm font-medium text-brand border border-brand/20">
-                      et {remainingArtistsCount} autres…
-                    </span>
-                  )}
-                </div>
-                <p className="text-sm text-zinc-500">
-                  Découvrez tous les talents des Antilles-Guyane sur notre plateforme
+              <button
+                className="sc-button"
+                type="submit"
+                disabled={artistForm.processing}
+                data-umami-event="newsletter-submit"
+                data-umami-event-type="artist"
+              >
+                {artistForm.processing ? 'Inscription…' : 'Rejoindre côté artistes'}
+                <ArrowRight size={17} aria-hidden="true" />
+              </button>
+              {artistMessage && (
+                <p className="sc-form-message" role="status">
+                  {artistMessage}
                 </p>
-              </div>
-            </div>
-          </section>
-
-          {/* For Artists Section */}
-          <section className="w-full py-20  overflow-hidden bg-brand">
-            <div className="max-w-6xl mx-auto px-6 relative">
-              <h2 className="text-4xl text-white font-bold text-center mb-12">Pour les Artistes</h2>
-              <div className="grid md:grid-cols-2 gap-8">
-                <div>
-                  <h3 className="text-2xl text-white font-semibold mb-4">Engagement Direct</h3>
-                  <p className="text-zinc-200 ">
-                    Un nouveau moyen de mettre en avant ta musique et d'interagir directement avec
-                    ton public.
-                  </p>
-                </div>
-                <div>
-                  <h3 className="text-2xl text-white font-semibold mb-4">
-                    Le meilleur est à venir
-                  </h3>
-                  <p className="text-zinc-200">
-                    De nombreuses fonctionnalités sont prévues et en cours de développement,
-                    inscris-toi dès maintenant pour participer à leurs tests et faire partie des
-                    pionnier·es de la plateforme.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </section>
-          {/* Forms Section */}
-          <section className="w-full py-20 bg-zinc-50" id="newsletter-section">
-            <div className="max-w-4xl mx-auto px-6">
-              <div className="text-center mb-12">
-                <h2 className="text-4xl font-bold text-gray-900 mb-4">Rejoignez la Communauté</h2>
-                <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-                  Que vous soyez passionné·e de musique ou artiste, rejoignez notre communauté dès
-                  maintenant
-                </p>
-              </div>
-              <div className="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2">
-                {/* General User Lead Form */}
-                <form
-                  onSubmit={handleSubmit}
-                  className="group relative rounded-2xl p-6 sm:p-8 bg-white shadow-lg flex flex-col"
-                >
-                  <h3 className="text-lg font-semibold text-zinc-900 mb-4 text-center">
-                    Passionné·es de musique
-                  </h3>
-                  <p className="text-sm text-center mb-4 text-brand-lightest">
-                    Rejoins la newsletter en attendant la v1.
-                  </p>
-
-                  {userSuccess && (
-                    <div className="mb-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded-md text-sm text-center">
-                      🎉 Merci ! Tu es maintenant inscrit·e à la newsletter.
-                    </div>
-                  )}
-
-                  <div className="space-y-3 flex flex-col h-full">
-                    <Input
-                      id="username"
-                      type="text"
-                      name="username"
-                      placeholder="macojaune"
-                      label="Nom d'utilisateur"
-                      value={userForm.data.username}
-                      onChange={(e) => userForm.setData('username', e.target.value)}
-                      error={userForm.errors?.username}
-                      required
-                    />
-                    <Input
-                      id="email"
-                      type="email"
-                      name="email"
-                      placeholder="hello@macojaune.com"
-                      label="E-mail"
-                      value={userForm.data.email}
-                      onChange={(e) => userForm.setData('email', e.target.value)}
-                      error={userForm.errors?.email}
-                      required
-                    />
-
-                    <Button
-                      type="submit"
-                      className="mt-auto"
-                      disabled={userForm.processing}
-                      data-umami-event="newsletter-submit"
-                      data-umami-event-type="user"
-                    >
-                      {userForm.processing ? 'Inscription...' : 'Rejoindre'}
-                    </Button>
-                  </div>
-                </form>
-
-                {/* Artist Lead Form */}
-                <form
-                  onSubmit={handleArtistSubmit}
-                  method="post"
-                  className="group relative rounded-2xl p-6 sm:p-8 bg-brand shadow-lg flex flex-col"
-                >
-                  <h3 className="text-lg font-semibold text-white mb-4 text-center">
-                    Artiste ou Équipe
-                  </h3>
-                  <p className="text-sm text-center mb-4 text-brand-lightest">
-                    Rejoins la communauté d'artistes.
-                  </p>
-
-                  {artistSuccess && (
-                    <div className="mb-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded-md text-sm text-center">
-                      🎵 Parfait ! Bienvenue dans la communauté d'artistes.
-                    </div>
-                  )}
-
-                  <div className="space-y-3 flex flex-col h-full">
-                    <Input
-                      id="artistName"
-                      type="text"
-                      name="artistName"
-                      label="Nom de l'artiste"
-                      placeholder="ex: Don Snoop"
-                      value={artistForm.data.artistName}
-                      onChange={(e) => artistForm.setData('artistName', e.target.value)}
-                      error={artistForm?.errors?.artistName}
-                      required
-                    />
-                    <Input
-                      id="role"
-                      type="text"
-                      name="role"
-                      label="Role du contact"
-                      placeholder="ex: Artiste, Manager, Attaché de presse..."
-                      value={artistForm.data.role}
-                      onChange={(e) => artistForm.setData('role', e.target.value)}
-                      error={artistForm?.errors?.role}
-                      required
-                    />
-                    <Input
-                      id="artistEmail"
-                      type="email"
-                      name="email"
-                      label='E-mail'
-                      placeholder="gel@ayo.gwo"
-                      value={artistForm.data.email}
-                      onChange={(e) => artistForm.setData('email', e.target.value)}
-                      error={artistForm?.errors?.email}
-                      required
-                    />
-
-                    <Button
-                      type="submit"
-                      variant="secondary"
-                      disabled={artistForm.processing}
-                      data-umami-event="newsletter-submit"
-                      data-umami-event-type="artist"
-                    >
-                      {artistForm.processing ? 'Inscription...' : 'Rejoindre'}
-                    </Button>
-                  </div>
-                </form>
-              </div>
-            </div>
-          </section>
+              )}
+            </form>
+          </details>
         </div>
       </div>
-    </AppLayout>
+    </section>
+  )
+}
+
+function ReleaseEntry({
+  release,
+  rank,
+  priority,
+}: {
+  release: ReleaseItem
+  rank?: number
+  priority: boolean
+}) {
+  const [imageFailed, setImageFailed] = useState(false)
+  const href = `/sorties/${release.slug}`
+  const territories = demoMode ? getDemoTerritories(release.slug) : []
+  return (
+    <article className={`sc-entry${rank ? ' sc-entry-ranked' : ''}`}>
+      {rank && (
+        <span className="sc-entry-rank" aria-label={`Position ${rank}`}>
+          {String(rank).padStart(2, '0')}
+        </span>
+      )}
+      <Link
+        className="sc-entry-artwork"
+        href={href}
+        aria-label={`${release.artist} — ${release.title}, voir la sortie`}
+      >
+        {release.imageUrl && !imageFailed ? (
+          <img
+            src={release.imageUrl}
+            alt={`Pochette de ${release.title}`}
+            width={180}
+            height={180}
+            loading={priority ? 'eager' : 'lazy'}
+            onError={() => setImageFailed(true)}
+          />
+        ) : (
+          <span className="sc-cover-fallback" aria-hidden="true">
+            {release.artist.slice(0, 2)}
+          </span>
+        )}
+        <span className="sc-entry-open">
+          <ArrowUpRight size={20} aria-hidden="true" />
+        </span>
+      </Link>
+      <div className="sc-entry-info">
+        <div className="sc-entry-meta">
+          <span>{releaseType(release.type)}</span>
+          {rank && (
+            <time dateTime={release.dateIso}>{shortDate.format(dateOf(release.dateIso))}</time>
+          )}
+        </div>
+        <h3>
+          <Link href={href}>{release.artist}</Link>
+        </h3>
+        <p className="sc-entry-title">
+          <Link href={href}>{release.title}</Link>
+        </p>
+        {release.featuredArtists.length > 0 && (
+          <p className="sc-entry-featuring">Avec {release.featuredArtists.join(', ')}</p>
+        )}
+        {territories.length > 0 && (
+          <ul className="sc-territories" aria-label="Territoires fictifs pour cet aperçu">
+            {territories.map((territory) => (
+              <li
+                key={territory}
+                className={`sc-territory sc-territory-${territory.toLowerCase()}`}
+                title="Attribution fictive pour tester les badges, invités compris"
+              >
+                {territoryLabels[territory]}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+      <Link
+        className="sc-pullup-counter"
+        href={`${href}#soutenir`}
+        aria-label={`${release.boostCount} pull-ups pour ${release.title}, voir le soutien`}
+      >
+        <RotateCcw size={20} aria-hidden="true" />
+        <strong>{release.boostCount}</strong>
+        <span>pull-up{release.boostCount !== 1 ? 's' : ''}</span>
+      </Link>
+    </article>
+  )
+}
+
+export default function Home({ timelineData, errors }: HomeProps) {
+  const weeks = [...timelineData].sort((a, b) => a.weekStart.localeCompare(b.weekStart))
+  const [selectedWeek, setSelectedWeek] = useState(
+    () =>
+      timelineData.find((week) => week.title === 'Cette semaine')?.weekStart || weeks[0]?.weekStart
+  )
+  const [sort, setSort] = useState<'date' | 'boosts'>('date')
+  const week = weeks.find((item) => item.weekStart === selectedWeek)
+  const releases = [...(week?.news || [])].sort(
+    (a, b) =>
+      (sort === 'boosts' ? b.boostCount - a.boostCount : 0) ||
+      (b.dateIso || '').localeCompare(a.dateIso || '') ||
+      a.artist.localeCompare(b.artist)
+  )
+  const periodStart = week ? dateOf(week.weekStart) : null
+  const periodEnd = periodStart ? new Date(periodStart) : null
+  periodEnd?.setDate(periodEnd.getDate() + 6)
+  const period =
+    periodStart && periodEnd
+      ? `${shortDate.format(periodStart)} – ${shortDate.format(periodEnd)}`
+      : ''
+  return (
+    <EditorialLayout>
+      <Head title="Les sorties de la semaine">
+        <meta
+          name="description"
+          content="Les nouveautés des artistes des Antilles-Guyane et de leurs diasporas. Découvre les sorties, écoute et donne un pull-up à tes coups de cœur."
+        />
+      </Head>
+      <section className="sc-masthead" aria-labelledby="discovery-title">
+        <div className="sc-shell sc-masthead-content">
+          <h1 className="sc-display" id="discovery-title">
+            <span>Les sorties</span>
+            <span>de la semaine.</span>
+          </h1>
+          <div className="sc-masthead-aside">
+            <PullUpRecord />
+            <div className="sc-masthead-copy">
+              <p>
+                Les nouveautés des artistes des Antilles-Guyane et de leurs diasporas.
+                <br />
+                Découvre. Écoute. Un pull-up pour tes coups de cœur.
+              </p>
+              <a href="#newsletter-section">
+                Le récap par email <ArrowRight size={17} aria-hidden="true" />
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section className="sc-shell sc-catalogue" aria-label="Catalogue des sorties">
+        <div className="sc-catalogue-top">
+          <div className="sc-weeks" role="group" aria-label="Choisir une semaine">
+            {weeks.map((item) => (
+              <button
+                type="button"
+                key={item.weekStart}
+                aria-pressed={selectedWeek === item.weekStart}
+                onClick={() => setSelectedWeek(item.weekStart)}
+              >
+                {item.isUpcoming
+                  ? 'À venir'
+                  : item.title === 'Cette semaine'
+                    ? 'Cette semaine'
+                    : 'La semaine passée'}
+              </button>
+            ))}
+          </div>
+        </div>
+        <div className="sc-catalogue-toolbar">
+          <h2 className="sc-count" aria-live="polite">
+            {releases.length} {week?.isUpcoming ? 'sortie' : 'nouveauté'}
+            {releases.length !== 1 ? 's' : ''}
+            <span>{period}</span>
+          </h2>
+          <div className="sc-sort" role="group" aria-label="Classer les sorties">
+            <button type="button" aria-pressed={sort === 'date'} onClick={() => setSort('date')}>
+              <CalendarDays size={16} aria-hidden="true" /> Le fil des sorties
+            </button>
+            <button
+              type="button"
+              aria-pressed={sort === 'boosts'}
+              onClick={() => setSort('boosts')}
+            >
+              <ListOrdered size={17} aria-hidden="true" /> Le classement
+            </button>
+          </div>
+        </div>
+        {demoMode && (
+          <p className="sc-territory-demo">
+            Les territoires affichés sont fictifs dans cet aperçu, invités compris.
+          </p>
+        )}
+        {releases.length > 0 ? (
+          <div className={`sc-listing sc-listing-${sort}`} key={`${selectedWeek}-${sort}`}>
+            {sort === 'boosts' ? (
+              <>
+                <p className="sc-ranking-note">
+                  Le classement de la semaine, par nombre de pull-ups.
+                </p>
+                {releases.map((release, index) => (
+                  <ReleaseEntry
+                    key={release.id}
+                    release={release}
+                    rank={index + 1}
+                    priority={index < 3}
+                  />
+                ))}
+              </>
+            ) : (
+              [...new Set(releases.map((release) => release.dateIso))].map((day) => (
+                <section className="sc-day" key={day} aria-label={`Sorties du ${day}`}>
+                  <h3 className="sc-day-label">
+                    <time dateTime={day}>{dayDate.format(dateOf(day))}</time>
+                  </h3>
+                  <div className="sc-day-entries">
+                    {releases
+                      .filter((release) => release.dateIso === day)
+                      .map((release, index) => (
+                        <ReleaseEntry key={release.id} release={release} priority={index < 2} />
+                      ))}
+                  </div>
+                </section>
+              ))
+            )}
+          </div>
+        ) : (
+          <div className="sc-empty">
+            <h3 className="sc-display">
+              {week?.isUpcoming ? 'La suite arrive.' : 'Une semaine encore calme.'}
+            </h3>
+            <p>
+              {week?.isUpcoming
+                ? 'Aucune sortie annoncée pour la semaine prochaine.'
+                : 'Aucune sortie répertoriée pour cette semaine.'}
+            </p>
+            <a className="sc-button-light" href="#newsletter-section">
+              Recevoir les prochaines sorties <ArrowRight size={16} aria-hidden="true" />
+            </a>
+          </div>
+        )}
+      </section>
+      <Newsletter errors={errors} />
+    </EditorialLayout>
   )
 }
