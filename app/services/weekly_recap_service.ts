@@ -74,7 +74,7 @@ export default class WeeklyRecapService {
       period: {
         startIso: dataset.periodStart.toISO(),
         endIso: dataset.periodEnd.toISO(),
-        label: `${dataset.periodStart.toFormat('dd LLL')} → ${dataset.periodEnd.toFormat('dd LLL yyyy')}`,
+        label: `${dataset.periodStart.setLocale('fr').toFormat('dd LLL')} → ${dataset.periodEnd.setLocale('fr').toFormat('dd LLL yyyy')}`,
       },
       summary: {
         totalNewReleases: dataset.totalNewReleases,

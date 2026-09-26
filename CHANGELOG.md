@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.4.0](https://github.com/macojaune/stay-connect/compare/v1.3.1...v1.4.0) (2025-11-13)
+
+
+### Features
+
+* add BullMq for queue management ([70b6b8f](https://github.com/macojaune/stay-connect/commit/70b6b8f455eba7cac8aec2011d821d65faf7c72e))
+* add BullMQ for queue management ([14141f2](https://github.com/macojaune/stay-connect/commit/14141f2a15380c3b19c80204015696d76d751d9d))
+
 ## [1.3.1](https://github.com/macojaune/stay-connect/compare/v1.3.0...v1.3.1) (2025-11-03)
 
 
