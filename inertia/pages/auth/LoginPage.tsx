@@ -1,159 +1,78 @@
-import React, { useState } from 'react'
-import { Head, Link, useForm } from '@inertiajs/react'
-import AppLayout from '~/layouts/AppLayout'
-import { Button } from '~/components/ui/Button'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '~/components/ui/Card'
-import { Input } from '~/components/ui/Input'
-import { Label } from '~/components/ui/Label' // Assuming you'll create a Label component
+import { Link, useForm } from '@inertiajs/react'
+import { ArrowRight, Check } from 'lucide-react'
+import type { LoginPageProps } from '#contracts/auth'
+import AuthLayout, { authHref } from '~/layouts/AuthLayout'
+import AuthField, { AuthFormError, focusAuthError } from '~/components/auth/AuthField'
 
-type LoginForm = {
-  email: string
-  password: string
-}
-
-export default function LoginPage() {
-  const { data, setData, post, processing, errors } = useForm<LoginForm>({
-    email: '',
-    password: '',
-  })
-
-  const [showPassword, setShowPassword] = useState(false)
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    post('/login')
-  }
-
+export default function LoginPage({ returnTo, status }: LoginPageProps) {
+  const form = useForm({ email: '', password: '', returnTo })
   return (
-    <AppLayout>
-      <Head title="Connexion" />
-      <div className="container mx-auto flex min-h-[calc(100vh-var(--header-height)-var(--footer-height))] items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
-        <div className="w-full max-w-md space-y-8">
-          <Card>
-            <CardHeader className="text-center">
-              <CardTitle className="text-3xl font-bold tracking-tight">Connexion</CardTitle>
-              <CardDescription>
-                Pas encore de compte ?{' '}
-                <Link href="/register" className="font-medium text-primary hover:underline">
-                  Crée le tien
-                </Link>
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div>
-                  <Label htmlFor="email">Adresse email</Label>
-                  <Input
-                    id="email"
-                    name="email"
-                    type="email"
-                    autoComplete="email"
-                    required
-                    value={data.email}
-                    onChange={(e) => setData('email', e.target.value)}
-                    className={`mt-1 ${errors.email ? 'border-red-500' : ''}`}
-                    placeholder="toi@exemple.com"
-                  />
-                  {errors.email && <p className="mt-2 text-sm text-red-600">{errors.email}</p>}
-                </div>
-
-                <div>
-                  <div className="flex items-center justify-between">
-                    <Label htmlFor="password">Mot de passe</Label>
-                    <div className="text-sm">
-                      <span className="text-zinc-500">
-                        Mot de passe oublié ? Bientôt disponible.
-                      </span>
-                    </div>
-                  </div>
-                  <div className="relative mt-1">
-                    <Input
-                      id="password"
-                      name="password"
-                      type={showPassword ? 'text' : 'password'}
-                      autoComplete="current-password"
-                      required
-                      value={data.password}
-                      onChange={(e) => setData('password', e.target.value)}
-                      className={errors.password ? 'border-red-500' : ''}
-                      placeholder="••••••••"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute inset-y-0 right-0 flex items-center pr-3 text-sm leading-5 text-gray-500 hover:text-gray-700"
-                    >
-                      {showPassword ? (
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          strokeWidth={1.5}
-                          stroke="currentColor"
-                          className="h-5 w-5"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88"
-                          />
-                        </svg>
-                      ) : (
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          strokeWidth={1.5}
-                          stroke="currentColor"
-                          className="h-5 w-5"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"
-                          />
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                          />
-                        </svg>
-                      )}
-                    </button>
-                  </div>
-                  {errors.password && (
-                    <p className="mt-2 text-sm text-red-600">{errors.password}</p>
-                  )}
-                </div>
-
-                <div>
-                  <Button
-                    type="submit"
-                    className="w-full"
-                    loading={processing}
-                    disabled={processing}
-                  >
-                    Se connecter
-                  </Button>
-                </div>
-              </form>
-            </CardContent>
-            <CardFooter className="flex flex-col items-center text-sm">
-              <p className="text-gray-600">
-                En te connectant, tu acceptes les conditions d’utilisation et la politique de
-                confidentialité.
-              </p>
-            </CardFooter>
-          </Card>
-        </div>
-      </div>
-    </AppLayout>
+    <AuthLayout
+      title="Connexion"
+      description="Retrouve tes découvertes et les sorties que tu soutiens."
+      returnTo={returnTo}
+      footer={
+        <p>
+          Pas encore de compte ?{' '}
+          <Link href={authHref('/register', returnTo)}>
+            Créer mon compte <ArrowRight size={15} aria-hidden="true" />
+          </Link>
+        </p>
+      }
+    >
+      {status === 'password-reset' && (
+        <p className="sc-auth-notice" role="status">
+          <Check size={20} aria-hidden="true" />
+          Ton mot de passe a été modifié. Tu peux te connecter.
+        </p>
+      )}
+      <form
+        className="sc-auth-form"
+        aria-busy={form.processing}
+        onSubmit={(event) => {
+          event.preventDefault()
+          form.post('/login', {
+            onError: (errors) => {
+              form.reset('password')
+              focusAuthError(errors)
+            },
+          })
+        }}
+      >
+        <AuthFormError errors={form.errors} />
+        <AuthField
+          id="email"
+          label="Adresse email"
+          type="email"
+          autoComplete="username"
+          required
+          maxLength={254}
+          value={form.data.email}
+          onChange={(event) => form.setData('email', event.target.value)}
+          error={form.errors.email}
+          placeholder="toi@exemple.com"
+        />
+        <AuthField
+          id="password"
+          label="Mot de passe"
+          type="password"
+          autoComplete="current-password"
+          required
+          value={form.data.password}
+          onChange={(event) => form.setData('password', event.target.value)}
+          error={form.errors.password}
+        />
+        <Link href={authHref('/forgot-password', returnTo)} className="sc-auth-forgot">
+          Mot de passe oublié ?
+        </Link>
+        <button type="submit" className="sc-button sc-auth-submit" disabled={form.processing}>
+          {form.processing ? 'Connexion en cours…' : 'Se connecter'}{' '}
+          <ArrowRight size={18} aria-hidden="true" />
+        </button>
+        {returnTo.startsWith('/sorties/') && (
+          <p className="sc-auth-hint">Tu retrouveras cette sortie après connexion.</p>
+        )}
+      </form>
+    </AuthLayout>
   )
 }

@@ -24,6 +24,7 @@ const looksLikeUuid = (value: string): boolean => UUID_REGEX.test(value)
 export default class ReleasePagesController {
   public async show({ auth, params, inertia, request, response }: HttpContext) {
     const releaseQuery = Release.query()
+      .where('is_secret', false)
       .preload('artist', (artistQuery) => {
         artistQuery.preload('categories').withCount('releases')
       })

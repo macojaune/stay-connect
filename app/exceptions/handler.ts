@@ -3,6 +3,7 @@ import { HttpContext, ExceptionHandler } from '@adonisjs/core/http'
 import type { StatusPageRange, StatusPageRenderer } from '@adonisjs/core/types/http'
 import { errors } from '@vinejs/vine'
 import { errorDetails } from '#exceptions/error_details'
+import { authValidationUrl, authPageUrl, safeReturnTo } from '#services/auth_redirect'
 
 export default class HttpExceptionHandler extends ExceptionHandler {
   /**
@@ -42,6 +43,30 @@ export default class HttpExceptionHandler extends ExceptionHandler {
     const details = errorDetails(error)
     // Handle Vine validation errors
     if (error instanceof errors.E_VALIDATION_ERROR) {
+      if (this.wantsWebResponse(ctx)) {
+        const fields: Record<string, string> = {}
+        for (const message of error.messages) {
+          if (
+            typeof message === 'object' &&
+            message !== null &&
+            'field' in message &&
+            typeof message.field === 'string' &&
+            'message' in message &&
+            typeof message.message === 'string' &&
+            !fields[message.field]
+          ) {
+            fields[message.field] = message.message
+          }
+        }
+        ctx.session.flashErrors(fields)
+        const authDestination = authValidationUrl(
+          ctx.request.url(),
+          ctx.request.input('returnTo'),
+          ctx.request.input('token')
+        )
+        if (authDestination) return ctx.response.redirect().toPath(authDestination)
+        return ctx.response.redirect().back()
+      }
       return ctx.response.status(422).json({
         status: 'error',
         message: 'Validation failed',
@@ -51,6 +76,11 @@ export default class HttpExceptionHandler extends ExceptionHandler {
 
     // Handle authentication errors
     if (details.code === 'E_UNAUTHORIZED_ACCESS') {
+      if (this.wantsWebResponse(ctx)) {
+        const requestedPage =
+          ctx.request.url() === '/mon-compte/mot-de-passe' ? '/mon-compte' : ctx.request.url()
+        return ctx.response.redirect().toPath(authPageUrl('/login', safeReturnTo(requestedPage)))
+      }
       return ctx.response.status(401).json({
         status: 'error',
         message: 'Unauthorized access',
@@ -60,6 +90,11 @@ export default class HttpExceptionHandler extends ExceptionHandler {
 
     // Handle not found errors
     if (details.code === 'E_ROW_NOT_FOUND') {
+      if (this.wantsWebResponse(ctx)) {
+        ctx.response.status(404)
+        const page = await ctx.inertia.render('errors/not_found')
+        return ctx.response.send(page)
+      }
       return ctx.response.status(404).json({
         status: 'error',
         message: 'Resource not found',
@@ -89,6 +124,13 @@ export default class HttpExceptionHandler extends ExceptionHandler {
     }
 
     return super.handle(error, ctx)
+  }
+
+  private wantsWebResponse(ctx: HttpContext) {
+    return (
+      !ctx.request.url().startsWith('/api/') &&
+      (Boolean(ctx.request.header('X-Inertia')) || ctx.request.accepts(['html', 'json']) === 'html')
+    )
   }
 
   /**

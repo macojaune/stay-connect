@@ -46,6 +46,10 @@ export default await Env.create(new URL('../', import.meta.url), {
   BREVO_CONTACT_LIST_ID: Env.schema.number(),
   MAIL_FROM_ADDRESS: Env.schema.string({ format: 'email' }),
   MAIL_FROM_NAME: Env.schema.string(),
+  MAIL_MAILER: Env.schema.enum.optional(['brevo', 'smtp'] as const),
+  SMTP_HOST: Env.schema.string.optional(),
+  SMTP_PORT: Env.schema.number.optional(),
+  SMTP_SECURE: Env.schema.boolean.optional(),
   /*
   |----------------------------------------------------------
   | Variables for configuring spotify api
@@ -83,5 +87,5 @@ export default await Env.create(new URL('../', import.meta.url), {
   */
   QUEUE_REDIS_HOST: Env.schema.string(),
   QUEUE_REDIS_PORT: Env.schema.number(),
-  QUEUE_REDIS_PASSWORD: Env.schema.string.optional()
+  QUEUE_REDIS_PASSWORD: Env.schema.string.optional(),
 })

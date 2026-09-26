@@ -1,14 +1,25 @@
 import { HttpContext } from '@adonisjs/core/http'
+import { errors } from '@adonisjs/lucid'
 import Vote from '#models/vote'
 import Release from '#models/release'
 import { voteValidator } from '#validators/vote'
 
 export default class VotesController {
+  private async findPublicRelease(releaseId: unknown) {
+    if (
+      typeof releaseId !== 'string' ||
+      !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(releaseId)
+    ) {
+      throw new errors.E_ROW_NOT_FOUND(Release)
+    }
+    return Release.query().where('id', releaseId).where('is_secret', false).firstOrFail()
+  }
+
   /**
    * Create a new vote
    */
   async store({ params, auth, request, response }: HttpContext) {
-    const release = await Release.findOrFail(params.releaseId || params.id)
+    const release = await this.findPublicRelease(params.releaseId || params.id)
     const user = auth.use('web').user!
     const payload = await request.validateUsing(voteValidator)
 
@@ -45,7 +56,7 @@ export default class VotesController {
    * Update a vote
    */
   async update({ params, auth, request, response }: HttpContext) {
-    const release = await Release.findOrFail(params.releaseId || params.id)
+    const release = await this.findPublicRelease(params.releaseId || params.id)
     const user = auth.use('web').user!
     const payload = await request.validateUsing(voteValidator)
 
@@ -67,7 +78,7 @@ export default class VotesController {
    * Delete a vote
    */
   async destroy({ params, auth, response }: HttpContext) {
-    const release = await Release.findOrFail(params.releaseId || params.id)
+    const release = await this.findPublicRelease(params.releaseId || params.id)
     const user = auth.use('web').user!
 
     const vote = await Vote.query()

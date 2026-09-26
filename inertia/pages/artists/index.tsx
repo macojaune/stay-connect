@@ -1,174 +1,299 @@
-import { Head, Link, useForm } from '@inertiajs/react'
-import { FormEvent } from 'react'
-import AppLayout from '~/layouts/AppLayout'
-import { Button } from '~/components/ui/Button'
-import { Input } from '~/components/ui/Input'
+import { Head, Link, useForm, usePage } from '@inertiajs/react'
+import type { FormEvent } from 'react'
+import type { SharedProps } from '@adonisjs/inertia/types'
+import type { ArtistIndexProps } from '#contracts/artists'
+import { ArrowDown, ArrowLeft, ArrowRight, ArrowUpRight, Check, Search } from 'lucide-react'
+import EditorialLayout from '~/layouts/EditorialLayout'
+import Artwork from '~/components/editorial/Artwork'
+import AuthField, { AuthFormError, focusAuthError } from '~/components/auth/AuthField'
+import '~/css/auth-editorial.css'
+import '~/css/artists-editorial.css'
 
-type Artist = {
-  id: string
-  name: string
-  profilePicture: string | null
-  releaseCount: number
-  latestRelease: {
-    id: string
-    title: string
-    slug: string
-    date: string | null
-    type: string
-    cover: string | null
-  } | null
+function releaseDate(value: string | null): string | null {
+  if (!value) return null
+  const date = new Date(value)
+  return Number.isNaN(date.getTime())
+    ? null
+    : date.toLocaleDateString('fr-FR', {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
+        timeZone: 'UTC',
+      })
 }
 
-type ArtistsIndexProps = {
-  artists: Artist[]
-  flash?: { success?: string }
-}
+export default function ArtistsIndex({ artists, filters, pagination, flash }: ArtistIndexProps) {
+  const { auth } = usePage<SharedProps>().props
+  const search = useForm({ q: filters.q, sort: filters.sort })
+  const form = useForm({ name: '', email: auth?.user?.email ?? '', sourceUrl: '', message: '' })
 
-const formatReleaseDate = (date: string | null) => {
-  if (!date) return null
+  function submitSearch(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    search.get('/artistes', { preserveState: true, preserveScroll: true })
+  }
 
-  return new Date(date).toLocaleDateString('fr-FR', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-  })
-}
-
-export default function ArtistsIndex({ artists, flash }: ArtistsIndexProps) {
-  const form = useForm({ name: '', email: '', sourceUrl: '', message: '' })
-
-  const submitSuggestion = (event: FormEvent<HTMLFormElement>) => {
+  function submitSuggestion(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     form.post('/artistes/suggestions', {
       preserveScroll: true,
       onSuccess: () => form.reset(),
+      onError: focusAuthError,
     })
   }
 
+  function pageUrl(page: number) {
+    const params = new URLSearchParams({ q: filters.q, sort: filters.sort, page: String(page) })
+    return `/artistes?${params}#repertoire`
+  }
+
   return (
-    <AppLayout>
-      <Head title="Artistes" />
-      <div className="mx-auto w-full max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-        <section className="border-b border-zinc-200 pb-8">
-          <p className="text-sm font-semibold uppercase tracking-wide text-brand">Répertoire</p>
-          <h1 className="mt-2 text-3xl font-bold text-zinc-900">Artistes référencés</h1>
-          <p className="mt-3 max-w-2xl text-zinc-600">
-            Retrouve les sorties publiées sur StayConnect et les profils déjà répertoriés.
-          </p>
-        </section>
+    <EditorialLayout>
+      <Head title="Les artistes" />
+      <header className="sc-artists-masthead">
+        <div className="sc-shell sc-artists-masthead-inner">
+          <h1 className="sc-display">
+            Les artistes<span aria-hidden="true">.</span>
+          </h1>
+          <div className="sc-artists-intro">
+            <p>
+              Antilles, Guyane, diasporas.
+              <br />
+              Retrouve les artistes et remonte le fil de leurs sorties.
+            </p>
+            <a href="#proposer">
+              Il manque quelqu’un ? <ArrowDown size={17} aria-hidden="true" />
+            </a>
+          </div>
+        </div>
+      </header>
+
+      <section
+        id="repertoire"
+        className="sc-shell sc-artist-directory"
+        aria-labelledby="directory-title"
+      >
+        <form
+          className="sc-artist-filters"
+          onSubmit={submitSearch}
+          role="search"
+          aria-label="Rechercher un artiste"
+        >
+          <div className="sc-artist-search-field">
+            <label htmlFor="artist-search">Nom de l’artiste</label>
+            <div className="sc-artist-search-input">
+              <Search size={20} aria-hidden="true" />
+              <input
+                id="artist-search"
+                type="search"
+                name="q"
+                value={search.data.q}
+                maxLength={120}
+                onChange={(event) => search.setData('q', event.target.value)}
+                placeholder="Qui veux-tu écouter ?"
+              />
+            </div>
+          </div>
+          <div className="sc-artist-sort-field">
+            <label htmlFor="artist-sort">Trier par</label>
+            <select
+              id="artist-sort"
+              name="sort"
+              value={search.data.sort}
+              onChange={(event) =>
+                search.setData('sort', event.target.value === 'recent' ? 'recent' : 'name')
+              }
+            >
+              <option value="name">Nom · A à Z</option>
+              <option value="recent">Dernière sortie</option>
+            </select>
+          </div>
+          <button type="submit" className="sc-button" disabled={search.processing}>
+            {search.processing ? 'Recherche…' : 'Rechercher'}{' '}
+            <ArrowRight size={18} aria-hidden="true" />
+          </button>
+        </form>
+
+        <div className="sc-artist-results-heading" aria-live="polite" aria-atomic="true">
+          <h2 id="directory-title">
+            <strong>{pagination.total.toLocaleString('fr-FR')}</strong>{' '}
+            {pagination.total === 1 ? 'artiste' : 'artistes'}
+            {filters.q && <> pour « {filters.q} »</>}
+          </h2>
+          {filters.q && (
+            <Link href="/artistes" className="sc-artist-text-link">
+              Effacer la recherche
+            </Link>
+          )}
+        </div>
 
         {artists.length > 0 ? (
-          <section className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="sc-artist-grid">
             {artists.map((artist) => (
-              <Link
-                key={artist.id}
-                href={`/artistes/${artist.id}`}
-                className="group flex min-h-36 gap-4 border border-zinc-200 bg-white p-4 transition hover:border-brand hover:shadow-sm"
-              >
-                <div className="h-16 w-16 shrink-0 overflow-hidden rounded-full bg-zinc-100">
-                  {artist.profilePicture ? (
-                    <img
-                      src={artist.profilePicture}
-                      alt=""
-                      className="h-full w-full object-cover"
-                    />
-                  ) : (
-                    <div className="flex h-full w-full items-center justify-center text-xl font-semibold text-brand">
-                      {artist.name[0]?.toUpperCase() ?? '?'}
-                    </div>
-                  )}
-                </div>
-                <div className="min-w-0">
-                  <h2 className="truncate font-semibold text-zinc-900 group-hover:text-brand">
-                    {artist.name}
-                  </h2>
-                  <p className="mt-1 text-sm text-zinc-500">
-                    {artist.releaseCount === 1
-                      ? '1 sortie référencée'
-                      : `${artist.releaseCount} sorties référencées`}
+              <article key={artist.id} className="sc-artist-tile">
+                <Link href={`/artistes/${artist.id}`} className="sc-artist-tile-main">
+                  <Artwork
+                    src={artist.profilePicture}
+                    name={artist.name}
+                    className="sc-artist-tile-portrait"
+                  />
+                  <div className="sc-artist-tile-name">
+                    <h3>{artist.name}</h3>
+                    <ArrowUpRight size={20} aria-hidden="true" />
+                  </div>
+                  <p className="sc-artist-tile-count">
+                    {artist.releaseCount === 0
+                      ? 'Aucune sortie référencée'
+                      : `${artist.releaseCount} ${artist.releaseCount === 1 ? 'sortie' : 'sorties'} au répertoire`}
                   </p>
-                  {artist.latestRelease && (
-                    <p className="mt-3 truncate text-sm text-zinc-700">
-                      Dernière sortie: {artist.latestRelease.title}
-                      {formatReleaseDate(artist.latestRelease.date)
-                        ? `, ${formatReleaseDate(artist.latestRelease.date)}`
-                        : ''}
-                    </p>
-                  )}
-                </div>
-              </Link>
+                </Link>
+                {artist.latestRelease && (
+                  <Link
+                    href={`/sorties/${artist.latestRelease.slug}`}
+                    className="sc-artist-tile-release"
+                  >
+                    <span>
+                      Dernière sortie
+                      {releaseDate(artist.latestRelease.date) && (
+                        <> · {releaseDate(artist.latestRelease.date)}</>
+                      )}
+                    </span>
+                    <strong>{artist.latestRelease.title}</strong>
+                  </Link>
+                )}
+              </article>
             ))}
-          </section>
+          </div>
         ) : (
-          <p className="mt-8 text-zinc-600">Aucun artiste n’est encore référencé.</p>
+          <div className="sc-artists-empty">
+            <h3 className="sc-display">
+              {filters.q ? 'Pas encore dans le répertoire.' : 'Le répertoire attend ses artistes.'}
+            </h3>
+            <p>
+              {filters.q
+                ? 'Essaie un autre nom ou propose-nous cet artiste pour compléter le catalogue.'
+                : 'Tu connais un artiste des Antilles-Guyane ou de leurs diasporas ? Envoie-nous son profil.'}
+            </p>
+            <a className="sc-button" href="#proposer">
+              Proposer un artiste <ArrowDown size={18} aria-hidden="true" />
+            </a>
+          </div>
         )}
 
-        <section className="mt-14 grid gap-8 border-t border-zinc-200 pt-10 lg:grid-cols-[1fr_minmax(0,1.1fr)]">
-          <div>
-            <p className="text-sm font-semibold uppercase tracking-wide text-brand">Manquant ?</p>
-            <h2 className="mt-2 text-2xl font-bold text-zinc-900">Proposer un artiste</h2>
-            <p className="mt-3 max-w-md text-zinc-600">
-              Envoie-nous le nom de l’artiste et un lien utile. La proposition est vérifiée avant
-              d’être ajoutée au répertoire.
+        {pagination.lastPage > 1 && (
+          <nav className="sc-artists-pagination" aria-label="Pages du répertoire">
+            {pagination.page > 1 ? (
+              <Link href={pageUrl(pagination.page - 1)} rel="prev">
+                <ArrowLeft size={18} aria-hidden="true" /> Précédente
+              </Link>
+            ) : (
+              <span />
+            )}
+            <span>
+              Page {pagination.page} / {pagination.lastPage}
+            </span>
+            {pagination.page < pagination.lastPage ? (
+              <Link href={pageUrl(pagination.page + 1)} rel="next">
+                Suivante <ArrowRight size={18} aria-hidden="true" />
+              </Link>
+            ) : (
+              <span />
+            )}
+          </nav>
+        )}
+      </section>
+
+      <section id="proposer" className="sc-artist-proposal" aria-labelledby="proposal-title">
+        <div className="sc-shell sc-artist-proposal-inner">
+          <div className="sc-artist-proposal-copy">
+            <h2 id="proposal-title" className="sc-display">
+              Fais passer
+              <br />
+              le nom.
+            </h2>
+            <p>
+              Un artiste manque à l’appel ? Partage son nom et un lien pour nous aider à compléter
+              le répertoire.
+            </p>
+            <p className="sc-artist-proposal-note">
+              Chaque proposition est vérifiée avant ajout. Aucun compte nécessaire.
             </p>
           </div>
           <form
             onSubmit={submitSuggestion}
-            className="grid gap-4 bg-white p-5 shadow-sm ring-1 ring-zinc-200"
+            className="sc-artist-proposal-form"
+            aria-label="Proposer un artiste"
+            aria-busy={form.processing}
           >
-            {flash?.success && (
-              <p className="text-sm font-medium text-emerald-700">{flash.success}</p>
+            {flash.success && (
+              <p className="sc-artist-success" role="status">
+                <Check size={20} aria-hidden="true" />
+                {flash.success}
+              </p>
             )}
-            <Input
-              id="artist-name"
+            <AuthFormError errors={form.errors} />
+            <AuthField
+              id="name"
               label="Nom de l’artiste"
+              autoComplete="off"
+              minLength={2}
+              maxLength={120}
               value={form.data.name}
               onChange={(event) => form.setData('name', event.target.value)}
               error={form.errors.name}
               required
             />
-            <Input
-              id="artist-email"
+            <AuthField
+              id="sourceUrl"
+              label="Lien vers l’artiste"
+              type="url"
+              inputMode="url"
+              pattern="https?://.+"
+              maxLength={500}
+              placeholder="https://…"
+              hint="Spotify, YouTube, site officiel ou autre profil public."
+              value={form.data.sourceUrl}
+              onChange={(event) => form.setData('sourceUrl', event.target.value)}
+              error={form.errors.sourceUrl}
+              required
+            />
+            <AuthField
+              id="email"
               type="email"
               label="Ton adresse email"
+              autoComplete="email"
+              hint="Pour te contacter si nous avons besoin d’une précision."
               value={form.data.email}
               onChange={(event) => form.setData('email', event.target.value)}
               error={form.errors.email}
               required
             />
-            <Input
-              id="artist-source-url"
-              type="url"
-              label="Lien utile (facultatif)"
-              placeholder="Spotify, Instagram, site officiel..."
-              value={form.data.sourceUrl}
-              onChange={(event) => form.setData('sourceUrl', event.target.value)}
-              error={form.errors.sourceUrl}
-            />
-            <label className="space-y-2 text-sm font-medium text-zinc-900" htmlFor="artist-message">
-              Précision (facultatif)
+            <div className="sc-auth-field">
+              <label htmlFor="message">
+                Une précision <span className="sc-artist-optional">(facultatif)</span>
+              </label>
               <textarea
-                id="artist-message"
+                id="message"
+                name="message"
+                rows={3}
+                maxLength={1000}
                 value={form.data.message}
                 onChange={(event) => form.setData('message', event.target.value)}
-                maxLength={1000}
-                className="min-h-24 w-full resize-y border border-zinc-300 px-3 py-2 text-sm font-normal outline-none focus:border-brand focus:ring-2 focus:ring-brand/20"
+                aria-invalid={form.errors.message ? true : undefined}
+                aria-describedby={form.errors.message ? 'message-error' : undefined}
               />
               {form.errors.message && (
-                <span className="block text-sm text-red-600">{form.errors.message}</span>
+                <p id="message-error" className="sc-auth-error" role="alert">
+                  {form.errors.message}
+                </p>
               )}
-            </label>
-            <Button
-              type="submit"
-              disabled={form.processing}
-              loading={form.processing}
-              className="justify-self-start"
-            >
-              Envoyer la proposition
-            </Button>
+            </div>
+            <button type="submit" className="sc-button" disabled={form.processing}>
+              {form.processing ? 'Envoi en cours…' : 'Envoyer la proposition'}{' '}
+              <ArrowUpRight size={18} aria-hidden="true" />
+            </button>
           </form>
-        </section>
-      </div>
-    </AppLayout>
+        </div>
+      </section>
+    </EditorialLayout>
   )
 }

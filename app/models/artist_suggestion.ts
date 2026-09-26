@@ -19,6 +19,9 @@ export default class ArtistSuggestion extends BaseModel {
   @column()
   declare email: string
 
+  @column({ serializeAs: null })
+  declare userId: string | null
+
   @column()
   declare sourceUrl: string | null
 

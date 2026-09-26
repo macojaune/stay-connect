@@ -1,139 +1,202 @@
 import { Head, Link } from '@inertiajs/react'
-import { BadgeCheck, ExternalLink } from 'lucide-react'
-import AppLayout from '~/layouts/AppLayout'
+import { ArrowDown, ArrowLeft, ArrowRight, ArrowUpRight, Disc3 } from 'lucide-react'
+import type { ArtistCredit, ArtistRelease, ArtistShowProps } from '#contracts/artists'
+import EditorialLayout from '~/layouts/EditorialLayout'
+import Artwork from '~/components/editorial/Artwork'
+import '~/css/artists-editorial.css'
 
-type ArtistShowProps = {
-  artist: {
-    id: string
-    name: string
-    description: string | null
-    profilePicture: string | null
-    socials: Record<string, string> | null
-    isVerified: boolean
-    categories: Array<{ id: string; name: string }>
-    releases: Array<{
-      id: string
-      title: string
-      slug: string
-      date: string | null
-      type: string
-      cover: string | null
-    }>
+function parsedDate(value: string | null): Date | null {
+  if (!value) return null
+  const date = new Date(value)
+  return Number.isNaN(date.getTime()) ? null : date
+}
+
+function ArtistName({ credit }: { credit: ArtistCredit }) {
+  return credit.id ? (
+    <Link href={`/artistes/${credit.id}`}>{credit.name}</Link>
+  ) : (
+    <span>{credit.name}</span>
+  )
+}
+
+export default function ArtistShow({ artist, releases, pagination }: ArtistShowProps) {
+  const years = new Map<string, ArtistRelease[]>()
+  for (const release of releases) {
+    const year = parsedDate(release.date)?.getUTCFullYear().toString() ?? 'Sans date'
+    const group = years.get(year)
+    if (group) group.push(release)
+    else years.set(year, [release])
   }
-}
 
-const formatReleaseDate = (date: string | null) => {
-  if (!date) return null
-
-  return new Date(date).toLocaleDateString('fr-FR', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-  })
-}
-
-export default function ArtistShow({ artist }: ArtistShowProps) {
-  const socialLinks = Object.entries(artist.socials ?? {}).filter(([, url]) => Boolean(url))
+  function pageUrl(page: number) {
+    return `/artistes/${artist.id}?page=${page}#sorties`
+  }
 
   return (
-    <AppLayout>
+    <EditorialLayout>
       <Head title={artist.name} />
-      <div className="mx-auto w-full max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-        <Link href="/artistes" className="text-sm font-medium text-brand hover:underline">
-          Retour aux artistes
+      <div className="sc-shell sc-artist-profile">
+        <Link href="/artistes" className="sc-artist-back">
+          <ArrowLeft size={18} aria-hidden="true" /> Tous les artistes
         </Link>
-
-        <section className="mt-6 grid gap-6 border-b border-zinc-200 pb-10 md:grid-cols-[160px_minmax(0,1fr)]">
-          <div className="aspect-square w-40 overflow-hidden rounded-full bg-zinc-100">
-            {artist.profilePicture ? (
-              <img src={artist.profilePicture} alt="" className="h-full w-full object-cover" />
-            ) : (
-              <div className="flex h-full w-full items-center justify-center text-5xl font-bold text-brand">
-                {artist.name[0]?.toUpperCase() ?? '?'}
-              </div>
-            )}
-          </div>
-          <div className="min-w-0 self-center">
-            <div className="flex flex-wrap items-center gap-2">
-              <h1 className="text-3xl font-bold text-zinc-900">{artist.name}</h1>
-              {artist.isVerified && (
-                <BadgeCheck className="h-6 w-6 text-brand" aria-label="Profil vérifié" />
-              )}
-            </div>
+        <header className="sc-artist-profile-hero">
+          <Artwork
+            src={artist.profilePicture}
+            name={artist.name}
+            className="sc-artist-profile-portrait"
+          />
+          <div className="sc-artist-profile-intro">
+            <h1 className="sc-display">{artist.name}</h1>
             {artist.categories.length > 0 && (
-              <div className="mt-4 flex flex-wrap gap-2">
+              <ul className="sc-artist-categories" aria-label="Styles musicaux">
                 {artist.categories.map((category) => (
-                  <span
-                    key={category.id}
-                    className="border border-zinc-300 px-2 py-1 text-xs font-medium text-zinc-700"
-                  >
-                    {category.name}
-                  </span>
+                  <li key={category.id}>{category.name}</li>
                 ))}
-              </div>
+              </ul>
             )}
-            {artist.description ? (
-              <p className="mt-5 max-w-3xl whitespace-pre-line text-zinc-700">
-                {artist.description}
-              </p>
-            ) : (
-              <p className="mt-5 max-w-3xl text-zinc-500">
-                Cet artiste n’a pas encore ajouté de présentation.
-              </p>
-            )}
-            {socialLinks.length > 0 && (
-              <div className="mt-5 flex flex-wrap gap-3">
-                {socialLinks.map(([label, url]) => (
-                  <a
-                    key={label}
-                    href={url}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex items-center gap-1 text-sm font-medium text-brand hover:underline"
-                  >
-                    {label} <ExternalLink className="h-3.5 w-3.5" />
+            <p className={artist.description ? 'sc-artist-bio' : 'sc-artist-bio sc-muted'}>
+              {artist.description ?? 'Aucune présentation disponible pour le moment.'}
+            </p>
+            {artist.links.length > 0 && (
+              <nav
+                className="sc-artist-links"
+                aria-label={`Retrouver ${artist.name} sur les plateformes`}
+              >
+                {artist.links.map((link) => (
+                  <a key={link.url} href={link.url} target="_blank" rel="noopener noreferrer">
+                    {link.label} <ArrowUpRight size={16} aria-hidden="true" />
+                    <span className="sr-only"> (nouvel onglet)</span>
                   </a>
                 ))}
-              </div>
+              </nav>
             )}
+            <a href="#sorties" className="sc-button sc-artist-listen">
+              Explorer les sorties <ArrowDown size={18} aria-hidden="true" />
+            </a>
           </div>
-        </section>
+        </header>
 
-        <section className="mt-10">
-          <h2 className="text-2xl font-bold text-zinc-900">Sorties référencées</h2>
-          {artist.releases.length > 0 ? (
-            <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {artist.releases.map((release) => (
-                <Link
-                  key={release.id}
-                  href={`/sorties/${release.slug}`}
-                  className="group overflow-hidden border border-zinc-200 bg-white transition hover:border-brand hover:shadow-sm"
-                >
-                  <div className="aspect-square bg-zinc-100">
-                    {release.cover ? (
-                      <img src={release.cover} alt="" className="h-full w-full object-cover" />
-                    ) : (
-                      <div className="flex h-full items-center justify-center px-4 text-center text-sm text-zinc-500">
-                        Pas de visuel
-                      </div>
-                    )}
-                  </div>
-                  <div className="p-4">
-                    <h3 className="truncate font-semibold text-zinc-900 group-hover:text-brand">
-                      {release.title}
-                    </h3>
-                    <p className="mt-1 text-sm capitalize text-zinc-500">
-                      {[release.type, formatReleaseDate(release.date)].filter(Boolean).join(' · ')}
-                    </p>
-                  </div>
-                </Link>
+        <section id="sorties" className="sc-artist-discography" aria-labelledby="discography-title">
+          <div className="sc-artist-discography-heading">
+            <div>
+              <h2 id="discography-title" className="sc-display">
+                Les sorties<span className="sc-artist-total">{pagination.total}</span>
+              </h2>
+              <p>De la plus récente à la plus ancienne, participations incluses.</p>
+            </div>
+            <Disc3 size={40} strokeWidth={1.5} aria-hidden="true" />
+          </div>
+
+          {releases.length > 0 ? (
+            <div className="sc-artist-timeline">
+              {Array.from(years, ([year, entries]) => (
+                <section key={year} className="sc-artist-year" aria-label={`Sorties ${year}`}>
+                  <h3 className="sc-display">{year}</h3>
+                  <ol className="sc-artist-release-list">
+                    {entries.map((release) => {
+                      const date = parsedDate(release.date)
+                      return (
+                        <li key={release.id} className="sc-artist-release-row">
+                          <Link
+                            href={`/sorties/${release.slug}`}
+                            className="sc-artist-release-cover"
+                            tabIndex={-1}
+                            aria-hidden="true"
+                          >
+                            <Artwork src={release.cover} name={release.title} />
+                          </Link>
+                          <div className="sc-artist-release-body">
+                            <div className="sc-artist-release-meta">
+                              <span>{release.type || 'Sortie'}</span>
+                              {release.role === 'featured' && (
+                                <span className="sc-artist-feature-label">En participation</span>
+                              )}
+                            </div>
+                            <h4>
+                              <Link href={`/sorties/${release.slug}`}>{release.title}</Link>
+                            </h4>
+                            <p className="sc-artist-release-credits">
+                              {release.artist ? (
+                                <ArtistName credit={release.artist} />
+                              ) : (
+                                <span>Artiste principal non renseigné</span>
+                              )}
+                              {release.featuredArtists.length > 0 && (
+                                <>
+                                  {' · avec '}
+                                  {release.featuredArtists.map((credit, index) => (
+                                    <span key={credit.id ?? credit.name}>
+                                      {index > 0 && ', '}
+                                      <ArtistName credit={credit} />
+                                    </span>
+                                  ))}
+                                </>
+                              )}
+                            </p>
+                            <p className="sc-artist-release-date">
+                              {date && release.date ? (
+                                <time dateTime={release.date}>
+                                  {date.toLocaleDateString('fr-FR', {
+                                    day: 'numeric',
+                                    month: 'long',
+                                    timeZone: 'UTC',
+                                  })}
+                                </time>
+                              ) : (
+                                'Date non renseignée'
+                              )}
+                            </p>
+                          </div>
+                          <Link
+                            href={`/sorties/${release.slug}`}
+                            className="sc-artist-release-open"
+                            aria-label={`Découvrir ${release.title}`}
+                          >
+                            <ArrowUpRight size={24} aria-hidden="true" />
+                          </Link>
+                        </li>
+                      )
+                    })}
+                  </ol>
+                </section>
               ))}
             </div>
           ) : (
-            <p className="mt-4 text-zinc-600">Aucune sortie publique n’est encore référencée.</p>
+            <div className="sc-artists-empty">
+              <h3 className="sc-display">Pas encore de sortie.</h3>
+              <p>
+                Aucune sortie n’est encore référencée pour {artist.name}. En attendant, explore les
+                nouveautés du catalogue.
+              </p>
+              <Link href="/" className="sc-button">
+                Voir les dernières sorties <ArrowUpRight size={18} aria-hidden="true" />
+              </Link>
+            </div>
+          )}
+
+          {pagination.lastPage > 1 && (
+            <nav className="sc-artists-pagination" aria-label="Pages des sorties de l’artiste">
+              {pagination.page > 1 ? (
+                <Link href={pageUrl(pagination.page - 1)} rel="prev">
+                  <ArrowLeft size={18} aria-hidden="true" /> Précédente
+                </Link>
+              ) : (
+                <span />
+              )}
+              <span>
+                Page {pagination.page} / {pagination.lastPage}
+              </span>
+              {pagination.page < pagination.lastPage ? (
+                <Link href={pageUrl(pagination.page + 1)} rel="next">
+                  Suivante <ArrowRight size={18} aria-hidden="true" />
+                </Link>
+              ) : (
+                <span />
+              )}
+            </nav>
           )}
         </section>
       </div>
-    </AppLayout>
+    </EditorialLayout>
   )
 }

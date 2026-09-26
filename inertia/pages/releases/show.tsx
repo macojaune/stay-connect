@@ -523,10 +523,16 @@ const ReleaseShow: React.FC<ReleaseShowProps> = ({ release, shareUrl }) => {
               <div className="sc-release-join">
                 <p>Connecte-toi pour donner un pull-up et laisser un commentaire.</p>
                 <div className="sc-release-vote-actions">
-                  <Link href="/login" className="sc-button">
+                  <Link
+                    href={`/login?${new URLSearchParams({ returnTo: `/sorties/${release.slug}#soutenir` })}`}
+                    className="sc-button"
+                  >
                     Se connecter
                   </Link>
-                  <Link href="/register" className="sc-button-light">
+                  <Link
+                    href={`/register?${new URLSearchParams({ returnTo: `/sorties/${release.slug}#soutenir` })}`}
+                    className="sc-button-light"
+                  >
                     Créer un compte
                   </Link>
                 </div>

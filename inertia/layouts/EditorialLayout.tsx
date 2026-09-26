@@ -1,11 +1,15 @@
 import type { ReactNode } from 'react'
 import { Head, Link, usePage } from '@inertiajs/react'
-import { ArrowUpRight, Mail } from 'lucide-react'
+import { ArrowUpRight, Mail, UserRound } from 'lucide-react'
 import type { SharedProps } from '@adonisjs/inertia/types'
 import '~/css/editorial.css'
 
 export default function EditorialLayout({ children }: { children: ReactNode }) {
-  const { auth } = usePage<SharedProps>().props
+  const {
+    props: { auth },
+    url,
+  } = usePage<SharedProps>()
+  const path = url.split(/[?#]/)[0]
   return (
     <div className="sc-editorial">
       <Head>
@@ -23,18 +27,29 @@ export default function EditorialLayout({ children }: { children: ReactNode }) {
             #StayConnect<span aria-hidden="true">●</span>
           </Link>
           <nav aria-label="Navigation principale">
-            <Link href="/">Les sorties</Link>
-            <Link href="/artistes">Les artistes</Link>
+            <Link
+              href="/"
+              aria-current={path === '/' || path.startsWith('/sorties/') ? 'page' : undefined}
+            >
+              Les sorties
+            </Link>
+            <Link href="/artistes" aria-current={path.startsWith('/artistes') ? 'page' : undefined}>
+              Les artistes
+            </Link>
             <Link href="/#newsletter-section" className="sc-nav-recap">
               <Mail size={16} aria-hidden="true" /> Le récap
             </Link>
           </nav>
           {auth?.user ? (
-            <Link className="sc-account" href="/logout" method="post" as="button">
-              Déconnexion
+            <Link
+              className="sc-account"
+              href="/mon-espace"
+              aria-current={path.startsWith('/mon-') ? 'page' : undefined}
+            >
+              <UserRound size={16} aria-hidden="true" /> Mon espace
             </Link>
           ) : (
-            <Link className="sc-account" href="/login">
+            <Link className="sc-account" href="/login?returnTo=%2Fmon-espace">
               Connexion <ArrowUpRight size={15} aria-hidden="true" />
             </Link>
           )}
@@ -51,9 +66,14 @@ export default function EditorialLayout({ children }: { children: ReactNode }) {
             <br />
             Partout où tu es.
           </p>
-          <Link href="/artistes">
-            Explorer les artistes <ArrowUpRight size={18} aria-hidden="true" />
-          </Link>
+          <div className="sc-footer-links">
+            <Link href="/artistes">
+              Explorer les artistes <ArrowUpRight size={18} aria-hidden="true" />
+            </Link>
+            <Link href="/artistes#proposer">
+              Proposer un artiste <ArrowUpRight size={18} aria-hidden="true" />
+            </Link>
+          </div>
         </div>
         <div className="sc-shell sc-footer-bottom">
           <span>Antilles · Guyane · Diasporas</span>

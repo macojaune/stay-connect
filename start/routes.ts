@@ -13,6 +13,7 @@ const SpotifyArtistsController = () => import('#controllers/spotify_artists_cont
 const AuthController = () => import('#controllers/auth_controller')
 const ArtistPagesController = () => import('#controllers/artist_pages_controller')
 const ArtistSuggestionsController = () => import('#controllers/artist_suggestions_controller')
+const MemberController = () => import('#controllers/member_controller')
 //healthcheck
 router.get('/health', '#controllers/health_checks_controller')
 
@@ -47,10 +48,25 @@ router
     router.post('/login', [AuthController, 'login'])
     router.get('/register', [AuthController, 'showRegister'])
     router.post('/register', [AuthController, 'register'])
+    router.get('/forgot-password', [AuthController, 'showForgotPassword'])
+    router.post('/forgot-password', [AuthController, 'forgotPassword'])
   })
   .use(middleware.guest())
 
 router.post('/logout', [AuthController, 'logout']).use(middleware.auth())
+router.get('/reset-password', [AuthController, 'showResetPassword'])
+router.post('/reset-password', [AuthController, 'resetPassword'])
+
+router
+  .group(() => {
+    router.get('/mon-espace', [MemberController, 'dashboard'])
+    router.get('/mon-compte', [MemberController, 'account'])
+    router.patch('/mon-compte', [MemberController, 'updateAccount'])
+    router.post('/mon-compte/mot-de-passe', [MemberController, 'requestPasswordReset'])
+    router.get('/mon-espace/propositions', [MemberController, 'suggestions'])
+    router.post('/mon-espace/propositions', [MemberController, 'storeSuggestion'])
+  })
+  .use(middleware.auth({ guards: ['web'] }))
 
 // Newsletter routes
 router.post('/newsletter', '#controllers/home_controller.subscribe')

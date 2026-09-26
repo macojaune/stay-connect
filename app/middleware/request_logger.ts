@@ -102,6 +102,8 @@ export default class RequestLoggerMiddleware {
       'api-key',
       'x-csrf-token',
       'x-xsrf-token',
+      // Reset links may contain a bearer credential in their query string.
+      'referer',
     ]
     const sanitized = { ...headers }
 

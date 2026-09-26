@@ -87,8 +87,15 @@
   <link rel="preconnect" href="https://fonts.bunny.net">
   <link href="https://fonts.bunny.net/css?family=instrument-sans:400,400i,500,500i,600,600i,700,700i"
     rel="stylesheet" />
-  @if(env.get('NODE_ENV') === 'production')
-  <script defer src="{{env.get('UMAMI_SCRIPT_URL')}}" data-website-id="{{env.get('UMAMI_WEBSITE_ID')}}" />
+  @if(env.get('NODE_ENV') === 'production' && env.get('UMAMI_SCRIPT_URL') && env.get('UMAMI_WEBSITE_ID') && !page.component.startsWith('auth/'))
+  <script>
+    // Also covers Inertia navigation after the tracker loaded on a public page.
+    window.stayconnectBeforeSend = function (_type, payload) {
+      if (/^\/(login|register|forgot-password|reset-password)\/?$/.test(window.location.pathname)) return false;
+      return payload;
+    };
+  </script>
+  <script defer src="{{env.get('UMAMI_SCRIPT_URL')}}" data-website-id="{{env.get('UMAMI_WEBSITE_ID')}}" data-exclude-search="true" data-exclude-hash="true" data-before-send="stayconnectBeforeSend"></script>
   @endif
 
   @inertiaHead()
