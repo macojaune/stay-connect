@@ -1,11 +1,11 @@
 import type { ReactNode } from 'react'
 import { Head, Link, usePage } from '@inertiajs/react'
 import { ArrowUpRight, Mail } from 'lucide-react'
+import type { SharedProps } from '@adonisjs/inertia/types'
 import '~/css/editorial.css'
 
 export default function EditorialLayout({ children }: { children: ReactNode }) {
-  const { auth } = usePage<{ auth?: { user?: { fullName?: string; username?: string } | null } }>()
-    .props
+  const { auth } = usePage<SharedProps>().props
   return (
     <div className="sc-editorial">
       <Head>

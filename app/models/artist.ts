@@ -14,6 +14,11 @@ import Category from '#models/category'
 import Release from '#models/release'
 import User from '#models/user'
 
+export type ArtistFollowers = {
+  spotify?: number
+  lastUpdated?: string
+} & Record<string, unknown>
+
 export default class Artist extends BaseModel {
   static selfAssignPrimaryKey = true
 
@@ -40,10 +45,10 @@ export default class Artist extends BaseModel {
   declare profilePicture: string | null
 
   @column({
-    prepare: (value: Record<string, any> | null) => (value ? JSON.stringify(value) : null),
+    prepare: (value: ArtistFollowers | null) => (value ? JSON.stringify(value) : null),
     // consume: (value: string | null) => (value ? JSON.parse(value) : {}),
   })
-  declare followers: Record<string, any> | null
+  declare followers: ArtistFollowers | null
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
@@ -59,6 +64,9 @@ export default class Artist extends BaseModel {
 
   @column.dateTime()
   declare lastSpotifyCheck: DateTime | null
+
+  @column()
+  declare userId: string | null
 
   @belongsTo(() => User)
   declare user: BelongsTo<typeof User>
@@ -88,11 +96,7 @@ export default class Artist extends BaseModel {
 
   @computed()
   get releaseCount(): number | null {
-    const raw = (this.$extras?.releases_count ?? this.$extras?.release_count) as
-      | number
-      | string
-      | null
-      | undefined
+    const raw: unknown = this.$extras?.releases_count ?? this.$extras?.release_count
 
     if (raw === null || raw === undefined) {
       return null

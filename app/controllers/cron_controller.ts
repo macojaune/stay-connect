@@ -4,6 +4,7 @@ import env from '#start/env'
 import logger from '@adonisjs/core/services/logger'
 import { execFile } from 'node:child_process'
 import { promisify } from 'node:util'
+import { errorDetails } from '#exceptions/error_details'
 
 const execFileAsync = promisify(execFile)
 
@@ -57,15 +58,16 @@ export default class CronController {
         },
       })
     } catch (error) {
+      const details = errorDetails(error)
       logger.error('Failed to execute Spotify releases check via HTTP endpoint', {
-        error: error.message,
-        stack: error.stack,
+        error: details.message,
+        stack: details.stack,
       })
 
       return response.internalServerError({
         success: false,
         error: 'Failed to execute Spotify releases check',
-        message: error.message,
+        message: details.message,
       })
     }
   }
@@ -102,20 +104,25 @@ export default class CronController {
         timestamp: new Date().toISOString(),
       })
     } catch (error) {
-      const execError = error as Error & { stdout?: string; stderr?: string }
+      const details = errorDetails(error)
+      const execError = typeof error === 'object' && error !== null ? error : {}
+      const stdout =
+        'stdout' in execError && typeof execError.stdout === 'string' ? execError.stdout : undefined
+      const stderr =
+        'stderr' in execError && typeof execError.stderr === 'string' ? execError.stderr : undefined
 
       logger.error('Failed to execute weekly recap command via HTTP endpoint', {
-        error: execError.message,
-        stdout: execError.stdout,
-        stderr: execError.stderr,
-        stack: execError.stack,
+        error: details.message,
+        stdout,
+        stderr,
+        stack: details.stack,
       })
 
       return response.internalServerError({
         success: false,
         error: 'Failed to execute weekly recap command',
-        message: execError.message,
-        stderr: execError.stderr,
+        message: details.message,
+        stderr,
       })
     }
   }

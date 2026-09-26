@@ -2,6 +2,7 @@ import User from '#models/user'
 import { loginValidator, registerValidator } from '#validators/auth'
 import string from '@adonisjs/core/helpers/string'
 import type { HttpContext } from '@adonisjs/core/http'
+import { errors } from '@adonisjs/auth'
 
 export default class AuthController {
   async showLogin({ inertia }: HttpContext) {
@@ -13,12 +14,12 @@ export default class AuthController {
 
     try {
       const user = await User.verifyCredentials(payload.email, payload.password)
-      await auth.use('web').login(user, payload.remember ?? false)
+      await auth.use('web').login(user)
       return response.redirect().toPath('/')
     } catch (error) {
-      if ((error as { code?: string }).code === 'E_INVALID_CREDENTIALS') {
-        session.flash('errors', { email: 'Email ou mot de passe invalide.' })
-        session.flash('old', { email: payload.email, remember: payload.remember ?? false })
+      if (error instanceof errors.E_INVALID_CREDENTIALS) {
+        session.flashErrors({ email: 'Email ou mot de passe invalide.' })
+        session.flash('old', { email: payload.email })
         return response.redirect().back()
       }
 

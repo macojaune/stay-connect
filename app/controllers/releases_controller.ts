@@ -2,6 +2,8 @@ import { HttpContext } from '@adonisjs/core/http'
 import Release from '#models/release'
 import Category from '#models/category'
 import SonglinkService from '#services/songlink_service'
+import { createReleaseValidator, updateReleaseValidator } from '#validators/release'
+import { categoryAssignmentValidator } from '#validators/category'
 
 const songlinkService = new SonglinkService()
 
@@ -18,17 +20,7 @@ export default class ReleasesController {
    * Create a new release
    */
   async store({ request, response }: HttpContext) {
-    const data = request.only([
-      'title',
-      'description',
-      'date',
-      'type',
-      'urls',
-      'cover',
-      'isSecret',
-      'isAutomated',
-      'artistId',
-    ])
+    const data = await request.validateUsing(createReleaseValidator)
 
     const release = await Release.create(data)
     await songlinkService.syncReleaseLinks(release)
@@ -53,19 +45,10 @@ export default class ReleasesController {
    */
   async update({ params, request, response }: HttpContext) {
     const release = await Release.findOrFail(params.id)
-    const data = request.only([
-      'title',
-      'description',
-      'date',
-      'type',
-      'urls',
-      'cover',
-      'isSecret',
-      'isAutomated',
-    ])
+    const data = await request.validateUsing(updateReleaseValidator)
 
     await release.merge(data).save()
-    if (data.spotifyId || data.urls) {
+    if (data.urls) {
       await songlinkService.syncReleaseLinks(release)
     }
     await release.load('artist')
@@ -87,7 +70,7 @@ export default class ReleasesController {
    */
   async addCategory({ params, request, response }: HttpContext) {
     const release = await Release.findOrFail(params.id)
-    const categoryId = request.input('categoryId')
+    const { categoryId } = await request.validateUsing(categoryAssignmentValidator)
     const category = await Category.findOrFail(categoryId)
 
     await release.related('categories').attach([category.id])

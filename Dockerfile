@@ -33,7 +33,7 @@ ENV UMAMI_SCRIPT_URL=$UMAMI_SCRIPT_URL
 ENV UMAMI_WEBSITE_ID=$UMAMI_WEBSITE_ID
 
 # Build the application
-RUN pnpm run build --ignore-ts-errors
+RUN pnpm run typecheck && pnpm run build
 
 # Production image
 FROM base AS runner

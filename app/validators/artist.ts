@@ -1,5 +1,7 @@
 import vine from '@vinejs/vine'
-import BaseValidator from '#validators/base_validator'
+import type { Infer } from '@vinejs/vine/types'
+
+const socials = vine.record(vine.string().url())
 
 export const artistValidator = vine.compile(
   vine.object({
@@ -8,24 +10,42 @@ export const artistValidator = vine.compile(
     description: vine.string().optional(),
     location: vine.string().optional(),
     website: vine.string().url().optional(),
-    socials: vine
-      .object({
-        facebook: vine.string().url().optional(),
-        twitter: vine.string().url().optional(),
-        instagram: vine.string().url().optional(),
-        soundcloud: vine.string().url().optional(),
-        spotify: vine.string().url().optional(),
-        youtube: vine.string().url().optional(),
-      })
-      .allowUnknownProperties()
-      .optional(),
+    socials: socials.clone().optional(),
     isVerified: vine.boolean(),
     followers: vine
       .object({
         spotify: vine.number().optional(),
-        lastUpdated: vine.date({ formats: ['iso8601'] }).optional(),
+        lastUpdated: vine
+          .date({ formats: ['iso8601'] })
+          .transform((value) => value.toISOString())
+          .optional(),
       })
-      .allowUnknownProperties(),
+      .allowUnknownProperties<unknown>()
+      .optional(),
     profilePicture: vine.string().url().optional(),
+    categories: vine.array(vine.string().uuid()).optional(),
+  })
+)
+
+export type ArtistInput = Infer<typeof artistValidator>
+
+// The HTTP CRUD endpoints expose fewer fields than the Spotify import service.
+export const createArtistValidator = vine.compile(
+  vine.object({
+    name: vine.string().minLength(2),
+    description: vine.string().nullable().optional(),
+    socials: socials.clone().nullable().optional(),
+    profilePicture: vine.string().url().nullable().optional(),
+    userId: vine.string().uuid().nullable().optional(),
+  })
+)
+
+export const updateArtistValidator = vine.compile(
+  vine.object({
+    name: vine.string().minLength(2).optional(),
+    description: vine.string().nullable().optional(),
+    socials: socials.clone().nullable().optional(),
+    profilePicture: vine.string().url().nullable().optional(),
+    isVerified: vine.boolean().optional(),
   })
 )

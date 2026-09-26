@@ -1,3 +1,4 @@
+import { errorDetails } from '#exceptions/error_details'
 import Release from '#models/release'
 import SpotifyService from '#services/spotify_service'
 import { BaseCommand, flags } from '@adonisjs/core/ace'
@@ -51,7 +52,9 @@ export default class SyncSpotifyFeatureNames extends BaseCommand {
         )
       } catch (error) {
         errors += 1
-        this.logger.error(`Failed to sync ${release.title} (${release.id}): ${error.message}`)
+        this.logger.error(
+          `Failed to sync ${release.title} (${release.id}): ${errorDetails(error).message}`
+        )
       }
 
       if (delayMs > 0 && index < releases.length - 1) {

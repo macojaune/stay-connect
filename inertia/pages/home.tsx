@@ -4,20 +4,8 @@ import { ArrowRight, ArrowUpRight, RotateCcw, ListOrdered, CalendarDays } from '
 import PullUpRecord from '~/components/editorial/PullUpRecord'
 import { getDemoTerritories, territoryLabels } from '~/demo/territories'
 import EditorialLayout from '~/layouts/EditorialLayout'
+import type { TimelineRelease as ReleaseItem, TimelineWeek as Week } from '#contracts/discovery'
 
-type ReleaseItem = {
-  id: number
-  slug: string
-  title: string
-  artist: string
-  date: string
-  dateIso: string
-  type: string
-  imageUrl?: string | null
-  featuredArtists: string[]
-  boostCount: number
-}
-type Week = { title: string; weekStart: string; isUpcoming: boolean; news: ReleaseItem[] }
 type HomeProps = { timelineData: Week[]; errors?: string | Record<string, string> }
 const demoMode = import.meta.env.VITE_DEMO_MODE === 'true'
 const shortDate = new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'short' })

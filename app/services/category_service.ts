@@ -1,18 +1,16 @@
 import Category from '#models/category'
-import { CategoryValidator } from '#validators/category'
+import { categoryValidator } from '#validators/category'
 
 export default class CategoryService {
   /**
    * Create a new category
    */
-  async createCategory(data: any) {
-    const validatedData = await CategoryValidator.validate(data)
+  async createCategory(data: unknown) {
+    const validatedData = await categoryValidator.validate(data, { meta: {} })
     const category = await Category.create(validatedData)
 
     await category.load((loader) => {
-      loader
-        .load('artists')
-        .load('releases')
+      loader.load('artists').load('releases')
     })
 
     return category
@@ -21,14 +19,14 @@ export default class CategoryService {
   /**
    * Update category details
    */
-  async updateCategory(category: Category, data: any) {
-    const validatedData = await CategoryValidator.validate(data)
+  async updateCategory(category: Category, data: unknown) {
+    const validatedData = await categoryValidator.validate(data, {
+      meta: { categoryId: category.id },
+    })
     await category.merge(validatedData).save()
 
     await category.load((loader) => {
-      loader
-        .load('artists')
-        .load('releases')
+      loader.load('artists').load('releases')
     })
 
     return category
@@ -41,7 +39,7 @@ export default class CategoryService {
     // Remove associations with artists and releases
     await category.related('artists').detach()
     await category.related('releases').detach()
-    
+
     // Delete the category
     await category.delete()
   }
@@ -58,9 +56,7 @@ export default class CategoryService {
           })
         })
         .load('releases', (releaseQuery) => {
-          releaseQuery
-            .preload('artist')
-            .withCount('votes')
+          releaseQuery.preload('artist').withCount('votes')
         })
     })
 

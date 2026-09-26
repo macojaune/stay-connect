@@ -1,6 +1,8 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import type { NextFn } from '@adonisjs/core/types/http'
 import logger from '@adonisjs/core/services/logger'
+import { errorDetails } from '#exceptions/error_details'
+import type { IncomingHttpHeaders } from 'node:http'
 
 /**
  * Middleware to log API requests for debugging and monitoring
@@ -31,17 +33,18 @@ export default class RequestLoggerMiddleware {
    * Log request details
    */
   private logRequest(ctx: HttpContext) {
-    const { method, url, headers, body } = ctx.request
-
-    logger.info('API Request', {
-      requestId: ctx.request.id(),
-      method: method,
-      url: url,
-      headers: this.sanitizeHeaders(headers),
-      body: this.sanitizeBody(body),
-      ip: ctx.request.ip(),
-      timestamp: new Date().toISOString()
-    })
+    logger.info(
+      {
+        requestId: ctx.request.id(),
+        method: ctx.request.method(),
+        url: ctx.request.url(),
+        headers: this.sanitizeHeaders(ctx.request.headers()),
+        body: this.sanitizeBody(ctx.request.body()),
+        ip: ctx.request.ip(),
+        timestamp: new Date().toISOString(),
+      },
+      'API Request'
+    )
   }
 
   /**
@@ -51,31 +54,32 @@ export default class RequestLoggerMiddleware {
     const responseTime = this.calculateResponseTime(startTime)
     const statusCode = ctx.response.getStatus()
 
-    logger.info('API Response', {
-      requestId: ctx.request.id(),
-      statusCode,
-      responseTime: `${responseTime}ms`,
-      timestamp: new Date().toISOString()
-    })
+    logger.info(
+      {
+        requestId: ctx.request.id(),
+        statusCode,
+        responseTime: `${responseTime}ms`,
+        timestamp: new Date().toISOString(),
+      },
+      'API Response'
+    )
   }
 
   /**
    * Log error details
    */
-  private logError(ctx: HttpContext, error: any, startTime: [number, number]) {
+  private logError(ctx: HttpContext, error: unknown, startTime: [number, number]) {
     const responseTime = this.calculateResponseTime(startTime)
 
-    logger.error('API Error', {
-      requestId: ctx.request.id(),
-      error: {
-        name: error.name,
-        message: error.message,
-        stack: error.stack,
-        code: error.code
+    logger.error(
+      {
+        requestId: ctx.request.id(),
+        error: errorDetails(error),
+        responseTime: `${responseTime}ms`,
+        timestamp: new Date().toISOString(),
       },
-      responseTime: `${responseTime}ms`,
-      timestamp: new Date().toISOString()
-    })
+      'API Error'
+    )
   }
 
   /**
@@ -89,8 +93,16 @@ export default class RequestLoggerMiddleware {
   /**
    * Remove sensitive information from headers
    */
-  private sanitizeHeaders(headers: Record<string, any>): Record<string, any> {
-    const sensitiveHeaders = ['authorization', 'cookie', 'set-cookie']
+  private sanitizeHeaders(headers: IncomingHttpHeaders): IncomingHttpHeaders {
+    const sensitiveHeaders = [
+      'authorization',
+      'cookie',
+      'set-cookie',
+      'x-api-key',
+      'api-key',
+      'x-csrf-token',
+      'x-xsrf-token',
+    ]
     const sanitized = { ...headers }
 
     for (const header of sensitiveHeaders) {
@@ -105,8 +117,16 @@ export default class RequestLoggerMiddleware {
   /**
    * Remove sensitive information from request body
    */
-  private sanitizeBody(body: Record<string, any>): Record<string, any> {
-    const sensitiveFields = ['password', 'confirmPassword', 'currentPassword', 'token', 'apiKey']
+  private sanitizeBody(body: Record<string, unknown>): Record<string, unknown> {
+    const sensitiveFields = [
+      'password',
+      'password_confirmation',
+      'confirmPassword',
+      'currentPassword',
+      'token',
+      'apiKey',
+      'api_key',
+    ]
     const sanitized = { ...body }
 
     for (const field of sensitiveFields) {

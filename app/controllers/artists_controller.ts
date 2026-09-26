@@ -1,13 +1,15 @@
 import type { HttpContext } from '@adonisjs/core/http'
-import Artist from "../models/artist"
-import Category from "#models/category"
+import Artist from '#models/artist'
+import Category from '#models/category'
+import { createArtistValidator, updateArtistValidator } from '#validators/artist'
+import { categoryAssignmentValidator } from '#validators/category'
 
 export default class ArtistsController {
   /**
    * Display a list of artists
    */
   async index({ response }: HttpContext) {
-    const artists = await Artist.query().preload("categories")
+    const artists = await Artist.query().preload('categories')
     return response.json(artists)
   }
 
@@ -15,15 +17,9 @@ export default class ArtistsController {
    * Create a new artist
    */
   async store({ request, response }: HttpContext) {
-    const data = request.only([
-      "name",
-      "description",
-      "socials",
-      "profilePicture",
-      "userId",
-    ])
+    const data = await request.validateUsing(createArtistValidator)
     const artist = await Artist.create(data)
-    await artist.load("categories")
+    await artist.load('categories')
     return response.json(artist)
   }
 
@@ -32,7 +28,7 @@ export default class ArtistsController {
    */
   async show({ params, response }: HttpContext) {
     const artist = await Artist.findOrFail(params.id)
-    await artist.load("categories")
+    await artist.load('categories')
     return response.json(artist)
   }
 
@@ -41,16 +37,10 @@ export default class ArtistsController {
    */
   async update({ params, request, response }: HttpContext) {
     const artist = await Artist.findOrFail(params.id)
-    const data = request.only([
-      "name",
-      "description",
-      "socials",
-      "profilePicture",
-      "isVerified",
-    ])
+    const data = await request.validateUsing(updateArtistValidator)
 
     await artist.merge(data).save()
-    await artist.load("categories")
+    await artist.load('categories')
     return response.json(artist)
   }
 
@@ -68,11 +58,11 @@ export default class ArtistsController {
    */
   async addCategory({ params, request, response }: HttpContext) {
     const artist = await Artist.findOrFail(params.id)
-    const categoryId = request.input("categoryId")
+    const { categoryId } = await request.validateUsing(categoryAssignmentValidator)
     const category = await Category.findOrFail(categoryId)
 
-    await artist.related("categories").attach([category.id])
-    await artist.load("categories")
+    await artist.related('categories').attach([category.id])
+    await artist.load('categories')
     return response.json(artist)
   }
 
@@ -81,8 +71,8 @@ export default class ArtistsController {
    */
   async removeCategory({ params, response }: HttpContext) {
     const artist = await Artist.findOrFail(params.id)
-    await artist.related("categories").detach([params.categoryId])
-    await artist.load("categories")
+    await artist.related('categories').detach([params.categoryId])
+    await artist.load('categories')
     return response.json(artist)
   }
 }

@@ -5,8 +5,8 @@ import env from '#start/env'
 import ReleaseExcerptService from '#services/release_excerpt_service'
 
 type WeeklyRecapDataset = {
-  periodStart: DateTime
-  periodEnd: DateTime
+  periodStart: DateTime<true>
+  periodEnd: DateTime<true>
   totalNewReleases: number
   releases: ReleaseHighlight[]
 }
@@ -19,6 +19,12 @@ type RecipientInfo = {
   username?: string | null
 }
 
+function assertValidReference(reference: DateTime): asserts reference is DateTime<true> {
+  if (!reference.isValid) {
+    throw new RangeError(`Invalid weekly recap reference date: ${reference.invalidReason}`)
+  }
+}
+
 /**
  * Aggregates data for the weekly recap email.
  * The dataset is computed once and reused for all recipients.
@@ -27,12 +33,13 @@ export default class WeeklyRecapService {
   constructor(
     private readonly appBaseUrl: string = env.get('APP_URL'),
     private readonly excerptService: ReleaseExcerptService = new ReleaseExcerptService()
-  ) { }
+  ) {}
 
   /**
    * Prepare the recap dataset for the most recent 7-day window.
    */
   async buildDataset(reference: DateTime = DateTime.now()): Promise<WeeklyRecapDataset> {
+    assertValidReference(reference)
     const previousWeekReference = reference.minus({ weeks: 1 })
     const periodStart = previousWeekReference.startOf('week')
     const periodEnd = previousWeekReference.endOf('week')
@@ -84,8 +91,8 @@ export default class WeeklyRecapService {
   }
 
   private async fetchReleasesAddedWithin(
-    from: DateTime,
-    to: DateTime,
+    from: DateTime<true>,
+    to: DateTime<true>,
     limit: number = 10
   ): Promise<ReleaseHighlight[]> {
     const releases = await Release.query()
@@ -100,7 +107,10 @@ export default class WeeklyRecapService {
     return releases.map((release) => this.mapRelease(release))
   }
 
-  private async fetchReleaseCountForPeriod(from: DateTime, to: DateTime): Promise<number> {
+  private async fetchReleaseCountForPeriod(
+    from: DateTime<true>,
+    to: DateTime<true>
+  ): Promise<number> {
     const response = await Release.query()
       .where('is_secret', false)
       .where('date', '>=', from.toISO())

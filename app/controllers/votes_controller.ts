@@ -9,7 +9,7 @@ export default class VotesController {
    */
   async store({ params, auth, request, response }: HttpContext) {
     const release = await Release.findOrFail(params.releaseId || params.id)
-    const user = auth.user!
+    const user = auth.use('web').user!
     const payload = await request.validateUsing(voteValidator)
 
     // Check if user already voted
@@ -46,7 +46,7 @@ export default class VotesController {
    */
   async update({ params, auth, request, response }: HttpContext) {
     const release = await Release.findOrFail(params.releaseId || params.id)
-    const user = auth.user!
+    const user = auth.use('web').user!
     const payload = await request.validateUsing(voteValidator)
 
     const vote = await Vote.query()
@@ -68,7 +68,7 @@ export default class VotesController {
    */
   async destroy({ params, auth, response }: HttpContext) {
     const release = await Release.findOrFail(params.releaseId || params.id)
-    const user = auth.user!
+    const user = auth.use('web').user!
 
     const vote = await Vote.query()
       .where('user_id', user.id)

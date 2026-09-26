@@ -1,6 +1,22 @@
 import env from '#start/env'
 import { defineConfig } from '@adonisjs/inertia'
 import type { InferSharedProps } from '@adonisjs/inertia/types'
+import type { HttpContext } from '@adonisjs/core/http'
+
+function serializeAuth(ctx?: HttpContext) {
+  const user = ctx?.auth?.use('web').user
+
+  if (!user) return { user: null }
+
+  return {
+    user: {
+      id: user.id,
+      email: user.email,
+      fullName: user.fullName,
+      username: user.username,
+    },
+  }
+}
 
 const inertiaConfig = defineConfig({
   /**
@@ -15,25 +31,8 @@ const inertiaConfig = defineConfig({
     umamiURL: env.get('UMAMI_SCRIPT_URL', ''),
     umamiID: env.get('UMAMI_WEBSITE_ID', ''),
     auth: (ctx) => {
-      const serializeAuth = () => {
-        const user = ctx?.auth?.use('web').user
-
-        if (!user) {
-          return { user: null }
-        }
-
-        return {
-          user: {
-            id: user.id,
-            email: user.email,
-            fullName: user.fullName,
-            username: user.username,
-          },
-        }
-      }
-
       // Inertia also resolves shared props while rendering an error page, without a request context.
-      return ctx?.inertia ? ctx.inertia.always(serializeAuth) : serializeAuth()
+      return ctx?.inertia ? ctx.inertia.always(() => serializeAuth(ctx)) : serializeAuth(ctx)
     },
   },
 
@@ -48,6 +47,12 @@ const inertiaConfig = defineConfig({
 
 export default inertiaConfig
 
+// Inertia 3.1 does not unwrap an AlwaysProp union with its error-page fallback.
+// Infer auth from the serializer used by both branches, never from a duplicate user interface.
+type AppSharedProps = Omit<InferSharedProps<typeof inertiaConfig>, 'auth'> & {
+  auth: ReturnType<typeof serializeAuth>
+}
+
 declare module '@adonisjs/inertia/types' {
-  export interface SharedProps extends InferSharedProps<typeof inertiaConfig> {}
+  export interface SharedProps extends AppSharedProps {}
 }

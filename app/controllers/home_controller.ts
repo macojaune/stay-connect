@@ -1,11 +1,29 @@
 import env from '#start/env'
 import { createLeadValidator } from '#validators/newsletter'
 import type { HttpContext } from '@adonisjs/core/http'
-import { ContactsApi, ContactsApiApiKeys } from '@getbrevo/brevo'
+import { ContactsApi, ContactsApiApiKeys, type CreateContact } from '@getbrevo/brevo'
 import logger from '@adonisjs/core/services/logger'
 import Release from '#models/release'
 import Artist from '#models/artist'
 import { DateTime } from 'luxon'
+import type { TimelineRelease, TimelineWeek } from '#contracts/discovery'
+import { errorDetails } from '#exceptions/error_details'
+
+function requireIsoDate(date: DateTime): string {
+  const isoDate = date.toISODate()
+  if (isoDate === null) throw new RangeError(`Invalid catalogue date: ${date.invalidReason}`)
+  return isoDate
+}
+
+function contactErrorMessage(error: unknown): string {
+  if (typeof error === 'object' && error !== null && 'response' in error) {
+    const response = error.response
+    if (typeof response === 'object' && response !== null && 'body' in response) {
+      return errorDetails(response.body).message
+    }
+  }
+  return errorDetails(error).message
+}
 
 export default class HomeController {
   async index({ inertia, session }: HttpContext) {
@@ -72,8 +90,7 @@ export default class HomeController {
   }
 
   private isTransientDbError(error: unknown): boolean {
-    const message = (error as Error)?.message ?? ''
-    const code = (error as { code?: string })?.code ?? ''
+    const { message, code } = errorDetails(error)
 
     const transientMessages = [
       'Connection terminated unexpectedly',
@@ -87,7 +104,10 @@ export default class HomeController {
 
     const transientCodes = new Set(['ECONNRESET', 'ETIMEDOUT', '57P01', '57P02', '57P03'])
 
-    return transientCodes.has(code) || transientMessages.some((entry) => message.includes(entry))
+    return (
+      (code !== undefined && transientCodes.has(code)) ||
+      transientMessages.some((entry) => message.includes(entry))
+    )
   }
 
   private async withDbRetry<T>(
@@ -108,8 +128,7 @@ export default class HomeController {
               operation,
               attempt,
               maxAttempts,
-              message: (error as Error)?.message,
-              code: (error as { code?: string })?.code,
+              ...errorDetails(error),
             },
             'Database operation failed'
           )
@@ -123,8 +142,7 @@ export default class HomeController {
             attempt,
             maxAttempts,
             waitTimeMs,
-            message: (error as Error)?.message,
-            code: (error as { code?: string })?.code,
+            ...errorDetails(error),
           },
           'Transient database error detected, retrying operation'
         )
@@ -136,15 +154,15 @@ export default class HomeController {
     return fallbackValue
   }
 
-  private groupReleasesByWeek(releases: Release[], now: DateTime) {
-    const groups: { [key: string]: any } = {}
+  private groupReleasesByWeek(releases: Release[], now: DateTime): TimelineWeek[] {
+    const groups: Record<string, TimelineWeek> = {}
 
     releases.forEach((release) => {
       const releaseDate = DateTime.fromJSDate(release.date.toJSDate())
       const weekStart = releaseDate.startOf('week')
-      const weekKey = weekStart.toISODate() || now.toISODate()
+      const weekKey = requireIsoDate(weekStart)
 
-      if (!groups?.[weekKey!]) {
+      if (!groups[weekKey]) {
         const isThisWeek = weekStart.hasSame(now.startOf('week'), 'day')
         const isNextWeek = weekStart.hasSame(now.plus({ weeks: 1 }).startOf('week'), 'day')
         const isPastWeek = weekStart < now.startOf('week')
@@ -170,23 +188,23 @@ export default class HomeController {
           subtitle = 'Retour sur les temps forts'
         }
 
-        groups[weekKey!] = {
+        groups[weekKey] = {
           title,
           subtitle,
           isUpcoming,
           news: [],
-          weekStart: weekStart.toISODate(),
+          weekStart: weekKey,
         }
       }
 
       // Transform release to news item format
-      const newsItem = {
+      const newsItem: TimelineRelease = {
         id: release.id,
         title: release.title,
         slug: release.slug,
         artist: release.artist?.name || 'Artiste inconnu',
         date: this.formatReleaseDate(DateTime.fromJSDate(release.date.toJSDate()), now),
-        dateIso: release.date.toISODate(),
+        dateIso: requireIsoDate(release.date),
         boostCount: release.voteCount ?? 0,
         type: release.type || 'release',
         category: release.categories?.[0]?.name || 'Musique',
@@ -196,18 +214,18 @@ export default class HomeController {
           .filter((name): name is string => !!name),
       }
 
-      groups[weekKey!].news.push(newsItem)
+      groups[weekKey].news.push(newsItem)
     })
 
     // Convert to array and sort by week
-    const sortedGroups = Object.values(groups).sort((a: any, b: any) => {
+    const sortedGroups = Object.values(groups).sort((a, b) => {
       return DateTime.fromISO(b.weekStart).toMillis() - DateTime.fromISO(a.weekStart).toMillis()
     })
 
     // Add placeholder for next week if no releases
     const nextWeekStart = now.plus({ weeks: 1 }).startOf('week')
     const hasNextWeek = sortedGroups.some(
-      (group: any) => group.weekStart === nextWeekStart.toISODate()
+      (group) => group.weekStart === requireIsoDate(nextWeekStart)
     )
 
     if (!hasNextWeek) {
@@ -216,7 +234,7 @@ export default class HomeController {
         subtitle: 'Inscris-toi pour voir les sorties en avance',
         isUpcoming: true,
         news: [],
-        weekStart: nextWeekStart.toISODate(),
+        weekStart: requireIsoDate(nextWeekStart),
       })
     }
 
@@ -224,15 +242,15 @@ export default class HomeController {
     const previousWeekStart = now.minus({ weeks: 1 }).startOf('week')
 
     const findGroupByWeekStart = (weekStart: DateTime) =>
-      sortedGroups.find((group: any) => group.weekStart === weekStart.toISODate())
+      sortedGroups.find((group) => group.weekStart === requireIsoDate(weekStart))
 
-    const limitedSections = []
+    const limitedSections: TimelineWeek[] = []
     const upcomingSection = findGroupByWeekStart(nextWeekStart)
 
     limitedSections.push({
       ...(upcomingSection ?? {
         news: [],
-        weekStart: nextWeekStart.toISODate(),
+        weekStart: requireIsoDate(nextWeekStart),
       }),
       title: 'À venir',
       subtitle: upcomingSection?.subtitle ?? 'Inscris-toi pour voir les sorties en avance',
@@ -252,7 +270,7 @@ export default class HomeController {
         subtitle: 'Les sorties de la semaine',
         isUpcoming: false,
         news: [],
-        weekStart: currentWeekStart.toISODate(),
+        weekStart: requireIsoDate(currentWeekStart),
       })
     }
 
@@ -291,30 +309,46 @@ export default class HomeController {
       const contactsApi = new ContactsApi()
       contactsApi.setApiKey(ContactsApiApiKeys.apiKey, env.get('BREVO_API_KEY'))
       try {
+        const attributes: Record<string, string> = {
+          IS_ARTIST: payload.type === 'artist' ? 'true' : 'false',
+        }
+        if (payload.artistName !== undefined) attributes.ARTIST_NAME = payload.artistName
+        if (payload.role !== undefined) attributes.ROLE = payload.role
+        if (payload.username !== undefined) attributes.USERNAME = payload.username
+
         await contactsApi.createContact({
-          email: payload?.email,
+          email: payload.email,
           listIds: [3],
-          attributes: {
-            IS_ARTIST: payload.type === 'artist' ? 'true' : 'false',
-            ARTIST_NAME: payload.artistName,
-            ROLE: payload.role,
-            USERNAME: payload.username,
-          },
-        } as any)
+          // SDK 2.2 declares attribute values as object, but Brevo accepts strings.
+          // Only this SDK boundary is asserted; validated contact data stays typed.
+          // https://developers.brevo.com/reference/create-contact
+          attributes: attributes as unknown as CreateContact['attributes'],
+        })
       } catch (e) {
         errorMessage =
           "Une erreur est survenue lors de l'enregistrement de ton inscription : " +
-          e.response.body.message
+          contactErrorMessage(e)
         session.flash('errors', errorMessage)
         session.flash('old', payload)
         return response.redirect().toRoute('home')
       }
     } else {
-      const validationMessages = errors.messages as Array<{ field: string; message: string }>
-      const reducedErrors = validationMessages.reduce((acc: Record<string, string>, curr) => {
-        acc[curr.field] = curr.message
-        return acc
-      }, {})
+      const validationMessages: unknown = errors.messages
+      const reducedErrors: Record<string, string> = {}
+      if (Array.isArray(validationMessages)) {
+        const messages: unknown[] = validationMessages
+        for (const message of messages) {
+          if (
+            typeof message === 'object' &&
+            message !== null &&
+            'field' in message &&
+            typeof message.field === 'string' &&
+            'message' in message &&
+            typeof message.message === 'string'
+          )
+            reducedErrors[message.field] = message.message
+        }
+      }
       session.flash('errors', reducedErrors)
     }
 

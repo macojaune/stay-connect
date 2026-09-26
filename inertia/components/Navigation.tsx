@@ -1,26 +1,14 @@
 import { useState } from 'react'
 import { Link, usePage } from '@inertiajs/react'
 import { Button } from '~/components/ui/Button'
-
-interface User {
-  id: string
-  email: string
-  fullName?: string | null
-  username?: string | null
-}
-
-interface PageProps {
-  auth?: {
-    user?: User | null
-  }
-}
+import type { SharedProps } from '@adonisjs/inertia/types'
 
 interface NavigationProps {
   isLandingPage?: boolean
 }
 
 export function Navigation({ isLandingPage }: NavigationProps) {
-  const { auth } = usePage<PageProps>().props
+  const { auth } = usePage<SharedProps>().props
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
   const navigationItems = [

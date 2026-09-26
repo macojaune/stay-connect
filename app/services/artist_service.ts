@@ -1,22 +1,20 @@
 import Artist from '#models/artist'
 import Category from '#models/category'
-import { artistValidator } from '#validators/artist'
+import { artistValidator, type ArtistInput } from '#validators/artist'
 import logger from '@adonisjs/core/services/logger'
 
 export default class ArtistService {
   /**
    * Create a new artist
    */
-  async createArtist(data) {
+  async createArtist(data: unknown) {
     try {
       const validatedData = await artistValidator.validate(data)
 
-      const artist = await Artist.create({
-        ...validatedData,
-      })
+      const artist = await Artist.create(this.artistAttributes(validatedData))
 
-      if (data.categories && Array.isArray(data.categories)) {
-        await artist.related('categories').attach(data.categories)
+      if (validatedData.categories) {
+        await artist.related('categories').attach(validatedData.categories)
       }
 
       await artist.load('categories')
@@ -29,12 +27,12 @@ export default class ArtistService {
   /**
    * Update artist details
    */
-  async updateArtist(artist: Artist, data: any) {
+  async updateArtist(artist: Artist, data: unknown) {
     const validatedData = await artistValidator.validate(data)
-    await artist.merge(validatedData).save()
+    await artist.merge(this.artistAttributes(validatedData)).save()
 
-    if (data.categories && Array.isArray(data.categories)) {
-      await artist.related('categories').sync(data.categories)
+    if (validatedData.categories) {
+      await artist.related('categories').sync(validatedData.categories)
     }
 
     await artist.load((loader) => {
@@ -44,6 +42,18 @@ export default class ArtistService {
     })
 
     return artist
+  }
+
+  private artistAttributes(data: ArtistInput) {
+    return {
+      name: data.name,
+      isVerified: data.isVerified,
+      ...(data.description !== undefined ? { description: data.description } : {}),
+      ...(data.spotifyId !== undefined ? { spotifyId: data.spotifyId } : {}),
+      ...(data.socials !== undefined ? { socials: data.socials } : {}),
+      ...(data.followers !== undefined ? { followers: data.followers } : {}),
+      ...(data.profilePicture !== undefined ? { profilePicture: data.profilePicture } : {}),
+    }
   }
 
   /**

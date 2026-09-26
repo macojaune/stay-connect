@@ -1,3 +1,4 @@
+import { errorDetails } from '#exceptions/error_details'
 import SpotifyService from '#services/spotify_service'
 import { args, flags, BaseCommand } from '@adonisjs/core/ace'
 import type { CommandOptions } from '@adonisjs/core/types/ace'
@@ -39,7 +40,7 @@ export default class CheckSpotifyReleases extends BaseCommand {
         )
       }
     } catch (error) {
-      this.logger.error('Failed to check Spotify releases: ' + error.message)
+      this.logger.error('Failed to check Spotify releases: ' + errorDetails(error).message)
       this.exitCode = 1
     }
   }

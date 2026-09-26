@@ -2,7 +2,6 @@ import type { GuardContract } from '@adonisjs/auth/types'
 import { symbols, errors } from '@adonisjs/auth'
 import type { HttpContext } from '@adonisjs/core/http'
 import env from '#start/env'
-import logger from '@adonisjs/core/services/logger'
 
 type ApiUser = { id: number; name: string }
 
@@ -45,7 +44,6 @@ export class ApiTokenGuard implements GuardContract<ApiUser> {
     this.authenticationAttempted = true
 
     const authHeader = this.#ctx.request.header('authorization')
-    logger.info('Auth header: ' + authHeader)
     if (!authHeader) {
       throw new errors.E_UNAUTHORIZED_ACCESS('Authorization header not found', {
         guardDriverName: this.driverName,
@@ -53,7 +51,6 @@ export class ApiTokenGuard implements GuardContract<ApiUser> {
     }
 
     const apiKey = env.get('API_KEY')
-    logger.info('API key: ' + apiKey)
     if (!apiKey) {
       throw new Error('API_KEY environment variable not set')
     }

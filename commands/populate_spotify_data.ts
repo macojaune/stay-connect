@@ -1,9 +1,11 @@
+import { errorDetails } from '#exceptions/error_details'
 import { BaseCommand } from '@adonisjs/core/ace'
 import type { CommandOptions } from '@adonisjs/core/types/ace'
 import Artist from '#models/artist'
 import Category from '#models/category'
 import fs from 'node:fs/promises'
 import { DateTime } from 'luxon'
+import { spotifyArtistsImportValidator } from '#contracts/spotify'
 
 export default class PopulateSpotifyData extends BaseCommand {
   static commandName = 'spotify:populate-data'
@@ -19,12 +21,8 @@ export default class PopulateSpotifyData extends BaseCommand {
     try {
       // Read and parse the JSON file
       const fileContent = await fs.readFile(filePath, 'utf-8')
-      const spotifyData = JSON.parse(fileContent)
-
-      if (!spotifyData.items || !Array.isArray(spotifyData.items)) {
-        this.logger.error('Invalid JSON structure: missing items array')
-        return
-      }
+      const payload: unknown = JSON.parse(fileContent)
+      const spotifyData = await spotifyArtistsImportValidator.validate(payload)
 
       this.logger.info(`Found ${spotifyData.items.length} artists to process`)
 
@@ -88,12 +86,16 @@ export default class PopulateSpotifyData extends BaseCommand {
             // Create the artist
             artist = await Artist.create({
               name: artistData.name,
-              description: `Spotify artist with ${artistData.followers?.total || 0} followers`,
+              description: artistData.followers
+                ? `Spotify artist with ${artistData.followers.total} followers`
+                : 'Spotify artist',
               profilePicture: profilePicture,
-              followers: artistData.followers?.total || 0,
+              followers: artistData.followers
+                ? { spotify: artistData.followers.total, lastUpdated: DateTime.now().toISO() }
+                : null,
               spotifyId: artistData.id,
               lastSpotifyCheck: DateTime.now(),
-              isVerified: artistData.popularity > 50, // Consider popular artists as verified
+              isVerified: artistData.popularity !== undefined && artistData.popularity > 50, // Consider popular artists as verified
               createdAt: DateTime.now(),
               updatedAt: DateTime.now(),
             })
@@ -118,20 +120,24 @@ export default class PopulateSpotifyData extends BaseCommand {
               const categoriesToAttach = categories.filter(
                 (cat) => !existingRelatedCategories.map((c) => c.id).includes(cat.id)
               )
-              const pivotData = categoriesToAttach.reduce((acc, cat) => {
-                acc[cat.id] = {
+              const pivotData = categoriesToAttach.reduce<
+                Record<Category['id'], { created_at: string; updated_at: string }>
+              >((pivot, category) => {
+                pivot[category.id] = {
                   created_at: DateTime.now().toSQL(),
                   updated_at: DateTime.now().toSQL(),
                 }
-                return acc
+                return pivot
               }, {})
               await artistToEdit.related('categories').attach(pivotData)
             }
           }
 
           this.logger.info(`Processed artist: ${artistData.name} (${artistData.id})`)
-        } catch (error) {
-          this.logger.error(`Error processing artist ${artistData.name}: ${error.message}`)
+        } catch (error: unknown) {
+          this.logger.error(
+            `Error processing artist ${artistData.name}: ${errorDetails(error).message}`
+          )
         }
       }
 
@@ -140,8 +146,8 @@ export default class PopulateSpotifyData extends BaseCommand {
       this.logger.info(`Artists: ${artistsCreated} created, ${artistsSkipped} skipped`)
       this.logger.info(`Categories: ${categoriesCreated} created, ${categoriesSkipped} skipped`)
       this.logger.info(`Total genres processed: ${processedGenres.size}`)
-    } catch (error) {
-      this.logger.error(`Error reading or parsing file: ${error.message}`)
+    } catch (error: unknown) {
+      this.logger.error(`Error reading or parsing file: ${errorDetails(error).message}`)
       this.logger.error('Make sure the file exists and contains valid JSON')
     }
   }

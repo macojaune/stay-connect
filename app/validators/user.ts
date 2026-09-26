@@ -24,7 +24,7 @@ export const userRegistrationValidator = vine.compile(
   })
 )
 
-export const userUpdateValidator = vine.compile(
+export const userUpdateValidator = vine.withMetaData<{ userId: string }>().compile(
   vine.object({
     username: vine
       .string()

@@ -1,6 +1,6 @@
 import vine from '@vinejs/vine'
 
-export const categoryValidator = vine.compile(
+export const categoryValidator = vine.withMetaData<{ categoryId?: string }>().compile(
   vine.object({
     name: vine
       .string()
@@ -16,4 +16,8 @@ export const categoryValidator = vine.compile(
       }),
     description: vine.string().maxLength(500).optional(),
   })
+)
+
+export const categoryAssignmentValidator = vine.compile(
+  vine.object({ categoryId: vine.string().uuid() })
 )

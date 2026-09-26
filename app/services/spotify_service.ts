@@ -1,20 +1,36 @@
+import { errorDetails } from '#exceptions/error_details'
 import env from '#start/env'
 import { DateTime } from 'luxon'
 import Artist from '#models/artist'
 import Release from '#models/release'
 import logger from '@adonisjs/core/services/logger'
-import ky from 'ky'
+import ky, { HTTPError } from 'ky'
 import Feature from '#models/feature'
 import ArtistService from '#services/artist_service'
 import SonglinkService from '#services/songlink_service'
+import {
+  spotifyAlbumValidator,
+  spotifyArtistAlbumsValidator,
+  spotifyArtistSearchValidator,
+  spotifyArtistValidator,
+  spotifyTokenValidator,
+  spotifyTrackValidator,
+} from '#contracts/spotify'
 import type {
   CreateArtistOptions,
-  SearchAndCreateResult,
   SpotifyAlbum,
+  SpotifyAlbumGroup,
+  SpotifyAlbumSummary,
   SpotifyArtist,
   SpotifySearchResult,
-  SpotifyTokenResponse,
-} from '@/types/index.js'
+  SpotifyTrack,
+} from '#contracts/spotify'
+
+interface SearchAndCreateResult {
+  searchResults: SpotifySearchResult[]
+  createdArtist?: Artist
+  error?: string
+}
 
 type SpotifyCreditArtist = {
   id: string
@@ -45,8 +61,8 @@ export default class SpotifyService {
       },
       hooks: {
         beforeRetry: [
-          async ({ request, options, error, retryCount }) => {
-            const response = error.response
+          async ({ error, retryCount }) => {
+            const response = error instanceof HTTPError ? error.response : undefined
             if (response?.status === 429) {
               const retryAfter = response.headers.get('Retry-After')
               const delay = retryAfter ? Number.parseInt(retryAfter) * 1000 : 1000
@@ -77,7 +93,7 @@ export default class SpotifyService {
 
       const credentials = Buffer.from(`${clientId}:${clientSecret}`).toString('base64')
 
-      const data = await this.api
+      const payload = await this.api
         .post(this.AUTH_URL, {
           headers: {
             'Authorization': `Basic ${credentials}`,
@@ -85,14 +101,15 @@ export default class SpotifyService {
           },
           body: 'grant_type=client_credentials',
         })
-        .json<SpotifyTokenResponse>()
+        .json<unknown>()
+      const data = await spotifyTokenValidator.validate(payload)
 
       this.accessToken = data.access_token
       this.tokenExpiresAt = DateTime.now().plus({ seconds: data.expires_in - 60 }) // Refresh 1 minute early
 
       return this.accessToken
-    } catch (error) {
-      logger.error('Failed to get Spotify access token: ' + error.message)
+    } catch (error: unknown) {
+      logger.error('Failed to get Spotify access token: ' + errorDetails(error).message)
       throw error
     }
   }
@@ -100,20 +117,27 @@ export default class SpotifyService {
   /**
    * Make authenticated request to Spotify API
    */
-  private async makeRequest<T>(endpoint: string): Promise<T> {
+  private async makeRequest<T>(
+    endpoint: string,
+    validator: { validate(data: unknown): Promise<T> }
+  ): Promise<T> {
     const token = await this.getAccessToken()
 
     try {
-      return await this.api
+      const payload = await this.api
         .get(`${this.BASE_URL}${endpoint}`, {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json',
           },
         })
-        .json<T>()
-    } catch (error: any) {
-      throw new Error(`Spotify API error: ${error.response?.status || 'Unknown'} ${error.message}`)
+        .json<unknown>()
+      return await validator.validate(payload)
+    } catch (error: unknown) {
+      const status = error instanceof HTTPError ? error.response.status : 'Unknown'
+      throw new Error(`Spotify API error: ${status} ${errorDetails(error).message}`, {
+        cause: error,
+      })
     }
   }
 
@@ -121,7 +145,7 @@ export default class SpotifyService {
    * Get artist information from Spotify
    */
   async getArtist(spotifyId: string): Promise<SpotifyArtist> {
-    return this.makeRequest<SpotifyArtist>(`/artists/${spotifyId}`)
+    return this.makeRequest(`/artists/${spotifyId}`, spotifyArtistValidator)
   }
 
   /**
@@ -130,12 +154,12 @@ export default class SpotifyService {
   async getArtistAlbums(
     spotifyId: string,
     options: {
-      includeGroups?: string[]
+      includeGroups?: SpotifyAlbumGroup[]
       market?: string
       limit?: number
       offset?: number
     } = {}
-  ): Promise<{ items: SpotifyAlbum[] }> {
+  ): Promise<{ items: SpotifyAlbumSummary[] }> {
     const params = new URLSearchParams({
       include_groups: options.includeGroups?.join(',') || 'album,single,',
       // market: options.market || 'FR',
@@ -143,8 +167,9 @@ export default class SpotifyService {
       offset: (options.offset || 0).toString(),
     })
     logger.info(`Fetching albums for artist ${spotifyId} with params ${params}`)
-    const res = await this.makeRequest<{ items: SpotifyAlbum[] }>(
-      `/artists/${spotifyId}/albums?${params}`
+    const res = await this.makeRequest(
+      `/artists/${spotifyId}/albums?${params}`,
+      spotifyArtistAlbumsValidator
     )
     logger.info(`Fetched ${res.items.length} albums for artist ${spotifyId}`)
     return res
@@ -154,13 +179,13 @@ export default class SpotifyService {
    * Get album details with tracks
    */
   async getAlbum(spotifyId: string): Promise<SpotifyAlbum> {
-    return this.makeRequest<SpotifyAlbum>(`/albums/${spotifyId}`)
+    return this.makeRequest(`/albums/${spotifyId}`, spotifyAlbumValidator)
   }
   /**
    * Get track details
    */
-  async getTrack(spotifyId: string): Promise<SpotifyAlbum> {
-    return this.makeRequest<SpotifyAlbum>(`/tracks/${spotifyId}`)
+  async getTrack(spotifyId: string): Promise<SpotifyTrack> {
+    return this.makeRequest(`/tracks/${spotifyId}`, spotifyTrackValidator)
   }
 
   /**
@@ -176,7 +201,7 @@ export default class SpotifyService {
       limit: limit.toString(),
     })
 
-    return this.makeRequest<{ artists: { items: SpotifyArtist[] } }>(`/search?${params}`)
+    return this.makeRequest(`/search?${params}`, spotifyArtistSearchValidator)
   }
 
   /**
@@ -214,8 +239,10 @@ export default class SpotifyService {
 
           // Add delay to respect rate limits
           await new Promise((resolve) => setTimeout(resolve, 100))
-        } catch (error) {
-          logger.error(`Error checking releases for artist ${artist.name}: ${error.message}`)
+        } catch (error: unknown) {
+          logger.error(
+            `Error checking releases for artist ${artist.name}: ${errorDetails(error).message}`
+          )
           stats.errors++
         }
       }
@@ -224,8 +251,8 @@ export default class SpotifyService {
         `Release check completed. Processed: ${stats.processed}, New: ${stats.newReleases}, Errors: ${stats.errors}`
       )
       return stats
-    } catch (error) {
-      logger.error('Failed to check for new releases: ' + error.message)
+    } catch (error: unknown) {
+      logger.error('Failed to check for new releases: ' + errorDetails(error).message)
       throw error
     }
   }
@@ -267,8 +294,11 @@ export default class SpotifyService {
           stats.newReleases++
         }
       }
-    } catch (error) {
-      logger.error(`Error checking artist ${artist.name} for new releases:`, error.message)
+    } catch (error: unknown) {
+      logger.error(
+        `Error checking artist ${artist.name} for new releases:`,
+        errorDetails(error).message
+      )
       throw error
     }
   }
@@ -283,7 +313,7 @@ export default class SpotifyService {
   ): Promise<Release> {
     try {
       const releaseData = {
-        title: isSingle ? album.tracks.items[0].name : album.name,
+        title: isSingle ? (album.tracks.items[0]?.name ?? album.name) : album.name,
         description: `${album.album_type.charAt(0).toUpperCase() + album.album_type.slice(1)} by ${artist.name}`,
         date: DateTime.fromISO(album.release_date),
         type: album.album_type,
@@ -321,8 +351,10 @@ export default class SpotifyService {
       await this.songlinkService.syncReleaseLinks(release)
 
       return release
-    } catch (error) {
-      logger.error(`Failed to create release for album ${album.name}: ${error.message}`)
+    } catch (error: unknown) {
+      logger.error(
+        `Failed to create release for album ${album.name}: ${errorDetails(error).message}`
+      )
       throw error
     }
   }
@@ -453,17 +485,24 @@ export default class SpotifyService {
 
       await artist
         .merge({
-          followers: {
-            spotify: spotifyArtist.followers.total,
-            lastUpdated: DateTime.now().toISO(),
-          },
+          ...(spotifyArtist.followers
+            ? {
+                followers: {
+                  ...artist.followers,
+                  spotify: spotifyArtist.followers.total,
+                  lastUpdated: DateTime.now().toISO(),
+                },
+              }
+            : {}),
           profilePicture: artist.profilePicture || spotifyArtist.images[0]?.url || null,
         })
         .save()
 
       logger.info(`Updated artist ${artist.name} from Spotify`)
-    } catch (error) {
-      logger.error(`Failed to update artist ${artist.name} from Spotify:  ${error.message}`)
+    } catch (error: unknown) {
+      logger.error(
+        `Failed to update artist ${artist.name} from Spotify:  ${errorDetails(error).message}`
+      )
       throw error
     }
   }
@@ -480,14 +519,14 @@ export default class SpotifyService {
         id: artist.id,
         name: artist.name,
         genres: artist.genres,
-        followers: artist.followers.total,
+        followers: artist.followers?.total,
         images: artist.images,
         socials: artist.external_urls,
         spotifyUrl: `https://open.spotify.com/artist/${artist.id}`,
       }))
-    } catch (error) {
-      logger.error(`Failed to search Spotify artists: ${error.message}`)
-      throw new Error(`Spotify search failed: ${error.message}`)
+    } catch (error: unknown) {
+      logger.error(`Failed to search Spotify artists: ${errorDetails(error).message}`)
+      throw new Error(`Spotify search failed: ${errorDetails(error).message}`)
     }
   }
 
@@ -520,10 +559,14 @@ export default class SpotifyService {
       description: options?.description || `${spotifyResult.name} - Artist from Spotify`,
       profilePicture: spotifyResult.images[0]?.url || null,
       spotifyId: spotifyResult.id,
-      followers: {
-        spotify: spotifyResult.followers,
-        lastUpdated: DateTime.now().toISO(),
-      },
+      ...(spotifyResult.followers !== undefined
+        ? {
+            followers: {
+              spotify: spotifyResult.followers,
+              lastUpdated: DateTime.now().toISO(),
+            },
+          }
+        : {}),
       socials: options?.socials || { spotify: spotifyResult.spotifyUrl },
       isVerified: false,
       categories: options.categories || [],
@@ -549,9 +592,9 @@ export default class SpotifyService {
       logger.info(`Created new artist: ${artist.name} with Spotify ID: ${artist.spotifyId}`)
 
       return artist
-    } catch (error) {
-      logger.error(`Failed to create artist from Spotify data: ${error.message}`)
-      throw new Error(`Artist creation failed: ${error.message}`)
+    } catch (error: unknown) {
+      logger.error(`Failed to create artist from Spotify data: ${errorDetails(error).message}`)
+      throw new Error(`Artist creation failed: ${errorDetails(error).message}`)
     }
   }
 
@@ -582,14 +625,14 @@ export default class SpotifyService {
 
         try {
           result.createdArtist = await this.createArtistFromSpotify(selectedArtist, options)
-        } catch (error) {
-          result.error = error.message
+        } catch (error: unknown) {
+          result.error = errorDetails(error).message
         }
       }
 
       return result
-    } catch (error) {
-      result.error = error.message
+    } catch (error: unknown) {
+      result.error = errorDetails(error).message
       return result
     }
   }
@@ -597,20 +640,21 @@ export default class SpotifyService {
   /**
    * Get detailed artist information from Spotify
    */
-  async getArtistDetails(spotifyId: string) {
+  async getArtistDetails(spotifyId: string): Promise<SpotifySearchResult> {
     try {
       const artist = await this.getArtist(spotifyId)
       return {
         id: artist.id,
         name: artist.name,
         genres: artist.genres,
-        followers: artist.followers.total,
+        followers: artist.followers?.total,
         images: artist.images,
+        socials: artist.external_urls,
         spotifyUrl: `https://open.spotify.com/artist/${artist.id}`,
       }
-    } catch (error) {
-      logger.error(`Failed to get artist details from Spotify: ${error.message}`)
-      throw new Error(`Failed to get artist details: ${error.message}`)
+    } catch (error: unknown) {
+      logger.error(`Failed to get artist details from Spotify: ${errorDetails(error).message}`)
+      throw new Error(`Failed to get artist details: ${errorDetails(error).message}`)
     }
   }
 
@@ -631,9 +675,9 @@ export default class SpotifyService {
 
       logger.info(`Synced artist ${artist.name} with Spotify data`)
       return artist
-    } catch (error) {
-      logger.error(`Failed to sync artist with Spotify: ${error.message}`)
-      throw new Error(`Sync failed: ${error.message}`)
+    } catch (error: unknown) {
+      logger.error(`Failed to sync artist with Spotify: ${errorDetails(error).message}`)
+      throw new Error(`Sync failed: ${errorDetails(error).message}`)
     }
   }
 }

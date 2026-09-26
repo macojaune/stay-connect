@@ -1,6 +1,6 @@
 import logger from '@adonisjs/core/services/logger'
 import mail from '@adonisjs/mail/services/main'
-import type { BaseMail } from '@adonisjs/mail/build/src/base_mail.js'
+import type { BaseMail } from '@adonisjs/mail'
 import WeeklyRecapMail from '#mails/weekly_recap_mail'
 import type { WeeklyRecapEmailPayload } from '#contracts/email'
 

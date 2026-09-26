@@ -1,3 +1,5 @@
+import type { ReleaseShowProps } from '#contracts/release_page'
+import type { SharedProps } from '@adonisjs/inertia/types'
 import React, { useEffect, useMemo, useState } from 'react'
 import EditorialLayout from '~/layouts/EditorialLayout'
 import '~/css/release-editorial.css'
@@ -20,60 +22,8 @@ import {
   WhatsappShareButton,
 } from 'react-share'
 
-type ReleaseShowProps = {
-  release: {
-    id: string
-    title: string
-    slug: string
-    description: string | null
-    date: string | null
-    type: string
-    cover: string | null
-    spotifyId: string | null
-    urls: string[]
-    artist: {
-      id: string
-      name: string
-      profilePicture?: string | null
-      releaseCount?: number | string | null
-    } | null
-    categories: Array<{
-      id: string
-      name: string
-      slug?: string
-    }>
-    featuredArtists: Array<{
-      id: string
-      artistName?: string | null
-      artistId?: string | null
-      releaseCount?: number | string | null
-      profilePicture?: string | null
-    }>
-    votesSummary: {
-      total: number
-    }
-    reviews: Array<{
-      id: string
-      comment: string | null
-      createdAt: string | null
-      user: {
-        id: string
-        displayName: string
-      }
-      isCurrentUser: boolean
-    }>
-    currentUserVote: {
-      id: string
-      comment: string | null
-    } | null
-  }
-  shareUrl: string
-}
-
 type PageProps = {
-  auth?: {
-    user?: { id: string } | null
-  }
+  auth: SharedProps['auth']
   errors?: Record<string, string>
 }
 

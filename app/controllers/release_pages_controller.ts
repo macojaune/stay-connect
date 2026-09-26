@@ -1,6 +1,21 @@
 import Release from '#models/release'
 import Vote from '#models/vote'
 import type { HttpContext } from '@adonisjs/core/http'
+import type { ReleaseShowProps } from '#contracts/release_page'
+
+function parseReleaseUrls(value: unknown): string[] {
+  if (typeof value === 'string') {
+    try {
+      const parsed: unknown = JSON.parse(value)
+      return parseReleaseUrls(parsed)
+    } catch {
+      return []
+    }
+  }
+  if (!Array.isArray(value)) return []
+  const urls: unknown[] = value
+  return urls.filter((url): url is string => typeof url === 'string')
+}
 
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
 
@@ -40,16 +55,7 @@ export default class ReleasePagesController {
       })
     }
 
-    const urlsValue = release.urls
-    const parsedUrls = Array.isArray(urlsValue)
-      ? urlsValue
-      : (() => {
-          try {
-            return JSON.parse((urlsValue as unknown as string) ?? '[]')
-          } catch {
-            return []
-          }
-        })()
+    const parsedUrls = parseReleaseUrls(release.urls)
 
     const shareUrl = request.completeUrl()
     const aggregates = await Vote.query()
@@ -57,70 +63,71 @@ export default class ReleasePagesController {
       .count('* as total_votes')
       .first()
     const totalVotes = Number(aggregates?.$extras.total_votes ?? release.voteCount ?? 0)
-    const viewerVote = auth.user
-      ? await Vote.query().where('release_id', release.id).where('user_id', auth.user.id).first()
+    const viewer = auth.use('web').user
+    const viewerVote = viewer
+      ? await Vote.query().where('release_id', release.id).where('user_id', viewer.id).first()
       : null
 
     const serializedArtist = release.artist
       ? {
-          ...release.artist.serialize(),
+          id: release.artist.id,
+          name: release.artist.name,
+          profilePicture: release.artist.profilePicture,
           releaseCount: release.artist.releaseCount ?? null,
         }
       : null
 
-    return inertia.render(
-      'releases/show',
-      {
-        release: {
-          id: release.id,
-          title: release.title,
-          slug: release.slug,
-          description: release.description,
-          date: release.date?.toISO(),
-          type: release.type,
-          cover: release.cover,
-          spotifyId: release.spotifyId,
-          urls: parsedUrls,
-          artist: serializedArtist,
-          categories: release.categories,
-          featuredArtists: release.features
-            .map((feature) => ({
-              id: feature.id,
-              artistName: feature.artistName?.trim() || feature.artist?.name?.trim() || null,
-              artistId: feature.artistId,
-              releaseCount: feature.artist?.releaseCount ?? null,
-              profilePicture: feature.artist?.profilePicture ?? null,
-            }))
-            .filter((feature) => !!feature.artistName),
-          votesSummary: {
-            total: totalVotes,
-          },
-          reviews: release.votes.map((vote) => ({
-            id: vote.id,
-            comment: vote.comment,
-            createdAt: vote.createdAt.toISO(),
-            user: {
-              id: vote.user.id,
-              displayName:
-                vote.user.fullName ||
-                vote.user.username ||
-                vote.user.email.split('@')[0] ||
-                'Membre',
-            },
-            isCurrentUser: auth.user?.id === vote.user.id,
-          })),
-          currentUserVote: viewerVote
-            ? {
-                id: viewerVote.id,
-                comment: viewerVote.comment,
-              }
-            : null,
+    const props: ReleaseShowProps = {
+      release: {
+        id: release.id,
+        title: release.title,
+        slug: release.slug,
+        description: release.description,
+        date: release.date.toISO(),
+        type: release.type,
+        cover: release.cover,
+        spotifyId: release.spotifyId,
+        urls: parsedUrls,
+        artist: serializedArtist,
+        categories: release.categories.map((category) => ({
+          id: category.id,
+          name: category.name,
+        })),
+        featuredArtists: release.features
+          .map((feature) => ({
+            id: feature.id,
+            artistName: feature.artistName?.trim() || feature.artist?.name?.trim() || null,
+            artistId: feature.artistId,
+            releaseCount: feature.artist?.releaseCount ?? null,
+            profilePicture: feature.artist?.profilePicture ?? null,
+          }))
+          .filter((feature) => !!feature.artistName),
+        votesSummary: {
+          total: totalVotes,
         },
-        shareUrl,
+        reviews: release.votes.map((vote) => ({
+          id: vote.id,
+          comment: vote.comment,
+          createdAt: vote.createdAt.toISO(),
+          user: {
+            id: vote.user.id,
+            displayName:
+              vote.user.fullName || vote.user.username || vote.user.email.split('@')[0] || 'Membre',
+          },
+          isCurrentUser: viewer?.id === vote.user.id,
+        })),
+        currentUserVote: viewerVote
+          ? {
+              id: viewerVote.id,
+              comment: viewerVote.comment,
+            }
+          : null,
       },
-      {
-        title: `${release.title} · ${release.artist?.name ?? 'Sortie'}`,
-      }
-    )
+      shareUrl,
+    }
+
+    return inertia.render('releases/show', props, {
+      title: `${release.title} · ${release.artist?.name ?? 'Sortie'}`,
+    })
   }
 }

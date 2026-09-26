@@ -1,7 +1,31 @@
 import Release from '#models/release'
 import Category from '#models/category'
 import SonglinkService from '#services/songlink_service'
-import { ReleaseValidator } from '../validators/release'
+import { releaseValidator, type ReleaseInput } from '#validators/release'
+import { DateTime } from 'luxon'
+
+function releaseAttributes(data: ReleaseInput) {
+  const { streamingLinks } = data
+  const urls = streamingLinks
+    ? [
+        streamingLinks.spotify,
+        streamingLinks.appleMusic,
+        streamingLinks.soundcloud,
+        streamingLinks.youtube,
+        streamingLinks.bandcamp,
+        ...(streamingLinks.other?.map((link) => link.url) ?? []),
+      ].filter((url): url is string => url !== undefined)
+    : undefined
+
+  return {
+    title: data.title,
+    date: DateTime.fromJSDate(data.releaseDate),
+    type: data.type,
+    ...(data.description !== undefined ? { description: data.description } : {}),
+    ...(data.coverArt !== undefined ? { cover: data.coverArt } : {}),
+    ...(urls !== undefined ? { urls } : {}),
+  }
+}
 
 export default class ReleaseService {
   private songlinkService = new SonglinkService()
@@ -9,16 +33,19 @@ export default class ReleaseService {
   /**
    * Create a new release
    */
-  async createRelease(data: any, artistId: string) {
-    const validatedData = await ReleaseValidator.validate(data)
+  async createRelease(data: unknown, artistId: string) {
+    const validatedData = await releaseValidator.validate(data, { meta: { artistId } })
+    const attributes = releaseAttributes(validatedData)
     const release = await Release.create({
-      ...validatedData,
+      ...attributes,
+      description: attributes.description ?? '',
+      urls: attributes.urls ?? [],
       artistId,
       voteCount: 0,
     })
 
-    if (data.categories && Array.isArray(data.categories)) {
-      await release.related('categories').attach(data.categories)
+    if (validatedData.categories) {
+      await release.related('categories').attach(validatedData.categories)
     }
 
     await release.load((loader) => {
@@ -33,19 +60,21 @@ export default class ReleaseService {
   /**
    * Update release details
    */
-  async updateRelease(release: Release, data: any) {
-    const validatedData = await ReleaseValidator.validate(data)
-    await release.merge(validatedData).save()
+  async updateRelease(release: Release, data: unknown) {
+    const validatedData = await releaseValidator.validate(data, {
+      meta: { artistId: release.artistId, releaseId: release.id },
+    })
+    await release.merge(releaseAttributes(validatedData)).save()
 
-    if (data.categories && Array.isArray(data.categories)) {
-      await release.related('categories').sync(data.categories)
+    if (validatedData.categories) {
+      await release.related('categories').sync(validatedData.categories)
     }
 
     await release.load((loader) => {
       loader.load('categories').load('artist').load('votes')
     })
 
-    if (data.spotifyId || data.urls) {
+    if (validatedData.streamingLinks) {
       await this.songlinkService.syncReleaseLinks(release)
     }
 
