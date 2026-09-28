@@ -157,8 +157,9 @@ test.group('Team release editor authorization and publication', (group) => {
     const title = `Editor release ${key}`
     const artistName = `Editor artist ${key}`
     const categoryName = `Editor category ${key}`
+    let releaseId: string | null = null
     cleanup(async () => {
-      const release = await Release.query().where('title', title).first()
+      const release = releaseId ? await Release.find(releaseId) : null
       if (release) await release.delete()
       const artist = await Artist.query().where('name', artistName).first()
       if (artist) await artist.delete()
@@ -179,6 +180,7 @@ test.group('Team release editor authorization and publication', (group) => {
     })
     assert.oneOf(created.response.status, [302, 303])
     const release = await Release.query().where('title', title).preload('categories').firstOrFail()
+    releaseId = release.id
     assert.equal(release.isSecret, false)
     assert.equal(release.isAutomated, false)
     assert.equal(release.categories.length, 1)
@@ -200,6 +202,17 @@ test.group('Team release editor authorization and publication', (group) => {
     assert.equal(duplicate.response.headers.get('location'), '/equipe/sorties/nouvelle')
     const copies = await Release.query().where('artistId', linkedArtistId)
     assert.equal(copies.length, 1)
+
+    const missingCategories = releaseInput(title, linkedArtistId)
+    delete missingCategories.categoryIds
+    const ignoredMissingCategories = await client.request(
+      `/equipe/sorties/${release.id}`,
+      'PATCH',
+      missingCategories
+    )
+    assert.oneOf(ignoredMissingCategories.response.status, [302, 303, 422])
+    await release.load('categories')
+    assert.equal(release.categories.length, 1)
 
     const removeLastLink = await client.request(`/equipe/sorties/${release.id}`, 'PATCH', {
       ...releaseInput(title),
@@ -231,6 +244,45 @@ test.group('Team release editor authorization and publication', (group) => {
     assert.equal(release.description, 'Description corrigée')
     assert.equal(release.isSecret, false)
     assert.equal(release.isAutomated, true)
+
+    const originalSlug = release.slug
+    const titleCorrection = await client.request(`/equipe/sorties/${release.id}`, 'PATCH', {
+      ...releaseInput(`${title} corrigée`, linkedArtistId),
+      categoryIds: release.categories.map((category) => category.id),
+    })
+    assert.oneOf(titleCorrection.response.status, [302, 303])
+    await release.refresh()
+    assert.equal(release.slug, originalSlug)
+    assert.equal(release.title, `${title} corrigée`)
+    const oldPublicLink = await client.request(`/sorties/${originalSlug}`)
+    assert.equal(oldPublicLink.response.status, 200)
+  })
+
+  test('category slug collision returns a field error instead of a server error', async ({
+    assert,
+    cleanup,
+  }) => {
+    const user = await memberFixture()
+    cleanup(() => user.delete())
+    const previous = env.get('STAYCONNECT_EDITOR_USER_IDS') ?? ''
+    env.set('STAYCONNECT_EDITOR_USER_IDS', user.id)
+    cleanup(() => env.set('STAYCONNECT_EDITOR_USER_IDS', previous))
+    const suffix = randomUUID().slice(0, 8)
+    const existingName = `Rap Créole ${suffix}`
+    const collidingName = `Rap Creole ${suffix}`
+    const existing = await Category.create({ name: existingName, description: '' })
+    cleanup(() => existing.delete())
+
+    const client = new LocalSessionClient()
+    await client.login(user)
+    const result = await client.request('/equipe/sorties', 'POST', {
+      ...releaseInput(`Collision ${randomUUID()}`),
+      newArtistName: `Collision artist ${randomUUID()}`,
+      newCategoryName: collidingName,
+    })
+    assert.oneOf(result.response.status, [302, 303])
+    assert.equal(result.response.headers.get('location'), '/equipe/sorties/nouvelle')
+    assert.isNull(await Category.query().where('name', collidingName).first())
   })
 
   test('invalid relation rolls back a new artist and release', async ({ assert, cleanup }) => {

@@ -32,6 +32,9 @@ export const createTeamReleaseValidator = vine.compile(
 export const updateTeamReleaseValidator = vine.compile(
   vine.object({
     ...releaseFields,
+    // A correction submits the full category selection. Missing input must not
+    // silently detach the categories already linked to the release.
+    categoryIds: vine.array(vine.string().uuid()).maxLength(12),
     urls: vine.array(httpsUrl.clone()).maxLength(12).optional(),
   })
 )

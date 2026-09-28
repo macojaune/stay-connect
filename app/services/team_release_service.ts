@@ -1,4 +1,5 @@
 import db from '@adonisjs/lucid/services/db'
+import string from '@adonisjs/core/helpers/string'
 import type { TransactionClientContract } from '@adonisjs/lucid/types/database'
 import Artist from '#models/artist'
 import Category from '#models/category'
@@ -157,6 +158,20 @@ export default class TeamReleaseService {
       .whereRaw('lower(name) = lower(?)', [newName])
       .first()
     if (!category) {
+      const slug = string.slug(newName)
+      if (!slug) {
+        throw new TeamReleaseInputError(
+          'newCategoryName',
+          'Choisis un nom de catégorie plus précis.'
+        )
+      }
+      const slugMatch = await Category.query({ client: trx }).where('slug', slug).first()
+      if (slugMatch) {
+        throw new TeamReleaseInputError(
+          'newCategoryName',
+          `Ce nom ressemble à la catégorie « ${slugMatch.name} ». Sélectionne-la dans la recherche.`
+        )
+      }
       category = await Category.create({ name: newName, description: '' }, { client: trx })
     }
     return Array.from(new Set([...selectedIds, category.id]))

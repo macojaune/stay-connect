@@ -103,7 +103,9 @@ export default class Release extends BaseModel {
       return
     }
 
-    if (!release.slug || release.$dirty.title || release.$dirty.artistId) {
+    // Public URLs are shared in emails and pull-ups. Keep an existing slug stable
+    // when the team corrects a title or the primary artist.
+    if (!release.slug) {
       const artistName = release.artistId
         ? await release
             .related('artist')

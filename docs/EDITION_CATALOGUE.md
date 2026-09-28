@@ -11,7 +11,7 @@ L'adresse email seule ne peut pas servir d'autorisation : l'inscription native n
 ## Parcours
 
 - `GET /equipe/sorties/nouvelle` : choisir un artiste existant ou créer son profil par nom, saisir le titre, la date précise, le type et au moins un lien d'écoute HTTPS. La cover HTTPS et les catégories sont facultatives ; une catégorie peut être créée depuis le formulaire.
-- `GET /equipe/sorties/:id/modifier` : corriger ces données sur une sortie existante. L'édition conserve son identifiant, ses pull-ups et sa provenance automatique éventuelle.
+- `GET /equipe/sorties/:id/modifier` : corriger ces données sur une sortie existante. L'édition conserve son identifiant, son slug public, ses pull-ups et sa provenance automatique éventuelle. Le titre affiché peut donc différer du slug historique, afin que les liens déjà partagés restent valides.
 - Une fiche ancienne qui n'a aucun lien peut être corrigée sans en ajouter. Une fiche déjà liée conserve au moins un lien ; tout nouveau lien doit être HTTPS. Une cover locale historique est conservée si le champ cover n'est pas modifié ; une nouvelle cover doit avoir une URL HTTPS.
 - `POST /equipe/sorties` et `PATCH /equipe/sorties/:id` : les deux actions exigent une session web dont l'UUID figure dans l'allowlist. Un membre ordinaire reçoit 403. La sortie est publique à l'enregistrement ; aucun brouillon, upload d'image ou appel à Songlink n'est déclenché.
 
