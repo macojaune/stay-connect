@@ -1,8 +1,10 @@
-import { useState, type FormEvent, type InputHTMLAttributes } from 'react'
-import { Head, Link, useForm } from '@inertiajs/react'
+import { useEffect, useState, type FormEvent, type InputHTMLAttributes } from 'react'
+import { Head, Link, router, useForm, useRemember } from '@inertiajs/react'
 import { ArrowRight, ArrowUpRight, RotateCcw, ListOrdered, CalendarDays } from 'lucide-react'
 import PullUpRecord from '~/components/editorial/PullUpRecord'
 import { getDemoTerritories, territoryLabels } from '~/demo/territories'
+import { trackNewsletterSubscribed } from '~/lib/analytics'
+import { clearLeaderboardDirty, isLeaderboardDirty } from '~/lib/leaderboard_refresh'
 import EditorialLayout from '~/layouts/EditorialLayout'
 import type { TimelineRelease as ReleaseItem, TimelineWeek as Week } from '#contracts/discovery'
 
@@ -60,6 +62,7 @@ function Newsletter({ errors }: Pick<HomeProps, 'errors'>) {
         if (!page.props.errors || Object.keys(page.props.errors).length === 0) {
           userForm.reset()
           setUserMessage('Tu es inscrit·e. Rendez-vous au prochain récap !')
+          trackNewsletterSubscribed('listener')
         }
       },
     })
@@ -77,6 +80,7 @@ function Newsletter({ errors }: Pick<HomeProps, 'errors'>) {
         if (!page.props.errors || Object.keys(page.props.errors).length === 0) {
           artistForm.reset()
           setArtistMessage('Merci, ton inscription a bien été enregistrée.')
+          trackNewsletterSubscribed('artist')
         }
       },
     })
@@ -121,13 +125,7 @@ function Newsletter({ errors }: Pick<HomeProps, 'errors'>) {
               error={userForm.errors.email}
               required
             />
-            <button
-              className="sc-button"
-              type="submit"
-              disabled={userForm.processing}
-              data-umami-event="newsletter-submit"
-              data-umami-event-type="user"
-            >
+            <button className="sc-button" type="submit" disabled={userForm.processing}>
               {userForm.processing ? 'Inscription…' : 'Recevoir le récap'}
               <ArrowRight size={17} aria-hidden="true" />
             </button>
@@ -172,13 +170,7 @@ function Newsletter({ errors }: Pick<HomeProps, 'errors'>) {
                   required
                 />
               </div>
-              <button
-                className="sc-button"
-                type="submit"
-                disabled={artistForm.processing}
-                data-umami-event="newsletter-submit"
-                data-umami-event-type="artist"
-              >
+              <button className="sc-button" type="submit" disabled={artistForm.processing}>
                 {artistForm.processing ? 'Inscription…' : 'Rejoindre côté artistes'}
                 <ArrowRight size={17} aria-hidden="true" />
               </button>
@@ -282,11 +274,24 @@ function ReleaseEntry({
 
 export default function Home({ timelineData, errors }: HomeProps) {
   const weeks = [...timelineData].sort((a, b) => a.weekStart.localeCompare(b.weekStart))
-  const [selectedWeek, setSelectedWeek] = useState(
-    () =>
-      timelineData.find((week) => week.title === 'Cette semaine')?.weekStart || weeks[0]?.weekStart
-  )
-  const [sort, setSort] = useState<'date' | 'boosts'>('date')
+  const defaultWeek =
+    timelineData.find((week) => week.title === 'Cette semaine')?.weekStart ||
+    weeks[0]?.weekStart ||
+    ''
+  const [rememberedWeek, setSelectedWeek] = useRemember(defaultWeek, 'discovery:selected-week')
+  const selectedWeek = weeks.some((week) => week.weekStart === rememberedWeek)
+    ? rememberedWeek
+    : defaultWeek
+  const [sort, setSort] = useRemember<'date' | 'boosts'>('date', 'discovery:sort')
+
+  useEffect(() => {
+    if (isLeaderboardDirty()) {
+      router.reload({
+        only: ['timelineData'],
+        onSuccess: () => clearLeaderboardDirty(),
+      })
+    }
+  }, [])
   const week = weeks.find((item) => item.weekStart === selectedWeek)
   const releases = [...(week?.news || [])].sort(
     (a, b) =>

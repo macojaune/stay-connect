@@ -2,6 +2,8 @@ import type { ReleaseShowProps } from '#contracts/release_page'
 import type { SharedProps } from '@adonisjs/inertia/types'
 import React, { useEffect, useMemo, useState } from 'react'
 import EditorialLayout from '~/layouts/EditorialLayout'
+import { trackPlatformOpened, trackPullUp } from '~/lib/analytics'
+import { markLeaderboardDirty } from '~/lib/leaderboard_refresh'
 import '~/css/release-editorial.css'
 import { Head, Link, router, usePage } from '@inertiajs/react'
 import { ArrowLeft, ArrowUpRight, Check, Copy, Link2, RotateCcw, Trash2 } from 'lucide-react'
@@ -248,7 +250,11 @@ const ReleaseShow: React.FC<ReleaseShowProps> = ({ release, shareUrl }) => {
       preserveScroll: true,
       preserveState: true,
       onStart: () => setVoteIsSubmitting(true),
-      onSuccess: () => setVoteFeedback('saved'),
+      onSuccess: () => {
+        setVoteFeedback('saved')
+        trackPullUp(release.currentUserVote ? 'updated' : 'added', release.slug)
+        if (!release.currentUserVote) markLeaderboardDirty()
+      },
       onFinish: () => setVoteIsSubmitting(false),
     }
 
@@ -269,6 +275,8 @@ const ReleaseShow: React.FC<ReleaseShowProps> = ({ release, shareUrl }) => {
       onSuccess: () => {
         setVoteComment('')
         setVoteFeedback('removed')
+        trackPullUp('removed', release.slug)
+        markLeaderboardDirty()
       },
       onFinish: () => setVoteIsSubmitting(false),
     })
@@ -413,6 +421,7 @@ const ReleaseShow: React.FC<ReleaseShowProps> = ({ release, shareUrl }) => {
                         rel="noopener noreferrer"
                         className="sc-release-platform"
                         aria-label={`Écouter sur ${link.label}, nouvel onglet`}
+                        onClick={() => trackPlatformOpened(link.key, release.slug)}
                       >
                         <IconComponent className="sc-release-platform-logo" aria-hidden="true" />
                         <span>{link.label}</span>
