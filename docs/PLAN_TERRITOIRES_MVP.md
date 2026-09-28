@@ -1,12 +1,12 @@
 # Territoires sur les sorties — tranche MVP
 
-## État vérifié
+## État avant cette tranche
 
 - Le catalogue réel importe les artistes et les crédits depuis Spotify. `Artist` ne possède aucun territoire ; `Release` pointe vers un artiste principal et ses `Feature` peuvent pointer vers un artiste existant ou ne conserver qu'un nom et un identifiant Spotify.
 - La home reçoit `TimelineRelease` depuis `app/controllers/home_controller.ts`. Ce contrat ne contient pas de territoire. Les badges actuels de `inertia/pages/home.tsx` viennent de `inertia/demo/territories.ts` et n'apparaissent qu'en mode démo ; leurs attributions sont fictives.
 - `Artist.isVerified` ne prouve aucune affiliation territoriale. Ni un nom, ni un genre, ni une catégorie, ni une image, ni une fiche Spotify ne constituent une provenance suffisante.
 
-## Contrat proposé
+## Contrat retenu
 
 Un badge indique **une affiliation artistique avec un territoire, vérifiée par l'équipe**. Il ne prétend pas indiquer le lieu de naissance, l'adresse actuelle ou la nationalité. Le jeu initial de codes est `GP`, `MQ`, `GF`, avec leurs libellés Guadeloupe, Martinique et Guyane. Un artiste peut avoir plusieurs affiliations. L'absence d'affiliation connue reste une valeur inconnue : aucun badge ni badge « autre ».
 
@@ -22,9 +22,9 @@ Pour chaque sortie de la home, composer les codes vérifiés de l'artiste princi
 
 La migration doit être **schéma seul** : aucune valeur par défaut et aucun remplissage depuis Spotify ou `inertia/demo/territories.ts`. Toute reprise éditoriale ultérieure part d'une liste sourcée, passe par une prévisualisation, dispose d'un point de retour, et écrit de façon idempotente grâce à la clé unique. Contrôler ensuite les comptes par territoire, les sorties à crédits multiples et un échantillon de fiches réelles ; conserver les affiliations non établies à l'état inconnu.
 
-## Décision métier minimale
+## Décision métier confirmée
 
-Confirmer que le badge signifie bien « affiliation artistique ou culturelle vérifiée, diaspora incluse » pour le périmètre initial `GP/MQ/GF`, et non « origine géographique personnelle ». Cette définition fixe les critères que l'équipe devra appliquer à chaque source avant toute saisie.
+Marvin a confirmé le 27 septembre 2026 que le badge signifie « affiliation musicale ou culturelle vérifiée par l'équipe, diaspora incluse » pour le périmètre initial `GP/MQ/GF`. Il ne représente ni le lieu de naissance ni le lieu de résidence. Cette définition fixe les critères que l'équipe appliquera à chaque source avant toute saisie.
 
 ## Réalisation locale
 

@@ -31,7 +31,7 @@ Marvin consacre quelques heures par semaine au produit. Une petite tranche doit 
 - La découverte et l'écoute externe restent accessibles sans compte.
 - Le nom visible est « Pull-up » ; les identifiants et routes techniques de boost restent inchangés.
 - Au MVP, seule l'équipe StayConnect ajoute ou corrige manuellement une sortie. Une sortie enregistrée est publique immédiatement ; le catalogue Spotify automatique continue en parallèle. L'accès éditeur est refusé par défaut et vérifié côté serveur.
-- Le modèle actuel ne stocke aucun territoire structuré. Les badges du prototype sont des exemples fictifs en mode démo, invités compris ; ils ne décrivent pas l’origine réelle des artistes.
+- Les badges du catalogue décrivent une affiliation musicale ou culturelle vérifiée par l'équipe, y compris dans la diaspora. Plusieurs affiliations peuvent apparaître sur une sortie. Les badges du mode démo restent fictifs.
 - Accès artiste vérifié, clips et événements restent des sujets ultérieurs.
 
 ## Brand Commitments
@@ -51,11 +51,11 @@ Code AdonisJS/Inertia/React existant, tickets du projet StayConnect dans Linear 
 
 ## Confirmations
 
-Positionnement, périmètre géographique, catalogue automatisé, prototype navigable et nom « Pull-up » confirmés par Marvin le 26 septembre 2026.
+Positionnement, périmètre géographique, catalogue automatisé, prototype navigable et nom « Pull-up » confirmés par Marvin le 26 septembre 2026. Les affiliations territoriales vérifiées par l'équipe, y compris dans la diaspora, et les deux modes de pochette (URL HTTPS ou fichier image) ont été confirmés le 27 septembre 2026.
 
 ## Open decisions
 
-Critères précis d'éligibilité d'un artiste, traitement des suggestions et accès aux profils revendiqués à préciser lors des tâches correspondantes. Le format de la pochette ajoutée manuellement et les comptes équipe à habiliter restent à confirmer avant activation de l'éditeur.
+Critères précis d'éligibilité d'un artiste, traitement des suggestions et accès aux profils revendiqués à préciser lors des tâches correspondantes. L'activation de l'éditeur attend un compte équipe dont la propriété de l'adresse a été vérifiée dans l'environnement concerné.
 
 ## Sources historiques consultées
 
