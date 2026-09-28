@@ -159,12 +159,12 @@ export default class SpotifyService {
       limit?: number
       offset?: number
     } = {}
-  ): Promise<{ items: SpotifyAlbumSummary[] }> {
+  ): Promise<{ items: SpotifyAlbumSummary[]; next: string | null }> {
     const params = new URLSearchParams({
-      include_groups: options.includeGroups?.join(',') || 'album,single,',
+      include_groups: options.includeGroups?.join(',') || 'album,single',
       // market: options.market || 'FR',
-      limit: (options.limit || 50).toString(),
-      offset: (options.offset || 0).toString(),
+      limit: Math.min(Math.max(options.limit ?? 10, 1), 10).toString(),
+      offset: (options.offset ?? 0).toString(),
     })
     logger.info(`Fetching albums for artist ${spotifyId} with params ${params}`)
     const res = await this.makeRequest(
@@ -271,28 +271,49 @@ export default class SpotifyService {
 
     try {
       // Get recent albums
-      const daysAgo = DateTime.now().minus({ days: nbDays })
-      const albums = await this.getArtistAlbums(artist.spotifyId, {
-        includeGroups: ['album', 'single'],
-        // limit: 10,
-      })
+      const daysAgo = DateTime.now().startOf('day').minus({ days: nbDays })
+      const seenAlbumIds = new Set<string>()
+      let offset = 0
+      let hasNextPage = true
 
-      for (const album of albums.items) {
-        const releaseDate = DateTime.fromISO(album.release_date)
+      while (hasNextPage) {
+        const albums = await this.getArtistAlbums(artist.spotifyId, {
+          includeGroups: ['album', 'single'],
+          limit: 10,
+          offset,
+        })
 
-        // Only check releases from the specified number of days
-        if (releaseDate < daysAgo) {
-          continue
+        if (albums.items.length === 0 && albums.next) {
+          throw new Error(
+            `Spotify returned an empty album page with a next page for ${artist.name}`
+          )
         }
 
-        // Check if we already have this release
-        const existingRelease = await Release.query().where('spotifyId', album.id).first()
+        for (const album of albums.items) {
+          if (seenAlbumIds.has(album.id)) {
+            continue
+          }
+          seenAlbumIds.add(album.id)
 
-        if (!existingRelease) {
-          const fullAlbum = await this.getAlbum(album.id)
-          await this.createReleaseFromSpotify(artist, fullAlbum, album.album_type === 'single')
-          stats.newReleases++
+          // A month or year-only date cannot be placed in a daily release feed.
+          if (album.release_date_precision !== 'day') {
+            continue
+          }
+          const releaseDate = DateTime.fromISO(album.release_date)
+          if (!releaseDate.isValid || releaseDate < daysAgo) {
+            continue
+          }
+
+          const existingRelease = await Release.query().where('spotifyId', album.id).first()
+          if (!existingRelease) {
+            const fullAlbum = await this.getAlbum(album.id)
+            await this.createReleaseFromSpotify(artist, fullAlbum, album.album_type === 'single')
+            stats.newReleases++
+          }
         }
+
+        offset += albums.items.length
+        hasNextPage = albums.next !== null
       }
     } catch (error: unknown) {
       logger.error(

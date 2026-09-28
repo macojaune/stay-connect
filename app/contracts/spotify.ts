@@ -37,6 +37,7 @@ const albumSummarySchema = vine.object({
   id: vine.string(),
   name: vine.string(),
   release_date: vine.string(),
+  release_date_precision: vine.enum(['day', 'month', 'year']),
   album_type: vine.enum(['album', 'single', 'compilation']),
   images: vine.array(imageSchema.clone()),
   artists: vine.array(artistCreditSchema.clone()),
@@ -63,7 +64,10 @@ export const spotifyArtistSearchValidator = vine.compile(
   vine.object({ artists: vine.object({ items: vine.array(artistSchema.clone()) }) })
 )
 export const spotifyArtistAlbumsValidator = vine.compile(
-  vine.object({ items: vine.array(albumSummarySchema.clone()) })
+  vine.object({
+    items: vine.array(albumSummarySchema.clone()),
+    next: vine.string().url().nullable(),
+  })
 )
 export const spotifyAlbumValidator = vine.compile(
   vine.object({
