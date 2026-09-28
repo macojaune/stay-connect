@@ -1,5 +1,6 @@
 import type { ReleaseShowProps } from '#contracts/release_page'
 import type { SharedProps } from '@adonisjs/inertia/types'
+import { territoryLabels } from '#contracts/territories'
 import React, { useEffect, useMemo, useState } from 'react'
 import EditorialLayout from '~/layouts/EditorialLayout'
 import { trackPlatformOpened, trackPullUp } from '~/lib/analytics'
@@ -389,6 +390,21 @@ const ReleaseShow: React.FC<ReleaseShowProps> = ({ release, shareUrl }) => {
               <ul className="sc-release-genres" aria-label="Genres musicaux">
                 {release.categories.map((category) => (
                   <li key={category.id}>{category.name}</li>
+                ))}
+              </ul>
+            )}
+            {release.territories.length > 0 && (
+              <ul
+                className="sc-territories sc-release-territories"
+                aria-label="Affiliations des artistes crédités"
+              >
+                {release.territories.map((territory) => (
+                  <li
+                    key={territory}
+                    className={`sc-territory sc-territory-${territory.toLowerCase()}`}
+                  >
+                    {territoryLabels[territory]}
+                  </li>
                 ))}
               </ul>
             )}

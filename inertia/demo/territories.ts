@@ -1,5 +1,7 @@
 /** Visual fixtures only. They do not describe the actual origins of these artists. */
-export type TerritoryCode = 'GP' | 'MQ' | 'GF'
+import type { TerritoryCode } from '#contracts/territories'
+import { territoryLabels } from '#contracts/territories'
+export { territoryLabels }
 export type TerritoryCredit = {
   territories: TerritoryCode[]
   featuredTerritories: TerritoryCode[][]
@@ -15,11 +17,6 @@ export const demoTerritoryCredits: Record<string, TerritoryCredit> = {
     source: 'demo',
   },
   'le-youth-bazarde': { territories: ['GF'], featuredTerritories: [['MQ']], source: 'demo' },
-}
-export const territoryLabels: Record<TerritoryCode, string> = {
-  GP: 'Guadeloupe',
-  MQ: 'Martinique',
-  GF: 'Guyane',
 }
 export function getDemoTerritories(slug: string): TerritoryCode[] {
   const credits = demoTerritoryCredits[slug]

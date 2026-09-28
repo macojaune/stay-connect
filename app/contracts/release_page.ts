@@ -1,3 +1,5 @@
+import type { TerritoryCode } from '#contracts/territories'
+
 export type ReleaseShowProps = {
   release: {
     id: string
@@ -20,6 +22,7 @@ export type ReleaseShowProps = {
       name: string
       slug?: string
     }>
+    territories: TerritoryCode[]
     featuredArtists: Array<{
       id: string
       artistName?: string | null

@@ -13,6 +13,7 @@ import { randomUUID } from 'node:crypto'
 import Category from '#models/category'
 import Release from '#models/release'
 import User from '#models/user'
+import ArtistTerritory from '#models/artist_territory'
 
 export type ArtistFollowers = {
   spotify?: number
@@ -83,6 +84,9 @@ export default class Artist extends BaseModel {
 
   @hasMany(() => Release)
   declare releases: HasMany<typeof Release>
+
+  @hasMany(() => ArtistTerritory)
+  declare territories: HasMany<typeof ArtistTerritory>
 
   @manyToMany(() => Release, {
     pivotTable: 'features',

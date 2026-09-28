@@ -1,3 +1,5 @@
+import type { TerritoryCode } from '#contracts/territories'
+
 export type TimelineRelease = {
   id: string
   title: string
@@ -10,6 +12,7 @@ export type TimelineRelease = {
   category: string
   imageUrl: string | null
   featuredArtists: string[]
+  territories: TerritoryCode[]
 }
 
 export type TimelineWeek = {

@@ -198,7 +198,7 @@ function ReleaseEntry({
 }) {
   const [imageFailed, setImageFailed] = useState(false)
   const href = `/sorties/${release.slug}`
-  const territories = demoMode ? getDemoTerritories(release.slug) : []
+  const territories = demoMode ? getDemoTerritories(release.slug) : release.territories
   return (
     <article className={`sc-entry${rank ? ' sc-entry-ranked' : ''}`}>
       {rank && (
@@ -246,12 +246,23 @@ function ReleaseEntry({
           <p className="sc-entry-featuring">Avec {release.featuredArtists.join(', ')}</p>
         )}
         {territories.length > 0 && (
-          <ul className="sc-territories" aria-label="Territoires fictifs pour cet aperçu">
+          <ul
+            className="sc-territories"
+            aria-label={
+              demoMode
+                ? 'Territoires fictifs pour cet aperçu'
+                : 'Affiliations des artistes crédités'
+            }
+          >
             {territories.map((territory) => (
               <li
                 key={territory}
                 className={`sc-territory sc-territory-${territory.toLowerCase()}`}
-                title="Attribution fictive pour tester les badges, invités compris"
+                title={
+                  demoMode
+                    ? 'Attribution fictive pour tester les badges, invités compris'
+                    : undefined
+                }
               >
                 {territoryLabels[territory]}
               </li>

@@ -25,3 +25,11 @@ La migration doit être **schéma seul** : aucune valeur par défaut et aucun re
 ## Décision métier minimale
 
 Confirmer que le badge signifie bien « affiliation artistique ou culturelle vérifiée, diaspora incluse » pour le périmètre initial `GP/MQ/GF`, et non « origine géographique personnelle ». Cette définition fixe les critères que l'équipe devra appliquer à chaque source avant toute saisie.
+
+## Réalisation locale
+
+Le code du MVP stocke les affiliations dans `artist_territories` avec code, nature et note de source, URL publique éventuelle, compte vérificateur et date. La migration est limitée au schéma : elle ne crée aucune affiliation. Une sauvegarde du schéma local `stayconnect_relaunch_demo` a été prise avant sa migration dans `/tmp/stayconnect-relaunch-demo-before-territories-20260927.sql`.
+
+Un compte équipe autorisé par `STAYCONNECT_EDITOR_USER_IDS` peut ouvrir `/equipe/artistes/:id/territoires` depuis la fiche artiste. Chaque affiliation retenue exige une source et une confirmation explicite ; enlever une sélection retire immédiatement le badge des sorties concernées. Les badges sur l'accueil et les fiches sortie sont calculés à partir des artistes crédités dont le profil est lié. Aucun badge n'apparaît pour une affiliation inconnue ou un invité sans profil lié. Les badges du mode démo restent signalés comme fictifs.
+
+Le test local couvre le refus des visiteurs et membres ordinaires, le rejet d'un doublon, le rendu de deux affiliations liées et leur retrait. Cette vérification ne valide aucune affiliation d'artiste réel. L'éditeur reste fermé tant qu'aucun UUID équipe n'est configuré dans l'environnement visé.

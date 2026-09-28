@@ -15,6 +15,8 @@ const ArtistPagesController = () => import('#controllers/artist_pages_controller
 const ArtistSuggestionsController = () => import('#controllers/artist_suggestions_controller')
 const MemberController = () => import('#controllers/member_controller')
 const TeamReleasesController = () => import('#controllers/team_releases_controller')
+const TeamArtistTerritoriesController = () =>
+  import('#controllers/team_artist_territories_controller')
 //healthcheck
 router.get('/health', '#controllers/health_checks_controller')
 
@@ -75,6 +77,8 @@ router
     router.get('/equipe/sorties/:id/modifier', [TeamReleasesController, 'edit'])
     router.post('/equipe/sorties', [TeamReleasesController, 'store'])
     router.patch('/equipe/sorties/:id', [TeamReleasesController, 'update'])
+    router.get('/equipe/artistes/:id/territoires', [TeamArtistTerritoriesController, 'edit'])
+    router.put('/equipe/artistes/:id/territoires', [TeamArtistTerritoriesController, 'update'])
   })
   .use(middleware.auth({ guards: ['web'] }))
 

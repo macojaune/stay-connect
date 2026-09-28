@@ -8,6 +8,7 @@ import Artist from '#models/artist'
 import { DateTime } from 'luxon'
 import type { TimelineRelease, TimelineWeek } from '#contracts/discovery'
 import { errorDetails } from '#exceptions/error_details'
+import { releaseTerritories } from '#services/release_territories'
 
 function requireIsoDate(date: DateTime): string {
   const isoDate = date.toISODate()
@@ -39,10 +40,10 @@ export default class HomeController {
           .where('date', '>=', fourWeeksAgo.toSQL())
           .where('date', '<=', nextWeek.toSQL())
           .where('is_secret', false)
-          .preload('artist')
+          .preload('artist', (artistQuery) => artistQuery.preload('territories'))
           .preload('categories')
           .preload('features', (featureQuery) => {
-            featureQuery.preload('artist')
+            featureQuery.preload('artist', (artistQuery) => artistQuery.preload('territories'))
           })
           .orderBy('date', 'desc'),
       []
@@ -212,6 +213,7 @@ export default class HomeController {
         featuredArtists: release.features
           .map((feature) => feature.artistName?.trim() || feature.artist?.name?.trim() || null)
           .filter((name): name is string => !!name),
+        territories: releaseTerritories(release),
       }
 
       groups[weekKey].news.push(newsItem)

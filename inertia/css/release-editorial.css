@@ -135,6 +135,10 @@
   margin-right: 12px;
 }
 
+.sc-release-territories {
+  margin-top: 18px;
+}
+
 .sc-release-artwork {
   grid-area: cover;
   width: 100%;

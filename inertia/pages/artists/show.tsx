@@ -1,4 +1,5 @@
-import { Head, Link } from '@inertiajs/react'
+import { Head, Link, usePage } from '@inertiajs/react'
+import type { SharedProps } from '@adonisjs/inertia/types'
 import { ArrowDown, ArrowLeft, ArrowRight, ArrowUpRight, Disc3 } from 'lucide-react'
 import type { ArtistCredit, ArtistRelease, ArtistShowProps } from '#contracts/artists'
 import EditorialLayout from '~/layouts/EditorialLayout'
@@ -20,6 +21,7 @@ function ArtistName({ credit }: { credit: ArtistCredit }) {
 }
 
 export default function ArtistShow({ artist, releases, pagination }: ArtistShowProps) {
+  const { canManageCatalog } = usePage<SharedProps>().props
   const years = new Map<string, ArtistRelease[]>()
   for (const release of releases) {
     const year = parsedDate(release.date)?.getUTCFullYear().toString() ?? 'Sans date'
@@ -36,9 +38,19 @@ export default function ArtistShow({ artist, releases, pagination }: ArtistShowP
     <EditorialLayout>
       <Head title={artist.name} />
       <div className="sc-shell sc-artist-profile">
-        <Link href="/artistes" className="sc-artist-back">
-          <ArrowLeft size={18} aria-hidden="true" /> Tous les artistes
-        </Link>
+        <div className="sc-artist-utility">
+          <Link href="/artistes" className="sc-artist-back">
+            <ArrowLeft size={18} aria-hidden="true" /> Tous les artistes
+          </Link>
+          {canManageCatalog && (
+            <Link
+              href={`/equipe/artistes/${artist.id}/territoires`}
+              className="sc-artist-territory-edit"
+            >
+              Vérifier les territoires <ArrowUpRight size={16} aria-hidden="true" />
+            </Link>
+          )}
+        </div>
         <header className="sc-artist-profile-hero">
           <Artwork
             src={artist.profilePicture}

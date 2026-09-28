@@ -2,6 +2,7 @@ import Release from '#models/release'
 import Vote from '#models/vote'
 import type { HttpContext } from '@adonisjs/core/http'
 import type { ReleaseShowProps } from '#contracts/release_page'
+import { releaseTerritories } from '#services/release_territories'
 
 function parseReleaseUrls(value: unknown): string[] {
   if (typeof value === 'string') {
@@ -26,7 +27,7 @@ export default class ReleasePagesController {
     const releaseQuery = Release.query()
       .where('is_secret', false)
       .preload('artist', (artistQuery) => {
-        artistQuery.preload('categories').withCount('releases')
+        artistQuery.preload('categories').preload('territories').withCount('releases')
       })
       .preload('categories')
       .preload('votes', (votesQuery) => {
@@ -34,7 +35,7 @@ export default class ReleasePagesController {
       })
       .preload('features', (featureQuery) => {
         featureQuery.preload('artist', (artistQuery) => {
-          artistQuery.withCount('releases')
+          artistQuery.preload('territories').withCount('releases')
         })
       })
 
@@ -94,6 +95,7 @@ export default class ReleasePagesController {
           id: category.id,
           name: category.name,
         })),
+        territories: releaseTerritories(release),
         featuredArtists: release.features
           .map((feature) => ({
             id: feature.id,
