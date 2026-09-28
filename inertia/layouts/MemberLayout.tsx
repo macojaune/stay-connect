@@ -15,7 +15,7 @@ const links = [
 
 export default function MemberLayout({ title, description, children }: Props) {
   const {
-    props: { auth },
+    props: { auth, canManageCatalog },
     url,
   } = usePage<SharedProps>()
   const path = url.split(/[?#]/)[0]
@@ -46,6 +46,11 @@ export default function MemberLayout({ title, description, children }: Props) {
               </Link>
             ))}
           </nav>
+          {canManageCatalog && (
+            <Link href="/equipe/sorties/nouvelle" className="sc-member-catalogue-link">
+              <Plus size={17} aria-hidden="true" /> Ajouter une sortie
+            </Link>
+          )}
           <Link href="/logout" method="post" as="button" className="sc-member-logout">
             <LogOut size={16} aria-hidden="true" /> Se déconnecter
           </Link>

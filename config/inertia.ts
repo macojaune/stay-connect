@@ -2,6 +2,7 @@ import env from '#start/env'
 import { defineConfig } from '@adonisjs/inertia'
 import type { InferSharedProps } from '@adonisjs/inertia/types'
 import type { HttpContext } from '@adonisjs/core/http'
+import { canManageCatalog } from '#services/team_editor_access'
 
 function serializeAuth(ctx?: HttpContext) {
   const user = ctx?.auth?.use('web').user
@@ -16,6 +17,10 @@ function serializeAuth(ctx?: HttpContext) {
       username: user.username,
     },
   }
+}
+
+function serializeCatalogAccess(ctx?: HttpContext) {
+  return canManageCatalog(ctx?.auth?.use('web').user?.id)
 }
 
 const inertiaConfig = defineConfig({
@@ -34,6 +39,11 @@ const inertiaConfig = defineConfig({
       // Inertia also resolves shared props while rendering an error page, without a request context.
       return ctx?.inertia ? ctx.inertia.always(() => serializeAuth(ctx)) : serializeAuth(ctx)
     },
+    canManageCatalog: (ctx) => {
+      return ctx?.inertia
+        ? ctx.inertia.always(() => serializeCatalogAccess(ctx))
+        : serializeCatalogAccess(ctx)
+    },
   },
 
   /**
@@ -49,8 +59,9 @@ export default inertiaConfig
 
 // Inertia 3.1 does not unwrap an AlwaysProp union with its error-page fallback.
 // Infer auth from the serializer used by both branches, never from a duplicate user interface.
-type AppSharedProps = Omit<InferSharedProps<typeof inertiaConfig>, 'auth'> & {
+type AppSharedProps = Omit<InferSharedProps<typeof inertiaConfig>, 'auth' | 'canManageCatalog'> & {
   auth: ReturnType<typeof serializeAuth>
+  canManageCatalog: boolean
 }
 
 declare module '@adonisjs/inertia/types' {

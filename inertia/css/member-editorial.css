@@ -73,6 +73,21 @@
 .sc-member-sidebar nav a:not([aria-current]):hover {
   background: #eadfce;
 }
+.sc-member-catalogue-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  margin-top: 18px;
+  padding: 10px 12px;
+  border: 1px solid var(--sc-ink);
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 700;
+}
+.sc-member-catalogue-link:hover {
+  background: #eadfce;
+}
 .sc-member-logout {
   margin-top: 28px;
   color: var(--sc-muted);
@@ -609,6 +624,12 @@
     margin: 0 0 16px;
     align-self: center;
     font-size: 11px;
+  }
+  .sc-member-catalogue-link {
+    grid-column: 1 / -1;
+    grid-row: 3;
+    justify-content: center;
+    margin-top: 0;
   }
   .sc-member-heading {
     padding-top: 0;

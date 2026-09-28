@@ -4,6 +4,37 @@
   color: var(--sc-ink);
 }
 
+.sc-release-utility {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+  margin-bottom: 28px;
+}
+
+.sc-release-utility .sc-release-back {
+  margin-bottom: 0;
+}
+
+.sc-release-edit {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  color: var(--sc-ink);
+  text-decoration: underline;
+  text-decoration-color: var(--sc-orange);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+  font-size: 14px;
+  font-weight: 750;
+}
+
+.sc-release-edit:hover {
+  text-decoration-color: var(--sc-ink);
+}
+
 .sc-release-back {
   display: inline-flex;
   align-items: center;

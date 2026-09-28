@@ -30,6 +30,7 @@ Marvin consacre quelques heures par semaine au produit. Une petite tranche doit 
 - Un pull-up binaire par membre et par sortie, commentaire facultatif ; aucune note ou moyenne.
 - La découverte et l'écoute externe restent accessibles sans compte.
 - Le nom visible est « Pull-up » ; les identifiants et routes techniques de boost restent inchangés.
+- Au MVP, seule l'équipe StayConnect ajoute ou corrige manuellement une sortie. Une sortie enregistrée est publique immédiatement ; le catalogue Spotify automatique continue en parallèle. L'accès éditeur est refusé par défaut et vérifié côté serveur.
 - Le modèle actuel ne stocke aucun territoire structuré. Les badges du prototype sont des exemples fictifs en mode démo, invités compris ; ils ne décrivent pas l’origine réelle des artistes.
 - Accès artiste vérifié, clips et événements restent des sujets ultérieurs.
 
@@ -54,7 +55,7 @@ Positionnement, périmètre géographique, catalogue automatisé, prototype navi
 
 ## Open decisions
 
-Critères précis d'éligibilité d'un artiste, traitement des suggestions et accès aux profils revendiqués à préciser lors des tâches correspondantes.
+Critères précis d'éligibilité d'un artiste, traitement des suggestions et accès aux profils revendiqués à préciser lors des tâches correspondantes. Le format de la pochette ajoutée manuellement et les comptes équipe à habiliter restent à confirmer avant activation de l'éditeur.
 
 ## Sources historiques consultées
 

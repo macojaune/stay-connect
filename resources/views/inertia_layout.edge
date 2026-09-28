@@ -91,7 +91,7 @@
   <script>
     // Keep the tracker available after Inertia navigation from sign-in to a public page.
     window.stayconnectBeforeSend = function (_type, payload) {
-      if (/^\/(login|register|forgot-password|reset-password|mon-espace|mon-compte)(\/|$)/.test(window.location.pathname)) return false;
+      if (/^\/(login|register|forgot-password|reset-password|mon-espace|mon-compte|equipe)(\/|$)/.test(window.location.pathname)) return false;
       return payload;
     };
   </script>

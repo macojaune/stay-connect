@@ -26,6 +26,7 @@ import {
 
 type PageProps = {
   auth: SharedProps['auth']
+  canManageCatalog: SharedProps['canManageCatalog']
   errors?: Record<string, string>
 }
 
@@ -88,7 +89,7 @@ const PLATFORM_CONFIGS: PlatformConfig[] = [
 ]
 
 const ReleaseShow: React.FC<ReleaseShowProps> = ({ release, shareUrl }) => {
-  const { auth, errors } = usePage<PageProps>().props
+  const { auth, canManageCatalog, errors } = usePage<PageProps>().props
   const [copyStatus, setCopyStatus] = useState<'idle' | 'copied' | 'error'>('idle')
   const [showMorePlatforms, setShowMorePlatforms] = useState(false)
   const [voteComment, setVoteComment] = useState(release.currentUserVote?.comment ?? '')
@@ -354,9 +355,16 @@ const ReleaseShow: React.FC<ReleaseShowProps> = ({ release, shareUrl }) => {
         <link rel="canonical" href={shareUrl} />
       </Head>
       <div className="sc-shell sc-release">
-        <Link href="/" className="sc-release-back">
-          <ArrowLeft size={18} aria-hidden="true" /> Toutes les sorties
-        </Link>
+        <div className="sc-release-utility">
+          <Link href="/" className="sc-release-back">
+            <ArrowLeft size={18} aria-hidden="true" /> Toutes les sorties
+          </Link>
+          {canManageCatalog && (
+            <Link className="sc-release-edit" href={`/equipe/sorties/${release.id}/modifier`}>
+              Corriger la sortie <ArrowUpRight size={16} aria-hidden="true" />
+            </Link>
+          )}
+        </div>
 
         <article className="sc-release-hero">
           <header className="sc-release-heading">

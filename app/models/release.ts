@@ -82,6 +82,7 @@ export default class Release extends BaseModel {
     pivotForeignKey: 'release_id',
     relatedKey: 'id',
     pivotRelatedForeignKey: 'category_id',
+    pivotTimestamps: true,
   })
   declare categories: ManyToMany<typeof Category>
 

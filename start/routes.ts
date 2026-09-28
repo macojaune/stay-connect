@@ -14,6 +14,7 @@ const AuthController = () => import('#controllers/auth_controller')
 const ArtistPagesController = () => import('#controllers/artist_pages_controller')
 const ArtistSuggestionsController = () => import('#controllers/artist_suggestions_controller')
 const MemberController = () => import('#controllers/member_controller')
+const TeamReleasesController = () => import('#controllers/team_releases_controller')
 //healthcheck
 router.get('/health', '#controllers/health_checks_controller')
 
@@ -65,6 +66,15 @@ router
     router.post('/mon-compte/mot-de-passe', [MemberController, 'requestPasswordReset'])
     router.get('/mon-espace/propositions', [MemberController, 'suggestions'])
     router.post('/mon-espace/propositions', [MemberController, 'storeSuggestion'])
+  })
+  .use(middleware.auth({ guards: ['web'] }))
+
+router
+  .group(() => {
+    router.get('/equipe/sorties/nouvelle', [TeamReleasesController, 'create'])
+    router.get('/equipe/sorties/:id/modifier', [TeamReleasesController, 'edit'])
+    router.post('/equipe/sorties', [TeamReleasesController, 'store'])
+    router.patch('/equipe/sorties/:id', [TeamReleasesController, 'update'])
   })
   .use(middleware.auth({ guards: ['web'] }))
 
