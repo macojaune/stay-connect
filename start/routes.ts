@@ -15,6 +15,7 @@ const ArtistPagesController = () => import('#controllers/artist_pages_controller
 const ArtistSuggestionsController = () => import('#controllers/artist_suggestions_controller')
 const MemberController = () => import('#controllers/member_controller')
 const TeamReleasesController = () => import('#controllers/team_releases_controller')
+const CoversController = () => import('#controllers/covers_controller')
 const TeamArtistTerritoriesController = () =>
   import('#controllers/team_artist_territories_controller')
 //healthcheck
@@ -31,6 +32,7 @@ router
 
 // Web routes
 router.get('/', '#controllers/home_controller.index').as('home')
+router.get('/covers/:name', [CoversController, 'show'])
 router.get('/sorties/:slug', '#controllers/release_pages_controller.show').as('releases.show')
 router.get('/artistes', [ArtistPagesController, 'index'])
 router.post('/artistes/suggestions', [ArtistSuggestionsController, 'store'])

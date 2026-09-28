@@ -1,11 +1,13 @@
 import { test } from '@japa/runner'
 import { randomUUID } from 'node:crypto'
+import { readdir, rm } from 'node:fs/promises'
 import { DateTime } from 'luxon'
 import env from '#start/env'
 import Artist from '#models/artist'
 import Category from '#models/category'
 import Release from '#models/release'
 import User from '#models/user'
+import CoverStorage from '#services/cover_storage'
 
 const password = 'TeamEditorFixturePassword1!'
 
@@ -24,15 +26,16 @@ class LocalSessionClient {
   private readonly cookies = new Map<string, string>()
   private version = ''
 
-  async request(path: string, method = 'GET', data?: Record<string, unknown>) {
+  async request(path: string, method = 'GET', data?: Record<string, unknown> | FormData) {
     const headers: Record<string, string> = {
       'Accept': 'text/html',
       'X-Inertia': 'true',
       'X-Inertia-Version': this.version,
       'Cookie': Array.from(this.cookies.values()).join('; '),
+      'Referer': `http://127.0.0.1:${env.get('PORT')}/equipe/sorties/nouvelle`,
     }
     if (data !== undefined) {
-      headers['Content-Type'] = 'application/json'
+      if (!(data instanceof FormData)) headers['Content-Type'] = 'application/json'
       const xsrf = this.cookies.get('XSRF-TOKEN')?.slice('XSRF-TOKEN='.length)
       if (!xsrf) throw new Error('Initialize the fixture session before submitting')
       headers['X-XSRF-TOKEN'] = decodeURIComponent(xsrf)
@@ -41,7 +44,9 @@ class LocalSessionClient {
       method,
       redirect: 'manual',
       headers,
-      ...(data !== undefined ? { body: JSON.stringify(data) } : {}),
+      ...(data !== undefined
+        ? { body: data instanceof FormData ? data : JSON.stringify(data) }
+        : {}),
     })
     for (const cookie of response.headers.getSetCookie()) {
       const pair = cookie.split(';')[0]
@@ -349,5 +354,91 @@ test.group('Team release editor authorization and publication', (group) => {
     assert.equal(release.cover, '/demo/cover-1.jpg')
     assert.equal(release.description, 'Correction sans lien historique')
     assert.deepEqual(release.urls, [])
+  })
+
+  test('validates and serves an uploaded cover, and removes a failed upload', async ({
+    assert,
+    cleanup,
+  }) => {
+    const user = await memberFixture()
+    cleanup(() => user.delete())
+    const previous = env.get('STAYCONNECT_EDITOR_USER_IDS') ?? ''
+    env.set('STAYCONNECT_EDITOR_USER_IDS', user.id)
+    cleanup(() => env.set('STAYCONNECT_EDITOR_USER_IDS', previous))
+    const artist = await Artist.create({
+      name: `Cover artist ${randomUUID()}`,
+      description: null,
+      isVerified: false,
+      spotifyId: null,
+    })
+    cleanup(() => artist.delete())
+    const client = new LocalSessionClient()
+    await client.login(user)
+    const title = `Cover release ${randomUUID()}`
+    let releaseId: string | undefined
+    cleanup(async () => {
+      if (releaseId) {
+        const release = await Release.find(releaseId)
+        await release?.delete()
+      }
+    })
+    const image = Buffer.from(
+      'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIHWP4z8DwHwAFgAI/ScLttAAAAABJRU5ErkJggg==',
+      'base64'
+    )
+    const form = (name: string, bytes: Buffer, filename: string) => {
+      const data = new FormData()
+      data.set('title', name)
+      data.set('description', '')
+      data.set('date', '2026-09-26')
+      data.set('type', 'single')
+      data.set('artistId', artist.id)
+      data.set('urls[0]', 'https://example.test/listen')
+      data.set('coverFile', new Blob([bytes], { type: 'image/png' }), filename)
+      return data
+    }
+
+    const invalid = await client.request(
+      '/equipe/sorties',
+      'POST',
+      form(title, Buffer.from('<svg xmlns="http://www.w3.org/2000/svg"></svg>'), 'cover.png')
+    )
+    assert.oneOf(invalid.response.status, [302, 303])
+    assert.equal(invalid.response.headers.get('location'), '/equipe/sorties/nouvelle')
+    assert.isNull(await Release.query().where('title', title).first())
+
+    const conflicting = form(title, image, 'cover.png')
+    conflicting.set('cover', 'https://example.test/cover.png')
+    const both = await client.request('/equipe/sorties', 'POST', conflicting)
+    assert.oneOf(both.response.status, [302, 303])
+    assert.equal(both.response.headers.get('location'), '/equipe/sorties/nouvelle')
+    assert.isNull(await Release.query().where('title', title).first())
+
+    const created = await client.request('/equipe/sorties', 'POST', form(title, image, 'cover.png'))
+    assert.oneOf(created.response.status, [302, 303])
+    const release = await Release.query().where('title', title).firstOrFail()
+    releaseId = release.id
+    assert.match(release.cover ?? '', /^https?:\/\/[^/]+\/covers\/[0-9a-f-]+\.png$/)
+    const name = new URL(release.cover!).pathname.split('/').at(-1)!
+    cleanup(() => rm(CoverStorage.pathFor(name)!, { force: true }))
+    const served = await client.request(`/covers/${name}`)
+    assert.equal(served.response.status, 200)
+    assert.equal(served.response.headers.get('content-type'), 'image/png')
+    assert.equal(served.response.headers.get('x-content-type-options'), 'nosniff')
+    const publicResponse = await fetch(`http://127.0.0.1:${env.get('PORT')}/covers/${name}`)
+    const publicBytes = await publicResponse.arrayBuffer()
+    assert.equal(publicBytes.byteLength, image.length)
+
+    const before = await readdir(CoverStorage.directory())
+    const duplicate = await client.request(
+      '/equipe/sorties',
+      'POST',
+      form(title, image, 'cover.png')
+    )
+    assert.oneOf(duplicate.response.status, [302, 303])
+    assert.deepEqual(await readdir(CoverStorage.directory()), before)
+
+    const traversal = await client.request('/covers/..%2F..%2F.env')
+    assert.equal(traversal.response.status, 404)
   })
 })

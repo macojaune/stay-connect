@@ -16,6 +16,8 @@ const releaseFields = {
   date: vine.date({ formats: ['YYYY-MM-DD'] }).transform((value) => DateTime.fromJSDate(value)),
   type: vine.enum(['album', 'single', 'ep']),
   cover: httpsUrl.clone().nullable().optional(),
+  // MIME and file extension are untrusted. CoverStorage checks the actual bytes.
+  coverFile: vine.file({ size: '5mb' }).optional(),
   artistId: vine.string().uuid().nullable().optional(),
   newArtistName: vine.string().trim().minLength(2).maxLength(120).optional(),
   categoryIds: vine.array(vine.string().uuid()).maxLength(12).optional(),

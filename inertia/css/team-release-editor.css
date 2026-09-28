@@ -449,6 +449,78 @@
   overflow-wrap: anywhere;
 }
 
+.sc-editor-field > .sc-editor-upload {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  min-height: 74px;
+  margin: 0;
+  padding: 14px;
+  border: 1px dashed #8b8177;
+  border-radius: 4px;
+  background: #fffdf8;
+  cursor: pointer;
+}
+
+.sc-editor-upload > svg {
+  flex: none;
+}
+
+.sc-editor-field > .sc-editor-upload > span {
+  display: grid;
+  min-width: 0;
+  gap: 3px;
+  margin: 0;
+  color: var(--sc-ink);
+}
+
+.sc-editor-upload strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 13px;
+}
+
+.sc-editor-upload small {
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--sc-muted);
+}
+
+.sc-editor-field > .sc-editor-file-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  clip-path: inset(50%);
+  overflow: hidden;
+}
+
+.sc-editor-file-input:focus-visible + .sc-editor-error,
+.sc-editor-field:has(.sc-editor-file-input:focus-visible) .sc-editor-upload {
+  outline: 2px solid var(--sc-ink);
+  outline-offset: 3px;
+}
+
+.sc-editor-cover-or {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 16px 0;
+  color: var(--sc-muted);
+  font-size: 12px;
+}
+
+.sc-editor-cover-or::before,
+.sc-editor-cover-or::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--sc-line);
+}
+
 .sc-editor-remove-cover {
   display: inline-flex;
   align-items: center;

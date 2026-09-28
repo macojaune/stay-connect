@@ -31,7 +31,9 @@ export class TeamReleaseInputError extends Error {
       | 'newArtistName'
       | 'categoryIds'
       | 'newCategoryName'
-      | 'urls',
+      | 'urls'
+      | 'cover'
+      | 'coverFile',
     message: string
   ) {
     super(message)

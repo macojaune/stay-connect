@@ -10,10 +10,18 @@ L'adresse email seule ne peut pas servir d'autorisation : l'inscription native n
 
 ## Parcours
 
-- `GET /equipe/sorties/nouvelle` : choisir un artiste existant ou créer son profil par nom, saisir le titre, la date précise, le type et au moins un lien d'écoute HTTPS. La cover HTTPS et les catégories sont facultatives ; une catégorie peut être créée depuis le formulaire.
+- `GET /equipe/sorties/nouvelle` : choisir un artiste existant ou créer son profil par nom, saisir le titre, la date précise, le type et au moins un lien d'écoute HTTPS. La cover et les catégories sont facultatives ; une catégorie peut être créée depuis le formulaire.
 - `GET /equipe/sorties/:id/modifier` : corriger ces données sur une sortie existante. L'édition conserve son identifiant, son slug public, ses pull-ups et sa provenance automatique éventuelle. Le titre affiché peut donc différer du slug historique, afin que les liens déjà partagés restent valides.
-- Une fiche ancienne qui n'a aucun lien peut être corrigée sans en ajouter. Une fiche déjà liée conserve au moins un lien ; tout nouveau lien doit être HTTPS. Une cover locale historique est conservée si le champ cover n'est pas modifié ; une nouvelle cover doit avoir une URL HTTPS.
-- `POST /equipe/sorties` et `PATCH /equipe/sorties/:id` : les deux actions exigent une session web dont l'UUID figure dans l'allowlist. Un membre ordinaire reçoit 403. La sortie est publique à l'enregistrement ; aucun brouillon, upload d'image ou appel à Songlink n'est déclenché.
+- Une fiche ancienne qui n'a aucun lien peut être corrigée sans en ajouter. Une fiche déjà liée conserve au moins un lien ; tout nouveau lien doit être HTTPS. Une cover locale historique est conservée si la cover n'est pas modifiée.
+- `POST /equipe/sorties` et `PATCH /equipe/sorties/:id` : les deux actions exigent une session web dont l'UUID figure dans l'allowlist. Un membre ordinaire reçoit 403. La sortie est publique à l'enregistrement ; aucun brouillon ni appel à Songlink n'est déclenché.
+
+### Pochette
+
+Le même formulaire accepte `cover` (URL HTTPS) **ou** `coverFile` (fichier multipart) ; les deux champs présents ensemble sont refusés. En correction, leur absence conserve la pochette existante ; `cover: null` la retire ; `coverFile` la remplace. Le fichier est limité à 5 Mio et seuls les formats JPEG, PNG et WebP sont acceptés après vérification de la signature binaire, indépendamment du nom ou du type MIME déclaré. Les SVG et autres formats actifs sont refusés.
+
+Le fichier est créé sous `UPLOAD_PATH/covers` avec un nom aléatoire généré par le serveur. La sortie enregistre une URL absolue fondée sur `APP_URL`, de la forme `/covers/{nom}` ; cette route publique sert seulement les noms générés, avec un type MIME fixe et `nosniff`. Cette URL peut aussi figurer dans les emails. Un upload dont la transaction de sortie échoue est supprimé ; une ancienne pochette remplacée reste servie, car des emails déjà envoyés peuvent la référencer.
+
+Avant de livrer, vérifier que `APP_URL` pointe vers le domaine public correct, que `UPLOAD_PATH` pointe vers un stockage persistant accessible en écriture par le processus web, et que ce volume reste attaché aux nouvelles révisions. Les anciens fichiers Compose montent `/home/ubuntu/stayConnect/uploads` sur `/app/uploads`, mais cette définition ne prouve pas le volume de l'application Coolify actuellement servie. Sans volume persistant, les couvertures téléversées seraient perdues au redéploiement.
 
 L'ajout d'un profil artiste par nom ne prouve pas son territoire, son identité ni la propriété du profil. Il reste non vérifié et n'ouvre aucun droit d'édition à cet artiste. Une catégorie nouvellement créée n'est qu'une étiquette de classement.
 

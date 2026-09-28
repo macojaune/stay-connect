@@ -1,6 +1,6 @@
-import { useMemo, useState, type FormEvent } from 'react'
+import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react'
 import { Head, Link, useForm } from '@inertiajs/react'
-import { ArrowLeft, ArrowRight, Check, Plus, Search, Trash2 } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Check, ImagePlus, Plus, Search, Trash2 } from 'lucide-react'
 import EditorialLayout from '~/layouts/EditorialLayout'
 import Artwork from '~/components/editorial/Artwork'
 import '~/css/team-release-editor.css'
@@ -30,6 +30,7 @@ type EditorData = {
   date: string
   type: ReleaseType
   cover: string | null
+  coverFile: File | null
   urls: string[]
   artistId: string | null
   newArtistName: string
@@ -70,6 +71,7 @@ export default function TeamReleaseForm({ mode, artists, categories, release }: 
     date: release?.date ?? '',
     type: release?.type ?? 'single',
     cover: release?.cover && isHttps(release.cover) ? release.cover : null,
+    coverFile: null,
     urls: release?.urls.length && release.urls.every(isHttps) ? release.urls : [''],
     artistId: release?.artistId ?? null,
     newArtistName: '',
@@ -81,6 +83,8 @@ export default function TeamReleaseForm({ mode, artists, categories, release }: 
   const [categoryQuery, setCategoryQuery] = useState('')
   const [artistSelectionError, setArtistSelectionError] = useState('')
   const [coverTouched, setCoverTouched] = useState(false)
+  const [uploadedCoverPreview, setUploadedCoverPreview] = useState<string | null>(null)
+  const coverFileInput = useRef<HTMLInputElement>(null)
   const [linksTouched, setLinksTouched] = useState(false)
 
   const selectedArtist = artists.find((artist) => artist.id === form.data.artistId)
@@ -114,6 +118,16 @@ export default function TeamReleaseForm({ mode, artists, categories, release }: 
   const hasLegacyLinks = editing && release.urls.some((url) => !isHttps(url))
   const linksRequired = !editing || (release.urls.length > 0 && (!hasLegacyLinks || linksTouched))
 
+  useEffect(() => {
+    if (!form.data.coverFile) {
+      setUploadedCoverPreview(null)
+      return
+    }
+    const objectUrl = URL.createObjectURL(form.data.coverFile)
+    setUploadedCoverPreview(objectUrl)
+    return () => URL.revokeObjectURL(objectUrl)
+  }, [form.data.coverFile])
+
   function focusServerError(errors: Record<string, string>) {
     const key = Object.keys(errors)[0]
     const id = key?.startsWith('urls.')
@@ -141,7 +155,11 @@ export default function TeamReleaseForm({ mode, artists, categories, release }: 
       description: data.description.trim(),
       date: data.date,
       type: data.type,
-      ...(!editing || coverTouched ? { cover: data.cover?.trim() || null } : {}),
+      ...(data.coverFile
+        ? { coverFile: data.coverFile }
+        : !editing || coverTouched
+          ? { cover: data.cover?.trim() || null }
+          : {}),
       ...(!editing || linksTouched
         ? { urls: data.urls.map((url) => url.trim()).filter(Boolean) }
         : {}),
@@ -157,7 +175,8 @@ export default function TeamReleaseForm({ mode, artists, categories, release }: 
   }
 
   const previewArtist = artistMode === 'new' ? form.data.newArtistName : selectedArtist?.name
-  const previewCover = form.data.cover || (!coverTouched ? (release?.cover ?? null) : null)
+  const previewCover =
+    uploadedCoverPreview || form.data.cover || (!coverTouched ? (release?.cover ?? null) : null)
   const heading = editing ? 'Corriger la sortie.' : 'Ajouter une sortie.'
   return (
     <EditorialLayout>
@@ -562,6 +581,38 @@ export default function TeamReleaseForm({ mode, artists, categories, release }: 
                 </div>
               </div>
               <div className="sc-editor-field">
+                <label htmlFor="coverFile">
+                  Importer une pochette <span>facultatif</span>
+                </label>
+                <label className="sc-editor-upload" htmlFor="coverFile">
+                  <ImagePlus size={19} aria-hidden="true" />
+                  <span>
+                    <strong>{form.data.coverFile?.name || 'Choisir une image'}</strong>
+                    <small>JPG, PNG ou WebP · 5 Mo maximum</small>
+                  </span>
+                </label>
+                <input
+                  ref={coverFileInput}
+                  id="coverFile"
+                  name="coverFile"
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  className="sc-editor-file-input"
+                  onChange={(event) => {
+                    const file = event.target.files?.[0] ?? null
+                    if (!file) return
+                    setCoverTouched(true)
+                    form.setData((data) => ({ ...data, cover: null, coverFile: file }))
+                  }}
+                  aria-invalid={!!form.errors.coverFile}
+                  aria-describedby={fieldDescription('coverFile', form.errors.coverFile)}
+                />
+                <FieldError id="coverFile" message={form.errors.coverFile} />
+              </div>
+              <div className="sc-editor-cover-or" aria-hidden="true">
+                ou
+              </div>
+              <div className="sc-editor-field">
                 <label htmlFor="cover">
                   URL de la pochette <span>facultative</span>
                 </label>
@@ -574,7 +625,12 @@ export default function TeamReleaseForm({ mode, artists, categories, release }: 
                   value={form.data.cover ?? ''}
                   onChange={(event) => {
                     setCoverTouched(true)
-                    form.setData('cover', event.target.value || null)
+                    if (coverFileInput.current) coverFileInput.current.value = ''
+                    form.setData((data) => ({
+                      ...data,
+                      cover: event.target.value || null,
+                      coverFile: null,
+                    }))
                   }}
                   placeholder="https://…/pochette.jpg"
                   aria-invalid={!!form.errors.cover}
@@ -582,17 +638,18 @@ export default function TeamReleaseForm({ mode, artists, categories, release }: 
                 />
                 <p id="cover-hint" className="sc-editor-hint">
                   {editing && release.cover && !isHttps(release.cover) && !coverTouched
-                    ? 'La pochette actuelle est conservée. Pour la remplacer, colle une adresse HTTPS.'
+                    ? 'La pochette actuelle est conservée. Pour la remplacer, importe un fichier ou colle une adresse HTTPS.'
                     : 'Adresse HTTPS directe de l’image. Format carré conseillé.'}
                 </p>
                 <FieldError id="cover" message={form.errors.cover} />
-                {editing && previewCover && (
+                {(form.data.coverFile || previewCover) && (
                   <button
                     type="button"
                     className="sc-editor-remove-cover"
                     onClick={() => {
                       setCoverTouched(true)
-                      form.setData('cover', null)
+                      if (coverFileInput.current) coverFileInput.current.value = ''
+                      form.setData((data) => ({ ...data, cover: null, coverFile: null }))
                     }}
                   >
                     <Trash2 size={16} aria-hidden="true" /> Retirer la pochette

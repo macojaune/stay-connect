@@ -80,6 +80,7 @@ export default await Env.create(new URL('../', import.meta.url), {
   CRON_ALLOWED_IPS: Env.schema.string.optional(),
   API_KEY: Env.schema.string.optional(),
   STAYCONNECT_EDITOR_USER_IDS: Env.schema.string.optional(),
+  UPLOAD_PATH: Env.schema.string.optional(),
 
   /*
   |----------------------------------------------------------

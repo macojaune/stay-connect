@@ -3,9 +3,15 @@ import Artist from '#models/artist'
 import Category from '#models/category'
 import Release from '#models/release'
 import TeamReleaseService, { TeamReleaseInputError } from '#services/team_release_service'
+import CoverStorage from '#services/cover_storage'
 import { canManageCatalog } from '#services/team_editor_access'
 import { renderPage } from '#services/inertia_page'
-import { createTeamReleaseValidator, updateTeamReleaseValidator } from '#validators/team_release'
+import {
+  createTeamReleaseValidator,
+  updateTeamReleaseValidator,
+  type TeamReleaseCreateInput,
+  type TeamReleaseUpdateInput,
+} from '#validators/team_release'
 
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
 
@@ -47,7 +53,7 @@ export default class TeamReleasesController {
     if (!this.authorized(ctx)) return ctx.response.forbidden()
     const payload = await ctx.request.validateUsing(createTeamReleaseValidator)
     try {
-      const release = await this.releases.create(payload)
+      const release = await this.withCover(payload, (input) => this.releases.create(input))
       return ctx.response.redirect().toPath(`/sorties/${release.slug}`)
     } catch (error: unknown) {
       if (!(error instanceof TeamReleaseInputError)) throw error
@@ -61,7 +67,9 @@ export default class TeamReleasesController {
     if (!UUID_REGEX.test(ctx.params.id)) return ctx.response.notFound()
     const payload = await ctx.request.validateUsing(updateTeamReleaseValidator)
     try {
-      const release = await this.releases.update(ctx.params.id, payload)
+      const release = await this.withCover(payload, (input) =>
+        this.releases.update(ctx.params.id, input)
+      )
       return ctx.response.redirect().toPath(`/sorties/${release.slug}`)
     } catch (error: unknown) {
       if (!(error instanceof TeamReleaseInputError)) throw error
@@ -102,6 +110,24 @@ export default class TeamReleasesController {
 
   private authorized(ctx: HttpContext) {
     return canManageCatalog(ctx.auth.use('web').getUserOrFail().id)
+  }
+
+  private async withCover<T extends TeamReleaseCreateInput | TeamReleaseUpdateInput>(
+    payload: T,
+    persist: (input: T) => Promise<Release>
+  ): Promise<Release> {
+    if (payload.coverFile && payload.cover !== undefined)
+      throw new TeamReleaseInputError(
+        'coverFile',
+        'Choisis une URL ou un fichier pour la pochette.'
+      )
+    const uploaded = payload.coverFile ? await CoverStorage.save(payload.coverFile) : null
+    try {
+      return await persist({ ...payload, ...(uploaded ? { cover: uploaded.url } : {}) })
+    } catch (error: unknown) {
+      if (uploaded) await CoverStorage.remove(uploaded.name)
+      throw error
+    }
   }
 
   private privatePage(ctx: HttpContext) {
