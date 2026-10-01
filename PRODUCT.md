@@ -36,6 +36,8 @@ Marvin consacre quelques heures par semaine au produit. Une petite tranche doit 
 
 ## Brand Commitments
 
+Vocabulaire public confirmé le 1er octobre : ne plus employer « diaspora » ou ses variantes dans les textes du site, les métadonnées ou les libellés accessibles. Cela ne change pas le périmètre culturel ni les critères des affiliations. La signature exacte « Développé entre deux écoutes par MarvinL.com » doit être centrée, lisible et mise en avant en tête des footers, pas reléguée dans la barre inférieure.
+
 Nom #StayConnect. Orange #FD4F00. Le mail hebdomadaire validé est la référence visuelle : titre « Les sorties de la semaine », caractère affirmé, texture de points, noms d'artistes très lisibles. Ton français direct, musical et accueillant.
 
 ## Evidence on Hand

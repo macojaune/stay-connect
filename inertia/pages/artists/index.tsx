@@ -56,7 +56,7 @@ export default function ArtistsIndex({ artists, filters, pagination, flash }: Ar
           </h1>
           <div className="sc-artists-intro">
             <p>
-              Antilles, Guyane, diasporas.
+              Antilles et Guyane.
               <br />
               Retrouve les artistes et remonte le fil de leurs sorties.
             </p>
@@ -171,7 +171,7 @@ export default function ArtistsIndex({ artists, filters, pagination, flash }: Ar
             <p>
               {filters.q
                 ? 'Essaie un autre nom ou propose-nous cet artiste pour compléter le catalogue.'
-                : 'Tu connais un artiste des Antilles-Guyane ou de leurs diasporas ? Envoie-nous son profil.'}
+                : 'Tu connais un artiste des Antilles-Guyane ? Envoie-nous son profil.'}
             </p>
             <a className="sc-button" href="#proposer">
               Proposer un artiste <ArrowDown size={18} aria-hidden="true" />

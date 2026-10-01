@@ -119,7 +119,7 @@ export default function DashboardPage({
           </section>
           <section className="sc-member-recap">
             <h2>Une semaine de musique, dans ta boîte mail.</h2>
-            <p>Reçois le récap des sorties des Antilles-Guyane et de leurs diasporas.</p>
+            <p>Reçois le récap des sorties des Antilles-Guyane.</p>
             <Link href="/#newsletter-section">
               M’inscrire au récap <ArrowUpRight size={16} aria-hidden="true" />
             </Link>

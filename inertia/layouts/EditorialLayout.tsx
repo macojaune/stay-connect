@@ -2,6 +2,7 @@ import type { ReactNode } from 'react'
 import { Head, Link, usePage } from '@inertiajs/react'
 import { ArrowUpRight, Mail, UserRound } from 'lucide-react'
 import type { SharedProps } from '@adonisjs/inertia/types'
+import SiteSignature from '~/components/SiteSignature'
 import '~/css/editorial.css'
 
 export default function EditorialLayout({ children }: { children: ReactNode }) {
@@ -57,6 +58,9 @@ export default function EditorialLayout({ children }: { children: ReactNode }) {
       </header>
       <main id="contenu">{children}</main>
       <footer className="sc-footer">
+        <div className="sc-shell">
+          <SiteSignature />
+        </div>
         <div className="sc-shell sc-footer-top">
           <Link href="/" className="sc-logo">
             #StayConnect<span aria-hidden="true">●</span>
@@ -76,13 +80,7 @@ export default function EditorialLayout({ children }: { children: ReactNode }) {
           </div>
         </div>
         <div className="sc-shell sc-footer-bottom">
-          <span>Antilles · Guyane · Diasporas</span>
-          <span>
-            Développé entre deux écoutes par{' '}
-            <a href="https://marvinl.com" target="_blank" rel="noreferrer">
-              MarvinL.com
-            </a>
-          </span>
+          <span>Antilles · Guyane</span>
         </div>
       </footer>
     </div>

@@ -8,7 +8,7 @@ import {
   spotifyTokenValidator,
   spotifyTrackValidator,
 } from '#contracts/spotify'
-import type { SpotifyArtist } from '#contracts/spotify'
+import type { SpotifyAlbumSummary, SpotifyArtist } from '#contracts/spotify'
 import Artist from '#models/artist'
 import SpotifyService from '#services/spotify_service'
 
@@ -25,11 +25,12 @@ const album = {
   id: 'album-fixture',
   name: 'Fixture album',
   release_date: '2026-09-26',
+  release_date_precision: 'day',
   album_type: 'single',
   images: [],
   artists: [{ id: artist.id, name: artist.name }],
   external_urls: { spotify: 'https://open.spotify.com/album/fixture' },
-}
+} satisfies SpotifyAlbumSummary
 const track = {
   id: 'track-fixture',
   name: 'Fixture track',
@@ -173,7 +174,7 @@ test.group('Spotify JSON contracts', () => {
   test('accepts album summaries without tracks but requires tracks on album detail', async ({
     assert,
   }) => {
-    const result = await spotifyArtistAlbumsValidator.validate({ items: [album] })
+    const result = await spotifyArtistAlbumsValidator.validate({ items: [album], next: null })
     assert.equal(result.items[0].id, album.id)
 
     const [error] = await spotifyAlbumValidator.tryValidate(album)

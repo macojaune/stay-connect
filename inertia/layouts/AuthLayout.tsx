@@ -33,7 +33,7 @@ export default function AuthLayout({ title, description, children, footer, retur
         <div className="sc-auth-grid">
           <aside
             className="sc-auth-poster"
-            aria-label="Les sorties des Antilles-Guyane et de leurs diasporas"
+            aria-label="Les sorties des Antilles-Guyane"
           >
             <p className="sc-display sc-auth-poster-title">
               Les sorties
@@ -46,7 +46,7 @@ export default function AuthLayout({ title, description, children, footer, retur
               <PullUpRecord />
             </div>
             <p className="sc-auth-poster-note">
-              Antilles, Guyane et diasporas.
+              Antilles et Guyane.
               <br />
               Découvre les nouveautés, retrouve celles qui te parlent.
             </p>

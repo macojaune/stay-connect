@@ -95,7 +95,7 @@ function Newsletter({ errors }: Pick<HomeProps, 'errors'>) {
             <span>Dans ta boîte.</span>
           </h2>
           <p>
-            Le récap des nouveautés des Antilles-Guyane et de leurs diasporas, chaque semaine par
+            Le récap des nouveautés des Antilles-Guyane, chaque semaine par
             email. De quoi découvrir, écouter et soutenir les artistes d’ici.
           </p>
         </div>
@@ -322,7 +322,7 @@ export default function Home({ timelineData, errors }: HomeProps) {
       <Head title="Les sorties de la semaine">
         <meta
           name="description"
-          content="Les nouveautés des artistes des Antilles-Guyane et de leurs diasporas. Découvre les sorties, écoute et donne un pull-up à tes coups de cœur."
+          content="Les nouveautés des artistes des Antilles-Guyane. Découvre les sorties, écoute et donne un pull-up à tes coups de cœur."
         />
       </Head>
       <section className="sc-masthead" aria-labelledby="discovery-title">
@@ -335,7 +335,7 @@ export default function Home({ timelineData, errors }: HomeProps) {
             <PullUpRecord />
             <div className="sc-masthead-copy">
               <p>
-                Les nouveautés des artistes des Antilles-Guyane et de leurs diasporas.
+                Les nouveautés des artistes des Antilles-Guyane.
                 <br />
                 Découvre. Écoute. Un pull-up pour tes coups de cœur.
               </p>

@@ -1,4 +1,5 @@
 import { Link } from '@inertiajs/react'
+import SiteSignature from '~/components/SiteSignature'
 
 export function Footer() {
   const currentYear = new Date().getFullYear()
@@ -30,12 +31,9 @@ export function Footer() {
   return (
     <footer className="bg-gray-900 text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <p className="w-full text-center mb-8 lg:mb-12 text-md lg:text-lg">
-          Développé entre deux écoutes d'album par{' '}
-          <Link href="https://marvinl.com" target="_blank" className="text-brand">
-            MarvinL.com
-          </Link>
-        </p>
+        <div className="mb-8 lg:mb-12">
+          <SiteSignature />
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand */}
           <div className="col-span-1">

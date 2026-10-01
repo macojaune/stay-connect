@@ -1,0 +1,40 @@
+.sc-site-signature {
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+  margin: 0;
+  padding-block: 32px;
+  border-bottom: 1px solid color-mix(in srgb, currentColor 16%, transparent);
+  color: inherit;
+  font-size: clamp(18px, 2vw, 22px);
+  font-weight: 500;
+  line-height: 1.55;
+  text-align: center;
+  text-wrap: balance;
+}
+
+.sc-site-signature-record {
+  color: var(--sc-orange, #fd4f00);
+}
+
+.sc-site-signature a {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  min-height: 44px;
+  color: inherit;
+  font-weight: 800;
+  text-decoration: underline;
+  text-decoration-color: var(--sc-orange, #fd4f00);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 5px;
+}
+
+.sc-site-signature a:hover {
+  text-decoration-thickness: 3px;
+}
+
+.sc-site-signature a:focus-visible {
+  outline: 3px solid currentColor;
+  outline-offset: 4px;
+}

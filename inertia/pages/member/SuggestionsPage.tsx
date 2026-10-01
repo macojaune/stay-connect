@@ -28,7 +28,7 @@ export default function SuggestionsPage({
             Un nom à nous faire écouter ?
           </h2>
           <p>
-            Propose un artiste des Antilles-Guyane ou de leurs diasporas. Ajoute un lien vers sa
+            Propose un artiste des Antilles-Guyane. Ajoute un lien vers sa
             musique ou son profil officiel.
           </p>
           <p>
