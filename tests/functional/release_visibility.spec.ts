@@ -203,7 +203,10 @@ test.group('Public release visibility and pull-up access', (group) => {
     })
     await denied.text()
     assert.oneOf(denied.status, [302, 303])
-    assert.equal(denied.headers.get('location'), '/login')
+    assert.equal(
+      denied.headers.get('location'),
+      `/login?returnTo=${encodeURIComponent(`/sorties/${published.id}#soutenir`)}`
+    )
 
     const client = await fixtureClient(actor)
     for (const method of ['PUT', 'DELETE'] as const) {

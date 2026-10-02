@@ -176,7 +176,14 @@ export default class TeamReleaseService {
       }
       category = await Category.create({ name: newName, description: '' }, { client: trx })
     }
-    return Array.from(new Set([...selectedIds, category.id]))
+    const combinedIds = Array.from(new Set([...selectedIds, category.id]))
+    if (combinedIds.length > 12) {
+      throw new TeamReleaseInputError(
+        'newCategoryName',
+        'Choisis au maximum 12 catégories, nouvelle catégorie comprise.'
+      )
+    }
+    return combinedIds
   }
 
   private async assertNoDuplicate(

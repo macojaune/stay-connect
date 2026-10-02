@@ -1,4 +1,5 @@
 import Artist from '#models/artist'
+import { PUBLIC_ARTIST_RELEASES } from '#services/public_artist_catalog'
 import Release from '#models/release'
 import { renderPage } from '#services/inertia_page'
 import db from '@adonisjs/lucid/services/db'
@@ -13,16 +14,6 @@ import type {
 
 const PER_PAGE = 24
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
-
-// EXISTS counts a release once, even when an artist has several feature credits.
-const PUBLIC_ARTIST_RELEASES = `
-  from releases
-  where releases.is_secret = false
-    and (releases.artist_id = artists.id or exists (
-      select 1 from features
-      where features.release_id = releases.id and features.artist_id = artists.id
-    ))
-`
 
 function pageNumber(value: unknown): number {
   const parsed = typeof value === 'string' ? Number(value) : value

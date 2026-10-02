@@ -3,7 +3,12 @@ import { HttpContext, ExceptionHandler } from '@adonisjs/core/http'
 import type { StatusPageRange, StatusPageRenderer } from '@adonisjs/core/types/http'
 import { errors } from '@vinejs/vine'
 import { errorDetails } from '#exceptions/error_details'
-import { authValidationUrl, authPageUrl, safeReturnTo } from '#services/auth_redirect'
+import {
+  authValidationUrl,
+  authPageUrl,
+  safeReturnTo,
+  authResumePath,
+} from '#services/auth_redirect'
 
 export default class HttpExceptionHandler extends ExceptionHandler {
   /**
@@ -77,8 +82,7 @@ export default class HttpExceptionHandler extends ExceptionHandler {
     // Handle authentication errors
     if (details.code === 'E_UNAUTHORIZED_ACCESS') {
       if (this.wantsWebResponse(ctx)) {
-        const requestedPage =
-          ctx.request.url() === '/mon-compte/mot-de-passe' ? '/mon-compte' : ctx.request.url()
+        const requestedPage = authResumePath(ctx.request.url())
         return ctx.response.redirect().toPath(authPageUrl('/login', safeReturnTo(requestedPage)))
       }
       return ctx.response.status(401).json({

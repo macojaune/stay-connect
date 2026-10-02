@@ -606,6 +606,7 @@
     grid-column: 1 / -1;
     grid-row: 2;
     flex-direction: row;
+    flex-wrap: wrap;
     gap: 4px;
     border-bottom: 1px solid var(--sc-line);
     padding-bottom: 16px;

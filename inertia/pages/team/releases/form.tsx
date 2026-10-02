@@ -150,6 +150,8 @@ export default function TeamReleaseForm({ mode, artists, categories, release }: 
       return
     }
     setArtistSelectionError('')
+    const submittedUrls = form.data.urls.map((url) => url.trim()).filter(Boolean)
+    form.setData('urls', submittedUrls.length ? submittedUrls : [''])
     form.transform((data) => ({
       title: data.title.trim(),
       description: data.description.trim(),
@@ -356,6 +358,7 @@ export default function TeamReleaseForm({ mode, artists, categories, release }: 
                   <label htmlFor="newArtistName">Nom du nouvel artiste</label>
                   <input
                     id="newArtistName"
+                    minLength={2}
                     name="newArtistName"
                     required
                     maxLength={120}
@@ -405,8 +408,9 @@ export default function TeamReleaseForm({ mode, artists, categories, release }: 
                           type="checkbox"
                           checked={form.data.categoryIds.includes(category.id)}
                           disabled={
-                            form.data.categoryIds.length >= 12 &&
-                            !form.data.categoryIds.includes(category.id)
+                            form.data.categoryIds.length +
+                              (form.data.newCategoryName.trim() ? 1 : 0) >=
+                              12 && !form.data.categoryIds.includes(category.id)
                           }
                           onChange={(event) =>
                             form.setData(
@@ -440,6 +444,8 @@ export default function TeamReleaseForm({ mode, artists, categories, release }: 
                 </label>
                 <input
                   id="newCategoryName"
+                  minLength={2}
+                  disabled={form.data.categoryIds.length >= 12}
                   name="newCategoryName"
                   maxLength={80}
                   value={form.data.newCategoryName}
@@ -453,7 +459,8 @@ export default function TeamReleaseForm({ mode, artists, categories, release }: 
                   )}
                 />
                 <p id="newCategoryName-hint" className="sc-editor-hint">
-                  Elle sera créée et associée à la sortie.
+                  Elle sera créée et associée à la sortie. 12 catégories maximum, nouvelle catégorie
+                  comprise.
                 </p>
                 <FieldError id="newCategoryName" message={form.errors.newCategoryName} />
               </div>

@@ -27,6 +27,13 @@ export function safeReturnTo(value: unknown): string {
   }
 }
 
+/** A failed mutation resumes its public page, never replays the action. */
+export function authResumePath(path: string): string {
+  if (path === '/mon-compte/mot-de-passe') return '/mon-compte'
+  const review = path.match(/^\/sorties\/([a-zA-Z0-9_-]+)\/avis$/)
+  return review ? safeReturnTo(`/sorties/${review[1]}#soutenir`) : safeReturnTo(path)
+}
+
 export function authPageUrl(path: '/login' | '/register' | '/forgot-password', returnTo: string) {
   const safePath = safeReturnTo(returnTo)
   return safePath === '/' ? path : `${path}?returnTo=${encodeURIComponent(safePath)}`

@@ -1,4 +1,6 @@
 import Release from '#models/release'
+import db from '@adonisjs/lucid/services/db'
+import { PUBLIC_ARTIST_RELEASES } from '#services/public_artist_catalog'
 import Vote from '#models/vote'
 import type { HttpContext } from '@adonisjs/core/http'
 import type { ReleaseShowProps } from '#contracts/release_page'
@@ -27,15 +29,30 @@ export default class ReleasePagesController {
     const releaseQuery = Release.query()
       .where('is_secret', false)
       .preload('artist', (artistQuery) => {
-        artistQuery.preload('categories').preload('territories').withCount('releases')
+        artistQuery
+          .preload('categories')
+          .preload('territories')
+          .select('artists.*')
+          .select(db.raw(`(select count(*) ${PUBLIC_ARTIST_RELEASES}) as releases_count`))
       })
       .preload('categories')
+      .withCount('votes', (query) => {
+        query.whereRaw("nullif(btrim(comment), '') is not null").as('total_comments')
+      })
       .preload('votes', (votesQuery) => {
-        votesQuery.preload('user').orderBy('created_at', 'desc').limit(12)
+        votesQuery
+          .whereRaw("nullif(btrim(comment), '') is not null")
+          .preload('user')
+          .orderBy('updated_at', 'desc')
+          .orderBy('created_at', 'desc')
+          .limit(12)
       })
       .preload('features', (featureQuery) => {
         featureQuery.preload('artist', (artistQuery) => {
-          artistQuery.preload('territories').withCount('releases')
+          artistQuery
+            .preload('territories')
+            .select('artists.*')
+            .select(db.raw(`(select count(*) ${PUBLIC_ARTIST_RELEASES}) as releases_count`))
         })
       })
 
@@ -107,6 +124,7 @@ export default class ReleasePagesController {
           .filter((feature) => !!feature.artistName),
         votesSummary: {
           total: totalVotes,
+          comments: Number(release.$extras.total_comments ?? 0),
         },
         reviews: release.votes.map((vote) => ({
           id: vote.id,

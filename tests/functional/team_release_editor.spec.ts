@@ -8,6 +8,7 @@ import Category from '#models/category'
 import Release from '#models/release'
 import User from '#models/user'
 import CoverStorage from '#services/cover_storage'
+import TeamReleaseService, { TeamReleaseInputError } from '#services/team_release_service'
 
 const password = 'TeamEditorFixturePassword1!'
 
@@ -95,6 +96,48 @@ function releaseInput(title: string, artistId?: string): Record<string, unknown>
 }
 
 test.group('Team release editor authorization and publication', (group) => {
+  test('rejects a thirteenth category atomically but permits a duplicate selected name', async ({
+    assert,
+    cleanup,
+  }) => {
+    const key = randomUUID()
+    const artist = await Artist.create({ name: 'Category cap ' + key })
+    cleanup(() => artist.delete())
+    const categories: Category[] = []
+    for (let index = 0; index < 12; index++) {
+      const category = await Category.create({ name: 'Cap ' + key + ' ' + index, description: '' })
+      categories.push(category)
+      cleanup(() => category.delete())
+    }
+    const service = new TeamReleaseService()
+    const data = {
+      title: 'Cap release ' + key,
+      description: '',
+      date: DateTime.utc(),
+      type: 'single' as const,
+      urls: ['https://example.test/listen'],
+      artistId: artist.id,
+      categoryIds: categories.map((category) => category.id),
+    }
+    try {
+      await service.create({ ...data, newCategoryName: 'Thirteenth ' + key })
+      assert.fail('Expected category cap rejection')
+    } catch (error) {
+      assert.instanceOf(error, TeamReleaseInputError)
+      assert.equal((error as TeamReleaseInputError).field, 'newCategoryName')
+    }
+    assert.isNull(
+      await Category.query()
+        .where('name', 'Thirteenth ' + key)
+        .first()
+    )
+    assert.isNull(await Release.query().where('title', data.title).first())
+    const release = await service.create({ ...data, newCategoryName: categories[0].name })
+    cleanup(() => release.delete())
+    await release.load('categories')
+    assert.lengthOf(release.categories, 12)
+  })
+
   group.setup(() => {
     if (
       !['127.0.0.1', 'localhost', '::1'].includes(env.get('DB_HOST')) ||
@@ -144,6 +187,8 @@ test.group('Team release editor authorization and publication', (group) => {
         method === 'GET' ? undefined : releaseInput('Member forged release')
       )
       assert.equal(result.response.status, 403)
+      assert.equal((result.body as { component: string }).component, 'errors/forbidden')
+      assert.equal(result.response.headers.get('cache-control'), 'no-store')
     }
     assert.isNull(await Release.query().where('title', 'Member forged release').first())
   })

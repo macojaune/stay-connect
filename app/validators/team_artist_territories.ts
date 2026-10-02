@@ -1,4 +1,4 @@
-import vine from '@vinejs/vine'
+import vine, { SimpleMessagesProvider } from '@vinejs/vine'
 import type { Infer } from '@vinejs/vine/types'
 import { territoryCodes, territorySourceKinds } from '#contracts/territories'
 
@@ -23,5 +23,17 @@ export const teamArtistTerritoriesValidator = vine.compile(
       .maxLength(territoryCodes.length),
   })
 )
+
+teamArtistTerritoriesValidator.messagesProvider = new SimpleMessagesProvider({
+  'required': 'Ce champ est obligatoire.',
+  'string': 'Saisis un texte valide.',
+  'boolean': 'Confirme la vérification des affiliations.',
+  'array': 'Choisis les territoires vérifiés.',
+  'enum': 'Choisis une valeur proposée.',
+  'url': 'Utilise une adresse HTTPS valide pour la source.',
+  'minLength': 'Précise ce que la source établit en au moins 10 caractères.',
+  'maxLength': 'Ce champ est trop long.',
+  'territories.maxLength': 'Choisis au maximum les trois territoires proposés.',
+})
 
 export type TeamArtistTerritoriesInput = Infer<typeof teamArtistTerritoriesValidator>

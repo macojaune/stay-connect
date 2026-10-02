@@ -104,7 +104,6 @@ export default function TeamArtistTerritories({ artist, success }: Props) {
         <form className="sc-territory-form" onSubmit={submit} aria-busy={form.processing}>
           <div className="sc-territory-editor-heading">
             <div>
-              <p className="sc-territory-kicker">Référentiel · Antilles-Guyane</p>
               <h2 className="sc-display">Territoires vérifiés</h2>
             </div>
             <p>
@@ -164,17 +163,25 @@ export default function TeamArtistTerritories({ artist, success }: Props) {
                           type="url"
                           inputMode="url"
                           placeholder="https://…"
+                          pattern="https://.+"
+                          title="Utilise une adresse HTTPS pour la source."
                           value={entry.sourceReference ?? ''}
                           required={entry.sourceKind === 'public_source'}
                           maxLength={1000}
                           aria-invalid={!!error('sourceReference')}
-                          aria-describedby={
-                            error('sourceReference') ? `${code}-reference-error` : undefined
-                          }
+                          aria-describedby={[
+                            `${code}-reference-hint`,
+                            error('sourceReference') ? `${code}-reference-error` : null,
+                          ]
+                            .filter(Boolean)
+                            .join(' ')}
                           onChange={(event) =>
                             update(code, { sourceReference: event.target.value || null })
                           }
                         />
+                        <p id={`${code}-reference-hint`} className="sc-editor-hint">
+                          Adresse HTTPS directe de la source.
+                        </p>
                         {error('sourceReference') && (
                           <p
                             id={`${code}-reference-error`}

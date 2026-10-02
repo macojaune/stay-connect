@@ -1,6 +1,10 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import Artist from '#models/artist'
-import { canManageCatalog } from '#services/team_editor_access'
+import {
+  canManageCatalog,
+  renderCatalogForbidden,
+  renderCatalogNotFound,
+} from '#services/team_editor_access'
 import { renderPage } from '#services/inertia_page'
 import {
   saveArtistTerritories,
@@ -12,8 +16,8 @@ const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-
 
 export default class TeamArtistTerritoriesController {
   async edit(ctx: HttpContext) {
-    if (!this.authorized(ctx)) return ctx.response.forbidden()
-    if (!UUID.test(ctx.params.id)) return ctx.response.notFound()
+    if (!this.authorized(ctx)) return renderCatalogForbidden(ctx)
+    if (!UUID.test(ctx.params.id)) return renderCatalogNotFound(ctx)
     ctx.response.header('Cache-Control', 'no-store')
     ctx.response.header('X-Robots-Tag', 'noindex, nofollow')
     const artist = await Artist.query()
@@ -43,8 +47,8 @@ export default class TeamArtistTerritoriesController {
   }
 
   async update(ctx: HttpContext) {
-    if (!this.authorized(ctx)) return ctx.response.forbidden()
-    if (!UUID.test(ctx.params.id)) return ctx.response.notFound()
+    if (!this.authorized(ctx)) return renderCatalogForbidden(ctx)
+    if (!UUID.test(ctx.params.id)) return renderCatalogNotFound(ctx)
     const input = await ctx.request.validateUsing(teamArtistTerritoriesValidator)
     try {
       await saveArtistTerritories(ctx.params.id, ctx.auth.use('web').getUserOrFail().id, input)

@@ -4,7 +4,11 @@ import Category from '#models/category'
 import Release from '#models/release'
 import TeamReleaseService, { TeamReleaseInputError } from '#services/team_release_service'
 import CoverStorage from '#services/cover_storage'
-import { canManageCatalog } from '#services/team_editor_access'
+import {
+  canManageCatalog,
+  renderCatalogForbidden,
+  renderCatalogNotFound,
+} from '#services/team_editor_access'
 import { renderPage } from '#services/inertia_page'
 import {
   createTeamReleaseValidator,
@@ -33,15 +37,15 @@ export default class TeamReleasesController {
   private readonly releases = new TeamReleaseService()
 
   async create(ctx: HttpContext) {
-    if (!this.authorized(ctx)) return ctx.response.forbidden()
+    if (!this.authorized(ctx)) return renderCatalogForbidden(ctx)
     this.privatePage(ctx)
     return this.form(ctx, null)
   }
 
   async edit(ctx: HttpContext) {
-    if (!this.authorized(ctx)) return ctx.response.forbidden()
+    if (!this.authorized(ctx)) return renderCatalogForbidden(ctx)
     this.privatePage(ctx)
-    if (!UUID_REGEX.test(ctx.params.id)) return ctx.response.notFound()
+    if (!UUID_REGEX.test(ctx.params.id)) return renderCatalogNotFound(ctx)
     const release = await Release.query()
       .where('id', ctx.params.id)
       .preload('categories')
@@ -50,7 +54,7 @@ export default class TeamReleasesController {
   }
 
   async store(ctx: HttpContext) {
-    if (!this.authorized(ctx)) return ctx.response.forbidden()
+    if (!this.authorized(ctx)) return renderCatalogForbidden(ctx)
     const payload = await ctx.request.validateUsing(createTeamReleaseValidator)
     try {
       const release = await this.withCover(payload, (input) => this.releases.create(input))
@@ -63,8 +67,8 @@ export default class TeamReleasesController {
   }
 
   async update(ctx: HttpContext) {
-    if (!this.authorized(ctx)) return ctx.response.forbidden()
-    if (!UUID_REGEX.test(ctx.params.id)) return ctx.response.notFound()
+    if (!this.authorized(ctx)) return renderCatalogForbidden(ctx)
+    if (!UUID_REGEX.test(ctx.params.id)) return renderCatalogNotFound(ctx)
     const payload = await ctx.request.validateUsing(updateTeamReleaseValidator)
     try {
       const release = await this.withCover(payload, (input) =>

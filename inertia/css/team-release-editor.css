@@ -245,6 +245,10 @@
   font-weight: 550;
 }
 
+.sc-editor-options button:focus-visible {
+  outline-offset: -4px;
+}
+
 .sc-editor-options button:last-child {
   border-bottom: 0;
 }

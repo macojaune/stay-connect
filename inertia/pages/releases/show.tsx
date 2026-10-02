@@ -3,6 +3,7 @@ import type { SharedProps } from '@adonisjs/inertia/types'
 import { territoryLabels } from '#contracts/territories'
 import React, { useEffect, useMemo, useState } from 'react'
 import EditorialLayout from '~/layouts/EditorialLayout'
+import ImageWithFallback from '~/components/editorial/ImageWithFallback'
 import { trackPlatformOpened, trackPullUp } from '~/lib/analytics'
 import { markLeaderboardDirty } from '~/lib/leaderboard_refresh'
 import '~/css/release-editorial.css'
@@ -242,7 +243,8 @@ const ReleaseShow: React.FC<ReleaseShowProps> = ({ release, shareUrl }) => {
 
   const boostsCountLabel =
     release.votesSummary.total === 1 ? '1 pull-up' : `${release.votesSummary.total} pull-ups`
-  const comments = release.reviews.filter((review) => Boolean(review.comment))
+  const comments = release.reviews.filter((review) => Boolean(review.comment?.trim()))
+  const commentCount = release.votesSummary.comments
 
   const submitVote = () => {
     setVoteFeedback(null)
@@ -411,14 +413,7 @@ const ReleaseShow: React.FC<ReleaseShowProps> = ({ release, shareUrl }) => {
           </header>
 
           <div className="sc-release-artwork">
-            {release.cover ? (
-              <img
-                src={release.cover}
-                alt={`Pochette de ${release.title}`}
-                width={640}
-                height={640}
-              />
-            ) : (
+            <ImageWithFallback src={release.cover} alt={`Pochette de ${release.title}`} size={640}>
               <div
                 className="sc-release-cover-fallback"
                 role="img"
@@ -427,7 +422,7 @@ const ReleaseShow: React.FC<ReleaseShowProps> = ({ release, shareUrl }) => {
                 <span className="sc-display">{release.artist?.name[0]?.toUpperCase() ?? '#'}</span>
                 <span>Pochette indisponible</span>
               </div>
-            )}
+            </ImageWithFallback>
           </div>
 
           <section className="sc-release-listening" aria-labelledby="release-listening-title">
@@ -622,13 +617,11 @@ const ReleaseShow: React.FC<ReleaseShowProps> = ({ release, shareUrl }) => {
                 const content = (
                   <>
                     <div className="sc-release-artist-picture">
-                      {artist.picture ? (
-                        <img src={artist.picture} alt="" width={64} height={64} loading="lazy" />
-                      ) : (
+                      <ImageWithFallback src={artist.picture} size={64} loading="lazy">
                         <span className="sc-display" aria-hidden="true">
                           {artist.name[0]?.toUpperCase() ?? '?'}
                         </span>
-                      )}
+                      </ImageWithFallback>
                     </div>
                     <div>
                       <p className="sc-release-related-name">{artist.name}</p>
@@ -667,9 +660,12 @@ const ReleaseShow: React.FC<ReleaseShowProps> = ({ release, shareUrl }) => {
               Les commentaires
             </h2>
             <span className="sc-muted">
-              {comments.length} {comments.length === 1 ? 'commentaire' : 'commentaires'}
+              {commentCount} {commentCount === 1 ? 'commentaire' : 'commentaires'}
             </span>
           </div>
+          {commentCount > comments.length && (
+            <p className="sc-muted">Les {comments.length} derniers commentaires sont affichés.</p>
+          )}
           {comments.length > 0 ? (
             <div className="sc-release-comment-list">
               {comments.map((review) => (

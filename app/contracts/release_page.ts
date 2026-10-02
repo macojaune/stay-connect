@@ -32,6 +32,7 @@ export type ReleaseShowProps = {
     }>
     votesSummary: {
       total: number
+      comments: number
     }
     reviews: Array<{
       id: string

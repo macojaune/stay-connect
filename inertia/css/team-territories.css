@@ -38,15 +38,6 @@
   line-height: 1.55;
 }
 
-.sc-territory-kicker {
-  margin: 0 0 8px;
-  color: var(--sc-orange);
-  font-size: 12px;
-  font-weight: 800;
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
-}
-
 .sc-territory-editor-list {
   display: grid;
   gap: 14px;

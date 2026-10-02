@@ -1,10 +1,26 @@
 import { test } from '@japa/runner'
 import { errors } from '@vinejs/vine'
 import { rejects } from 'node:assert/strict'
-import { safeReturnTo } from '#services/auth_redirect'
+import { safeReturnTo, authResumePath } from '#services/auth_redirect'
 import { registerValidator, resetPasswordValidator } from '#validators/auth'
 
 test.group('Authentication input contracts', () => {
+  test('resumes a failed pull-up on its public support section without replay', ({ assert }) => {
+    assert.equal(
+      authResumePath('/sorties/fixture-release/avis'),
+      '/sorties/fixture-release#soutenir'
+    )
+    assert.equal(authResumePath('/mon-compte/mot-de-passe'), '/mon-compte')
+    for (const path of [
+      '//evil.example/avis',
+      '/sorties/../../evil/avis',
+      '/equipe/sorties',
+      '/sorties/%2fevil/avis',
+    ]) {
+      assert.equal(authResumePath(path), '/')
+    }
+  })
+
   test('only resumes public discovery paths and their support anchor', ({ assert }) => {
     assert.equal(
       safeReturnTo('/sorties/jooslyf-jalou-jalouz#soutenir'),

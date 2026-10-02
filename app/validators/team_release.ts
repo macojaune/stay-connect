@@ -1,4 +1,4 @@
-import vine from '@vinejs/vine'
+import vine, { SimpleMessagesProvider } from '@vinejs/vine'
 import type { Infer } from '@vinejs/vine/types'
 import { DateTime } from 'luxon'
 
@@ -40,6 +40,32 @@ export const updateTeamReleaseValidator = vine.compile(
     urls: vine.array(httpsUrl.clone()).maxLength(12).optional(),
   })
 )
+
+const messages = new SimpleMessagesProvider({
+  'required': 'Ce champ est obligatoire.',
+  'string': 'Saisis un texte valide.',
+  'array': 'Choisis une liste valide.',
+  'enum': 'Choisis un format proposé.',
+  'uuid': 'Choisis un élément du catalogue.',
+  'date': 'Saisis une date de sortie valide.',
+  'url': 'Utilise une adresse HTTPS valide.',
+  'title.minLength': 'Saisis le titre de la sortie.',
+  'title.maxLength': 'Le titre ne doit pas dépasser 200 caractères.',
+  'description.maxLength': 'La description ne doit pas dépasser 2 000 caractères.',
+  'cover.maxLength': 'L’adresse de la pochette est trop longue.',
+  'file': 'Choisis un fichier image valide.',
+  'file.size': 'La pochette ne doit pas dépasser 5 Mo.',
+  'newArtistName.minLength': 'Le nom de l’artiste doit contenir au moins 2 caractères.',
+  'newArtistName.maxLength': 'Le nom de l’artiste ne doit pas dépasser 120 caractères.',
+  'newCategoryName.minLength': 'Le nom de la catégorie doit contenir au moins 2 caractères.',
+  'newCategoryName.maxLength': 'Le nom de la catégorie ne doit pas dépasser 80 caractères.',
+  'categoryIds.maxLength': 'Choisis au maximum 12 catégories, nouvelle catégorie comprise.',
+  'urls.minLength': 'Ajoute au moins un lien d’écoute HTTPS.',
+  'urls.maxLength': 'Ajoute au maximum 12 liens d’écoute.',
+})
+for (const validator of [createTeamReleaseValidator, updateTeamReleaseValidator]) {
+  validator.messagesProvider = messages
+}
 
 export type TeamReleaseCreateInput = Infer<typeof createTeamReleaseValidator>
 export type TeamReleaseUpdateInput = Infer<typeof updateTeamReleaseValidator>
