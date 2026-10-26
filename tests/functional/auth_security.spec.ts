@@ -275,6 +275,69 @@ test.group('Authentication security against local PostgreSQL and Redis', (group)
     assert.equal(response.headers.get('X-Inertia-Location'), '/sorties/fixture#soutenir')
   })
 
+  test('HTTP logout revokes replayed cookies while other accounts and fresh logins still work', async ({
+    assert,
+    cleanup,
+  }) => {
+    const user = await fixtureUser()
+    const other = await fixtureUser()
+    cleanup(async () => {
+      await user.delete()
+      await other.delete()
+    })
+    const origin = `http://127.0.0.1:${env.get('PORT')}`
+    const login = async (account: User) => {
+      const response = await postAuth('/login', {
+        email: account.email,
+        password: originalPassword,
+        returnTo: '/mon-espace',
+      })
+      assert.equal(response.status, 302)
+      const cookies = response.headers.getSetCookie().map((cookie) => cookie.split(';')[0])
+      const xsrf = cookies
+        .find((cookie) => cookie.startsWith('XSRF-TOKEN='))
+        ?.slice('XSRF-TOKEN='.length)
+      if (!xsrf) throw new Error('Login did not provide a CSRF cookie')
+      return { 'Cookie': cookies.join('; '), 'X-XSRF-TOKEN': decodeURIComponent(xsrf) }
+    }
+    const readAccount = async (headers: Record<string, string>) => {
+      const response = await fetch(`${origin}/mon-compte`, { redirect: 'manual', headers })
+      await response.text()
+      return response
+    }
+    const saved = await login(user)
+    const secondSession = await login(user)
+    const otherSession = await login(other)
+    const beforeLogout = await readAccount(saved)
+    assert.equal(beforeLogout.status, 200)
+    const logout = await fetch(`${origin}/logout`, {
+      method: 'POST',
+      redirect: 'manual',
+      headers: saved,
+    })
+    await logout.text()
+    assert.equal(logout.status, 302)
+    assert.equal(logout.headers.get('location'), '/')
+
+    // Keep the exact pre-logout cookies: clearing a client jar alone is not revocation.
+    for (const stale of [saved, secondSession]) {
+      const replay = await readAccount(stale)
+      assert.equal(replay.status, 302)
+      assert.equal(replay.headers.get('location'), '/login?returnTo=%2Fmon-compte')
+      const mutation = await fetch(`${origin}/sorties/${randomUUID()}/avis`, {
+        method: 'POST',
+        redirect: 'manual',
+        headers: { ...stale, Accept: 'application/json' },
+      })
+      await mutation.text()
+      assert.equal(mutation.status, 401)
+    }
+    const otherAccount = await readAccount(otherSession)
+    assert.equal(otherAccount.status, 200)
+    const freshLogin = await readAccount(await login(user))
+    assert.equal(freshLogin.status, 200)
+  })
+
   test('forgot-password confirmation survives an Inertia asset version reload', async ({
     assert,
   }) => {
