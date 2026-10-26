@@ -20,6 +20,7 @@ import AuthRateLimiter from '#services/auth_rate_limiter'
 import AccountService from '#services/account_service'
 import PasswordResetService from '#services/password_reset_service'
 import PasswordResetEmailJob from '#jobs/password_reset_email_job'
+import User from '#models/user'
 
 export default class AuthController {
   private readonly rateLimiter = new AuthRateLimiter()
@@ -139,6 +140,9 @@ export default class AuthController {
   }
 
   async logout({ auth, response, session }: HttpContext) {
+    const user = auth.use('web').getUserOrFail()
+    // Cookie sessions can be replayed: revoke this account's older sessions server-side.
+    await User.query().where('id', user.id).increment('auth_version', 1)
     await auth.use('web').logout()
     session.clear()
     return response.redirect().toPath('/')
