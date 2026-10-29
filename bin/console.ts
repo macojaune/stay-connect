@@ -36,7 +36,14 @@ new Ignitor(APP_ROOT, { importer: IMPORTER })
     app.booting(async () => {
       await import('#start/env')
     })
-    app.listen('SIGTERM', () => app.terminate())
+    app.listen('SIGTERM', () => {
+      // Pool shutdown waits for transactions; a stopped migration must not
+      // keep executing SQL or leave the startup shell waiting indefinitely.
+      if (process.env.DB_MIGRATION_SINGLE_CONNECTION === 'true') {
+        process.exit(143)
+      }
+      return app.terminate()
+    })
     app.listenIf(app.managedByPm2, 'SIGINT', () => app.terminate())
   })
   .ace()

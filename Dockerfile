@@ -47,6 +47,8 @@ RUN adduser --system --uid 1001 adonisjs
 COPY --from=builder --chown=adonisjs:nodejs /app/build ./
 COPY --from=deps --chown=adonisjs:nodejs /app/node_modules ./node_modules
 
+COPY --chown=adonisjs:nodejs scripts/start-container.sh ./scripts/start-container.sh
+
 # Switch to non-root user
 USER adonisjs
 
@@ -67,6 +69,5 @@ ARG UMAMI_WEBSITE_ID
 ENV UMAMI_SCRIPT_URL=$UMAMI_SCRIPT_URL
 ENV UMAMI_WEBSITE_ID=$UMAMI_WEBSITE_ID
 
-# Start the web server by default, or the queue listener for worker deployments.
-# RUN_MIGRATIONS_ONCE is enabled only for an isolated maintenance deployment.
-CMD ["sh", "-c", "if [ \"$APP_ROLE\" = \"worker\" ]; then exec node bin/console.js queue:listen; elif [ \"$RUN_MIGRATIONS_ONCE\" = \"true\" ]; then node ace.js migration:run --force --disable-locks && exec node bin/server.js; else exec node bin/server.js; fi"]
+# The same migration gate protects web and worker starts.
+CMD ["sh", "scripts/start-container.sh"]
