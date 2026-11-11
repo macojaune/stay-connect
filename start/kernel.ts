@@ -48,6 +48,7 @@ router.use([
  * the routes or the routes group.
  */
 export const middleware = router.named({
+  controlAuth: () => import('#middleware/control_auth_middleware'),
   guest: () => import('#middleware/guest_middleware'),
   auth: () => import('#middleware/auth_middleware'),
   apiResponse: () => import('#middleware/api_response'),

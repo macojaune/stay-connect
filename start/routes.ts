@@ -141,3 +141,13 @@ router
     //       .use(middleware.auth())
   })
   .prefix('/api')
+
+// Dedicated server-to-server identity. No browser session or catalogue-wide API key.
+router
+  .group(() => {
+    router.get('/artists', '#controllers/control_controller.search')
+    router.post('/operations', '#controllers/control_controller.create')
+    router.get('/operations/:id', '#controllers/control_controller.show')
+  })
+  .prefix('/api/control')
+  .use(middleware.controlAuth())
