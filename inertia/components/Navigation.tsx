@@ -1,33 +1,32 @@
-import { useState } from 'react';
-import { Link, usePage } from '@inertiajs/react';
-import { Button } from '~/components/ui/Button';
+import { useState } from 'react'
+import { Link, usePage } from '@inertiajs/react'
+import { Button } from '~/components/ui/Button'
 
 interface User {
-  id: number;
-  email: string;
-  fullName?: string;
+  id: string
+  email: string
+  fullName?: string
+  username?: string
 }
 
 interface PageProps {
   auth?: {
-    user?: User;
-  };
+    user?: User
+  }
 }
 
 interface NavigationProps {
-  isLandingPage?: boolean;
+  isLandingPage?: boolean
 }
 
 export function Navigation({ isLandingPage }: NavigationProps) {
-  const { auth } = usePage<PageProps>().props;
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { auth } = usePage<PageProps>().props
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
 
-  const navigationItems = [
-    { name: 'Home', href: '/' },
-  ];
+  const navigationItems = [{ name: 'Home', href: '/' }]
 
   if (isLandingPage) {
-    return null;
+    return null
   }
 
   return (
@@ -56,19 +55,14 @@ export function Navigation({ isLandingPage }: NavigationProps) {
 
           {/* User Menu */}
           <div className="hidden md:flex items-center ml-auto space-x-4">
-            {/*{auth?.user ? (
+            {auth?.user ? (
               <div className="flex items-center space-x-4">
                 <span className="text-sm text-gray-700">
-                  Welcome, {auth.user.fullName || auth.user.email}
+                  {auth.user.fullName || auth.user.username || auth.user.email}
                 </span>
-                <Link href="/profile">
-                  <Button variant="outline" size="sm">
-                    Profile
-                  </Button>
-                </Link>
                 <Link href="/logout" method="post">
                   <Button variant="ghost" size="sm">
-                    Logout
+                    Déconnexion
                   </Button>
                 </Link>
               </div>
@@ -76,22 +70,17 @@ export function Navigation({ isLandingPage }: NavigationProps) {
               <div className="flex items-center space-x-2">
                 <Link href="/login">
                   <Button variant="ghost" size="sm">
-                    Login
+                    Connexion
                   </Button>
                 </Link>
                 <Link href="/register">
-                  <Button size="sm">
-                    Sign Up
-                  </Button>
+                  <Button size="sm">Créer un compte</Button>
                 </Link>
               </div>
-            )}*/}
+            )}
             <div className="flex items-center space-x-2">
-
               <Link href="/#newsletter-section">
-                <Button size="sm">
-                  S'inscrire à la newsletter
-                </Button>
+                <Button size="sm">S'inscrire à la newsletter</Button>
               </Link>
             </div>
           </div>
@@ -104,9 +93,19 @@ export function Navigation({ isLandingPage }: NavigationProps) {
             >
               <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 {isMenuOpen ? (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 ) : (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 6h16M4 12h16M4 18h16"
+                  />
                 )}
               </svg>
             </button>
@@ -128,8 +127,8 @@ export function Navigation({ isLandingPage }: NavigationProps) {
                 {item.name}
               </Link>
             ))}
-            <Link href="/#newsletter-section" className='items-center w-full'>
-              <Button size="lg" className='w-full'>
+            <Link href="/#newsletter-section" className="items-center w-full">
+              <Button size="lg" className="w-full">
                 S'inscrire à la newsletter
               </Button>
             </Link>

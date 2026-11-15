@@ -25,6 +25,9 @@ export default class Feature extends BaseModel {
   @column({ columnName: 'artist_name' })
   declare artistName: string | null
 
+  @column({ columnName: 'spotify_artist_id' })
+  declare spotifyArtistId: string | null
+
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
 

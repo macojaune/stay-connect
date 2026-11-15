@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import AppLayout from '~/layouts/AppLayout'
-import { Head, Link } from '@inertiajs/react'
-import { Copy, Link2 } from 'lucide-react'
+import { Head, Link, router, usePage } from '@inertiajs/react'
+import { Copy, Link2, Star, Trash2 } from 'lucide-react'
 import { Tooltip, TooltipContent, TooltipTrigger } from '~/components/ui/tooltip'
 import {
   AppleMusicLogo,
@@ -19,6 +19,7 @@ import {
   WhatsappIcon,
   WhatsappShareButton,
 } from 'react-share'
+import { Button } from '~/components/ui/Button'
 
 type ReleaseShowProps = {
   release: {
@@ -49,8 +50,38 @@ type ReleaseShowProps = {
       releaseCount?: number | string | null
       profilePicture?: string | null
     }>
+    votesSummary: {
+      average: number | null
+      total: number
+    }
+    reviews: Array<{
+      id: string
+      rating: number
+      createdAt: string | null
+      user: {
+        id: string
+        displayName: string
+      }
+      isCurrentUser: boolean
+    }>
+    currentUserVote: {
+      id: string
+      rating: number
+    } | null
   }
   shareUrl: string
+}
+
+type PageProps = {
+  auth?: {
+    user?: {
+      id: string
+      email: string
+      fullName?: string | null
+      username?: string | null
+    } | null
+  }
+  errors?: Record<string, string>
 }
 
 const hexToRgba = (hex: string, alpha: number) => {
@@ -86,6 +117,34 @@ type ShareButtonConfig = {
   Icon: React.ComponentType<{ size?: number; round?: boolean; borderRadius?: number }>
   buttonProps?: Record<string, unknown>
 }
+
+type StarRowProps = {
+  value: number
+  sizeClassName?: string
+}
+
+const RATING_OPTIONS = [
+  { value: 1, label: 'Bof' },
+  { value: 2, label: 'Pas mal' },
+  { value: 3, label: 'Solide' },
+  { value: 4, label: 'Lourd' },
+  { value: 5, label: 'En boucle' },
+] as const
+
+const StarRow = ({ value, sizeClassName = 'h-4 w-4' }: StarRowProps) => (
+  <>
+    {[1, 2, 3, 4, 5].map((rating) => {
+      const isFilled = rating <= value
+
+      return (
+        <Star
+          key={rating}
+          className={`${sizeClassName} ${isFilled ? 'fill-amber-400 text-amber-400' : 'text-zinc-300'}`}
+        />
+      )
+    })}
+  </>
+)
 
 const PLATFORM_CONFIGS: PlatformConfig[] = [
   { matcher: /spotify/, label: 'Spotify', key: 'spotify', Icon: SpotifyLogo, accent: '#1DB954' },
@@ -199,16 +258,19 @@ const PLATFORM_CONFIGS: PlatformConfig[] = [
 // }
 
 const ReleaseShow: React.FC<ReleaseShowProps> = ({ release, shareUrl }) => {
+  const { auth, errors } = usePage<PageProps>().props
   const [copyStatus, setCopyStatus] = useState<'idle' | 'copied' | 'error'>('idle')
   const [showMorePlatforms, setShowMorePlatforms] = useState(false)
+  const [voteFeedback, setVoteFeedback] = useState<'saved' | 'removed' | null>(null)
+  const [voteIsSubmitting, setVoteIsSubmitting] = useState(false)
 
   const releaseDate = release.date ? new Date(release.date) : null
   const formattedDate = releaseDate
     ? releaseDate.toLocaleDateString('fr-FR', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
-    })
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+      })
     : null
 
   const streamingLinks = useMemo<StreamingLink[]>(() => {
@@ -267,11 +329,16 @@ const ReleaseShow: React.FC<ReleaseShowProps> = ({ release, shareUrl }) => {
 
   const primaryLinks = useMemo(() => streamingLinks.slice(0, 3), [streamingLinks])
   const extraLinks = useMemo(() => streamingLinks.slice(3), [streamingLinks])
+  const featuredArtistNames = useMemo(
+    () =>
+      release.featuredArtists
+        .map((artist) => artist.artistName?.trim())
+        .filter((artistName): artistName is string => !!artistName),
+    [release.featuredArtists]
+  )
 
   const relatedArtists = useMemo(() => {
-    const normalizeReleaseCount = (
-      value: number | string | null | undefined
-    ): number | null => {
+    const normalizeReleaseCount = (value: number | string | null | undefined): number | null => {
       if (typeof value === 'number' && Number.isFinite(value)) {
         return value
       }
@@ -343,10 +410,7 @@ const ReleaseShow: React.FC<ReleaseShowProps> = ({ release, shareUrl }) => {
     return parts.join(' · ')
   }, [release.artist?.name, release.title])
 
-  const shareMessage = useMemo(
-    () => `Découvre "${release.title}" sur #StayConnect`,
-    [release.title]
-  )
+  const shareMessage = `Découvre "${release.title}" sur #StayConnect`
 
   const seoDescription = useMemo(() => {
     const raw = release.description?.replace(/\s+/g, ' ').trim() ?? ''
@@ -406,6 +470,47 @@ const ReleaseShow: React.FC<ReleaseShowProps> = ({ release, shareUrl }) => {
     release.type ? release.type.charAt(0).toUpperCase() + release.type.slice(1) : null,
   ].filter(Boolean)
 
+  const averageLabel =
+    release.votesSummary.average !== null
+      ? release.votesSummary.average.toFixed(1).replace('.', ',')
+      : 'Nouveau'
+
+  const reviewsCountLabel =
+    release.votesSummary.total === 1 ? '1 avis' : `${release.votesSummary.total} avis`
+
+  const currentUserRating = release.currentUserVote?.rating ?? 0
+
+  const handleVoteSubmit = (rating: number) => {
+    setVoteFeedback(null)
+
+    const options = {
+      preserveScroll: true,
+      preserveState: true,
+      onStart: () => setVoteIsSubmitting(true),
+      onSuccess: () => setVoteFeedback('saved'),
+      onFinish: () => setVoteIsSubmitting(false),
+    }
+
+    if (release.currentUserVote) {
+      router.put(`/sorties/${release.id}/avis`, { vote: rating }, options)
+      return
+    }
+
+    router.post(`/sorties/${release.id}/avis`, { vote: rating }, options)
+  }
+
+  const handleVoteRemove = () => {
+    setVoteFeedback(null)
+
+    router.delete(`/sorties/${release.id}/avis`, {
+      preserveScroll: true,
+      preserveState: true,
+      onStart: () => setVoteIsSubmitting(true),
+      onSuccess: () => setVoteFeedback('removed'),
+      onFinish: () => setVoteIsSubmitting(false),
+    })
+  }
+
   return (
     <AppLayout>
       <Head title={shareTitle}>
@@ -457,7 +562,9 @@ const ReleaseShow: React.FC<ReleaseShowProps> = ({ release, shareUrl }) => {
                     {release.title}
                   </h1>
                   {subtitleParts.length > 0 && (
-                    <p className="text-sm md:text-base text-zinc-600">{subtitleParts.join(' · ')}</p>
+                    <p className="text-sm md:text-base text-zinc-600">
+                      {subtitleParts.join(' · ')}
+                    </p>
                   )}
 
                   {release.categories.length > 0 && (
@@ -480,12 +587,10 @@ const ReleaseShow: React.FC<ReleaseShowProps> = ({ release, shareUrl }) => {
                   </p>
                 )}
 
-                {release.featuredArtists.length > 0 && (
+                {featuredArtistNames.length > 0 && (
                   <div className="text-sm text-zinc-600">
                     <span className="font-semibold text-zinc-800">Featuring :</span>{' '}
-                    {release.featuredArtists
-                      .map((artist) => artist.artistName ?? 'Artiste invité')
-                      .join(', ')}
+                    {featuredArtistNames.join(', ')}
                   </div>
                 )}
 
@@ -600,22 +705,124 @@ const ReleaseShow: React.FC<ReleaseShowProps> = ({ release, shareUrl }) => {
             </div>
           </article>
 
-          <aside className="bg-white rounded-3xl shadow-lg border border-zinc-100 overflow-hidden md:py-8">
-            <div className="relative overflow-hidden rounded-2xl border border-dashed border-brand/40 bg-brand/10 p-6 text-center mx-6">
-              <div
-                className="absolute inset-0 bg-gradient-to-br from-brand/40 via-white/40 to-brand-dark/40 blur-xl opacity-60"
-                aria-hidden="true"
-              />
-              <div className="relative space-y-3">
-                <h2 className="text-sm font-semibold uppercase tracking-wide text-brand">
-                  Votes
-                </h2>
-                <p className="text-sm text-zinc-600 leading-relaxed">
-                  Ici prochainement tu pourras voter pour cette sortie.
-                </p>
+          <aside className="space-y-6">
+            <div className="bg-white rounded-3xl shadow-lg border border-zinc-100 overflow-hidden p-6 md:p-7">
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <p className="text-xs font-semibold uppercase tracking-[0.28em] text-brand">
+                    Avis
+                  </p>
+                  <div className="flex items-end gap-3">
+                    <span className="text-4xl font-bold text-zinc-900">{averageLabel}</span>
+                    <div className="pb-1">
+                      <div className="flex items-center gap-1">
+                        <StarRow
+                          value={Math.round(release.votesSummary.average ?? 0)}
+                          sizeClassName="h-5 w-5"
+                        />
+                      </div>
+                      <p className="mt-1 text-xs text-zinc-500">{reviewsCountLabel}</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="rounded-2xl border border-zinc-200 bg-zinc-50 p-4">
+                  {auth?.user ? (
+                    <div className="space-y-4">
+                      <div className="space-y-1">
+                        <p className="text-sm font-semibold text-zinc-900">
+                          {release.currentUserVote ? 'Ton avis' : 'Note cette sortie'}
+                        </p>
+                        <p className="text-sm text-zinc-600">
+                          {release.currentUserVote
+                            ? 'Tu peux mettre à jour ta note à tout moment.'
+                            : 'Choisis une note de 1 à 5 pour partager ton ressenti.'}
+                        </p>
+                      </div>
+
+                      <div className="grid grid-cols-5 gap-2">
+                        {RATING_OPTIONS.map((option) => {
+                          const isActive = currentUserRating === option.value
+
+                          return (
+                            <button
+                              key={option.value}
+                              type="button"
+                              disabled={voteIsSubmitting}
+                              onClick={() => handleVoteSubmit(option.value)}
+                              className={`rounded-2xl border px-2 py-3 text-center transition ${
+                                isActive
+                                  ? 'border-brand bg-brand text-white shadow-sm'
+                                  : 'border-zinc-200 bg-white text-zinc-700 hover:border-brand/40 hover:text-brand'
+                              }`}
+                            >
+                              <div className="flex justify-center">
+                                <StarRow value={option.value} />
+                              </div>
+                              <p
+                                className={`mt-2 text-[11px] font-medium ${isActive ? 'text-white/90' : 'text-zinc-500'}`}
+                              >
+                                {option.label}
+                              </p>
+                            </button>
+                          )
+                        })}
+                      </div>
+
+                      {(voteFeedback || errors?.vote) && (
+                        <div className="text-sm">
+                          {voteFeedback === 'saved' && (
+                            <p className="font-medium text-emerald-600">Avis enregistré.</p>
+                          )}
+                          {voteFeedback === 'removed' && (
+                            <p className="font-medium text-zinc-600">Avis supprimé.</p>
+                          )}
+                          {errors?.vote && (
+                            <p className="font-medium text-red-600">{errors.vote}</p>
+                          )}
+                        </div>
+                      )}
+
+                      {release.currentUserVote && (
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          className="w-full justify-center text-zinc-600 hover:text-red-600"
+                          disabled={voteIsSubmitting}
+                          onClick={handleVoteRemove}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                          Retirer mon avis
+                        </Button>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      <div className="space-y-1">
+                        <p className="text-sm font-semibold text-zinc-900">Donne ton avis</p>
+                        <p className="text-sm text-zinc-600">
+                          Connecte-toi pour noter cette sortie et faire remonter les pépites.
+                        </p>
+                      </div>
+                      <div className="flex flex-col gap-2">
+                        <Link href="/login" className="w-full">
+                          <Button type="button" className="w-full">
+                            Se connecter
+                          </Button>
+                        </Link>
+                        <Link href="/register" className="w-full">
+                          <Button type="button" variant="outline" className="w-full">
+                            Créer un compte
+                          </Button>
+                        </Link>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
-            <div className="mt-6 space-y-4">
+
+            <div className="bg-white rounded-3xl shadow-lg border border-zinc-100 overflow-hidden p-6 md:p-7">
               <p className="text-center text-xs font-semibold uppercase tracking-wide text-brand">
                 Partager
               </p>
@@ -659,10 +866,7 @@ const ReleaseShow: React.FC<ReleaseShowProps> = ({ release, shareUrl }) => {
               )}
             </div>
           </aside>
-
         </div>
-
-
 
         {relatedArtists.length > 0 && (
           <section className="space-y-6">
@@ -694,7 +898,9 @@ const ReleaseShow: React.FC<ReleaseShowProps> = ({ release, shareUrl }) => {
                           )}
                         </div>
                         <div className="min-w-0">
-                          <p className="truncate text-sm font-semibold text-zinc-900">{artist.name}</p>
+                          <p className="truncate text-sm font-semibold text-zinc-900">
+                            {artist.name}
+                          </p>
                           {artist.releaseCount !== null && artist.releaseCount !== undefined && (
                             <p className="text-xs text-zinc-500">
                               {artist.releaseCount === 1
@@ -727,8 +933,8 @@ const ReleaseShow: React.FC<ReleaseShowProps> = ({ release, shareUrl }) => {
             <div className="relative space-y-3 text-center">
               <h2 className="text-xl text-center font-semibold text-zinc-900">Description</h2>
               <p className="text-sm text-zinc-600 leading-relaxed">
-                Prochainement l'artiste et son équipe pourront ajouter une description du
-                projet en détail, les crédits et les informations de production.
+                Prochainement l'artiste et son équipe pourront ajouter une description du projet en
+                détail, les crédits et les informations de production.
               </p>
             </div>
           </div>
@@ -765,19 +971,65 @@ const ReleaseShow: React.FC<ReleaseShowProps> = ({ release, shareUrl }) => {
           </section>
         )}
 
-        <section className="bg-white rounded-3xl shadow-lg border border-zinc-100 overflow-hidden">
-          <div className="relative px-6 py-10">
-            <div
-              className="absolute inset-0 bg-gradient-to-br from-zinc-200 via-white to-brand/40 blur-xl opacity-60"
-              aria-hidden="true"
-            />
-            <div className="relative space-y-3 text-center">
-              <h2 className="text-xl font-semibold text-zinc-900">Commentaires & avis</h2>
-              <p className="text-sm text-zinc-600 leading-relaxed">
-                Ici prochainement tu pourras partager tes retours et donner ton avis.
-              </p>
-            </div>
+        <section className="space-y-5">
+          <div>
+            <h2 className="text-xl font-semibold text-zinc-900">Avis de la communauté</h2>
+            <p className="mt-1 text-sm text-zinc-600">
+              {release.votesSummary.total > 0
+                ? `${reviewsCountLabel} récemment laissés sur cette sortie.`
+                : 'Aucun avis pour le moment. Sois le premier à noter cette sortie.'}
+            </p>
           </div>
+
+          {release.reviews.length > 0 ? (
+            <div className="grid gap-4 md:grid-cols-2">
+              {release.reviews.map((review) => {
+                const formattedReviewDate = review.createdAt
+                  ? new Date(review.createdAt).toLocaleDateString('fr-FR', {
+                      day: 'numeric',
+                      month: 'short',
+                      year: 'numeric',
+                    })
+                  : null
+
+                return (
+                  <article
+                    key={review.id}
+                    className="rounded-3xl border border-zinc-200 bg-white p-5 shadow-sm"
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <p className="font-semibold text-zinc-900">
+                          {review.user.displayName}
+                          {review.isCurrentUser ? ' · toi' : ''}
+                        </p>
+                        {formattedReviewDate && (
+                          <p className="mt-1 text-xs uppercase tracking-wide text-zinc-400">
+                            {formattedReviewDate}
+                          </p>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <StarRow value={review.rating} />
+                      </div>
+                    </div>
+                    <p className="mt-4 text-sm leading-relaxed text-zinc-600">
+                      {review.rating >= 5 && 'Coup de coeur immédiat.'}
+                      {review.rating === 4 && 'Très bonne sortie, à remettre dans la playlist.'}
+                      {review.rating === 3 && 'Bonne écoute, solide dans son registre.'}
+                      {review.rating === 2 &&
+                        'Quelques bonnes idées, mais ça ne prend pas totalement.'}
+                      {review.rating === 1 && 'Pas convaincu sur cette écoute.'}
+                    </p>
+                  </article>
+                )
+              })}
+            </div>
+          ) : (
+            <div className="rounded-3xl border border-dashed border-zinc-300 bg-white p-8 text-center text-sm text-zinc-500">
+              La zone avis est prête. Il manque juste les premiers retours.
+            </div>
+          )}
         </section>
       </div>
     </AppLayout>

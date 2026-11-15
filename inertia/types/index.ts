@@ -219,6 +219,10 @@ export interface SpotifyAlbum {
       duration_ms: number
       preview_url?: string
       track_number: number
+      artists?: Array<{
+        id: string
+        name: string
+      }>
     }>
   }
   external_urls: {

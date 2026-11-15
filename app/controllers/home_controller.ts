@@ -187,9 +187,9 @@ export default class HomeController {
         type: release.type || 'release',
         category: release.categories?.[0]?.name || 'Musique',
         imageUrl: release.cover,
-        featuredArtists: release.features.map(
-          (feature) => feature.artistName || feature.artist?.name || 'Artiste inconnu'
-        ),
+        featuredArtists: release.features
+          .map((feature) => feature.artistName?.trim() || feature.artist?.name?.trim() || null)
+          .filter((name): name is string => !!name),
       }
 
       groups[weekKey!].news.push(newsItem)

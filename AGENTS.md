@@ -24,6 +24,12 @@ Toujours passer `--context vps2` explicitement : le contexte CLI par défaut `ma
 - Web DEV : `stayconnect-web-dev` — UUID `tjgmwzdqzma20mk6pxx1hezq`, branche `develop`, URL `https://dev-stayconnect.marvinl.com`.
 - Worker DEV : `stayconnect-worker-dev` — UUID `ai34g6brwwqtaaj0fp2v0wcn`, branche `develop`.
 
+### Bases PostgreSQL
+
+- PROD : base `stayconnect_prod`, hôte interne `stayconnect_postgres`, application `stayconnect-postgres-prod` — UUID `khrzlf53lzw7ugbfyo9zci9n`.
+- DEV : base `stayconnect_develop`, hôte interne `stayconnect_develop_postgres`.
+- Le web et le worker de chaque environnement utilisent la base correspondante. La base PROD a été renommée le 27 octobre 2026 ; le relevé est dans `docs/operations/2026-10-27-rename-prod-database.md`.
+
 ### Vérification en lecture seule
 
 ```sh
