@@ -37,11 +37,6 @@ type SpotifyCreditArtist = {
   name: string
 }
 
-type SpotifyCreditArtist = {
-  id: string
-  name: string
-}
-
 export default class SpotifyService {
   private accessToken: string | null = null
   private tokenExpiresAt: DateTime | null = null

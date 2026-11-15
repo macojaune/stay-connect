@@ -137,22 +137,4 @@ export default class HttpExceptionHandler extends ExceptionHandler {
     )
   }
 
-  /**
-   * The method is used to report error to the logging service or
-   * the a third party error monitoring service.
-   *
-   * @note You should not attempt to send a response from this method.
-   */
-  async report(error: unknown, ctx: HttpContext) {
-    // Log error details
-    console.error('Error:', {
-      ...errorDetails(error),
-      url: ctx.request.url(),
-      method: ctx.request.method(),
-      ip: ctx.request.ip(),
-      timestamp: new Date().toISOString(),
-    })
-
-    return super.report(error, ctx)
-  }
 }
