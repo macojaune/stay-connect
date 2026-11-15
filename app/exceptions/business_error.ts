@@ -5,7 +5,7 @@ export default class BusinessError extends Error {
   constructor(
     message: string,
     public code: string = 'E_BUSINESS_RULE',
-    public details?: any
+    public details?: unknown
   ) {
     super(message)
     this.name = 'BusinessError'
@@ -15,11 +15,10 @@ export default class BusinessError extends Error {
    * Create an error for when a user has already voted
    */
   static duplicateVote(userId: string, releaseId: string) {
-    return new BusinessError(
-      'User has already voted for this release',
-      'E_DUPLICATE_VOTE',
-      { userId, releaseId }
-    )
+    return new BusinessError('User has already voted for this release', 'E_DUPLICATE_VOTE', {
+      userId,
+      releaseId,
+    })
   }
 
   /**
@@ -37,11 +36,10 @@ export default class BusinessError extends Error {
    * Create an error for when a resource is not found
    */
   static notFound(resourceType: string, identifier: string | number) {
-    return new BusinessError(
-      `${resourceType} not found`,
-      'E_RESOURCE_NOT_FOUND',
-      { resourceType, identifier }
-    )
+    return new BusinessError(`${resourceType} not found`, 'E_RESOURCE_NOT_FOUND', {
+      resourceType,
+      identifier,
+    })
   }
 
   /**

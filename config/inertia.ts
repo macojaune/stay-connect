@@ -1,6 +1,27 @@
 import env from '#start/env'
 import { defineConfig } from '@adonisjs/inertia'
 import type { InferSharedProps } from '@adonisjs/inertia/types'
+import type { HttpContext } from '@adonisjs/core/http'
+import { canManageCatalog } from '#services/team_editor_access'
+
+function serializeAuth(ctx?: HttpContext) {
+  const user = ctx?.auth?.use('web').user
+
+  if (!user) return { user: null }
+
+  return {
+    user: {
+      id: user.id,
+      email: user.email,
+      fullName: user.fullName,
+      username: user.username,
+    },
+  }
+}
+
+function serializeCatalogAccess(ctx?: HttpContext) {
+  return canManageCatalog(ctx?.auth?.use('web').user?.id)
+}
 
 const inertiaConfig = defineConfig({
   /**
@@ -14,23 +35,15 @@ const inertiaConfig = defineConfig({
   sharedData: {
     umamiURL: env.get('UMAMI_SCRIPT_URL', ''),
     umamiID: env.get('UMAMI_WEBSITE_ID', ''),
-    auth: (ctx) =>
-      ctx.inertia.always(() => {
-        const user = ctx.auth.user
-
-        if (!user || !('email' in user)) {
-          return { user: null }
-        }
-
-        return {
-          user: {
-            id: user.id,
-            email: user.email,
-            fullName: user.fullName,
-            username: user.username,
-          },
-        }
-      }),
+    auth: (ctx) => {
+      // Inertia also resolves shared props while rendering an error page, without a request context.
+      return ctx?.inertia ? ctx.inertia.always(() => serializeAuth(ctx)) : serializeAuth(ctx)
+    },
+    canManageCatalog: (ctx) => {
+      return ctx?.inertia
+        ? ctx.inertia.always(() => serializeCatalogAccess(ctx))
+        : serializeCatalogAccess(ctx)
+    },
   },
 
   /**
@@ -44,6 +57,13 @@ const inertiaConfig = defineConfig({
 
 export default inertiaConfig
 
+// Inertia 3.1 does not unwrap an AlwaysProp union with its error-page fallback.
+// Infer auth from the serializer used by both branches, never from a duplicate user interface.
+type AppSharedProps = Omit<InferSharedProps<typeof inertiaConfig>, 'auth' | 'canManageCatalog'> & {
+  auth: ReturnType<typeof serializeAuth>
+  canManageCatalog: boolean
+}
+
 declare module '@adonisjs/inertia/types' {
-  export interface SharedProps extends InferSharedProps<typeof inertiaConfig> {}
+  export interface SharedProps extends AppSharedProps {}
 }

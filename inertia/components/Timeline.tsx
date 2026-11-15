@@ -1,6 +1,4 @@
-import { useState } from 'react'
 import TimelineSectionComponent from '~/components/TimelineSection'
-import NewsCard from '~/components/NewsCard'
 
 export interface NewsItem {
   id: string
@@ -94,7 +92,6 @@ export default function Timeline({ sections = [] }: TimelineProps) {
             />
           )
         })}
-
       </div>
     </div>
   )

@@ -5,6 +5,19 @@ import EmailService, { EmailTemplate } from '#services/email_service'
 import env from '#start/env'
 import { ContactsApi, ContactsApiApiKeys } from '@getbrevo/brevo'
 
+function errorMessage(error: unknown): string {
+  if (
+    typeof error === 'object' &&
+    error !== null &&
+    'message' in error &&
+    typeof error.message === 'string'
+  ) {
+    return error.message
+  }
+
+  return String(error)
+}
+
 export default class SendWeeklyRecap extends BaseCommand {
   static commandName = 'email:weekly-recap'
   static description = 'Send the weekly recap email to subscribers from the Brevo list'
@@ -92,18 +105,12 @@ export default class SendWeeklyRecap extends BaseCommand {
       } catch (error) {
         failureCount++
         this.logger.error(
-          {
-            err: error,
-            email: recipient.email,
-          },
-          `Failed to send weekly recap to ${recipient.email}`
+          `Failed to send weekly recap to ${recipient.email}: ${errorMessage(error)}`
         )
       }
     }
 
-    this.logger.info(
-      `Weekly recap complete: ${successCount} succeeded, ${failureCount} failed.`
-    )
+    this.logger.info(`Weekly recap complete: ${successCount} succeeded, ${failureCount} failed.`)
   }
 
   private async fetchContactsFromBrevo() {
@@ -137,11 +144,11 @@ export default class SendWeeklyRecap extends BaseCommand {
 
         const attributes = (contact.attributes ?? {}) as Record<string, unknown>
         const firstName =
-          typeof attributes['FIRSTNAME'] === 'string' ? (attributes['FIRSTNAME'] as string) : undefined
+          typeof attributes['FIRSTNAME'] === 'string' ? attributes['FIRSTNAME'] : undefined
         const lastName =
-          typeof attributes['LASTNAME'] === 'string' ? (attributes['LASTNAME'] as string) : undefined
+          typeof attributes['LASTNAME'] === 'string' ? attributes['LASTNAME'] : undefined
         const username =
-          typeof attributes['USERNAME'] === 'string' ? (attributes['USERNAME'] as string) : undefined
+          typeof attributes['USERNAME'] === 'string' ? attributes['USERNAME'] : undefined
 
         const fullName = [firstName, lastName].filter(Boolean).join(' ').trim() || undefined
 
@@ -166,11 +173,12 @@ export default class SendWeeklyRecap extends BaseCommand {
 
   private handleFailure(error: unknown) {
     if (error instanceof AggregateError) {
-      error.errors.forEach((innerError) => {
-        this.logger.error(innerError)
+      const errors: unknown[] = error.errors
+      errors.forEach((innerError) => {
+        this.logger.error(errorMessage(innerError))
       })
     } else {
-      this.logger.error(error)
+      this.logger.error(errorMessage(error))
     }
 
     this.exitCode = 1

@@ -1,29 +1,20 @@
 import { useState } from 'react'
 import { Link, usePage } from '@inertiajs/react'
 import { Button } from '~/components/ui/Button'
-
-interface User {
-  id: string
-  email: string
-  fullName?: string
-  username?: string
-}
-
-interface PageProps {
-  auth?: {
-    user?: User
-  }
-}
+import type { SharedProps } from '@adonisjs/inertia/types'
 
 interface NavigationProps {
   isLandingPage?: boolean
 }
 
 export function Navigation({ isLandingPage }: NavigationProps) {
-  const { auth } = usePage<PageProps>().props
+  const { auth } = usePage<SharedProps>().props
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
-  const navigationItems = [{ name: 'Home', href: '/' }]
+  const navigationItems = [
+    { name: 'Accueil', href: '/' },
+    { name: 'Artistes', href: '/artistes' },
+  ]
 
   if (isLandingPage) {
     return null
@@ -127,6 +118,26 @@ export function Navigation({ isLandingPage }: NavigationProps) {
                 {item.name}
               </Link>
             ))}
+            {auth?.user ? (
+              <Link
+                href="/logout"
+                method="post"
+                className="block px-3 py-2 text-center text-base font-medium text-gray-700"
+              >
+                Déconnexion
+              </Link>
+            ) : (
+              <div className="grid grid-cols-2 gap-2 px-3 py-2">
+                <Link href="/login">
+                  <Button variant="outline" className="w-full">
+                    Connexion
+                  </Button>
+                </Link>
+                <Link href="/register">
+                  <Button className="w-full">Créer un compte</Button>
+                </Link>
+              </div>
+            )}
             <Link href="/#newsletter-section" className="items-center w-full">
               <Button size="lg" className="w-full">
                 S'inscrire à la newsletter

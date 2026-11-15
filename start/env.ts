@@ -36,15 +36,7 @@ export default await Env.create(new URL('../', import.meta.url), {
   DB_USER: Env.schema.string(),
   DB_PASSWORD: Env.schema.string.optional(),
   DB_DATABASE: Env.schema.string(),
-  DB_SSL: Env.schema.boolean.optional(),
-  DB_SSL_REJECT_UNAUTHORIZED: Env.schema.boolean.optional(),
-  DB_KEEPALIVE_ENABLED: Env.schema.boolean.optional(),
-  DB_KEEPALIVE_INITIAL_DELAY: Env.schema.number.optional(),
-  DB_POOL_MIN: Env.schema.number.optional(),
-  DB_POOL_MAX: Env.schema.number.optional(),
-  DB_POOL_ACQUIRE_TIMEOUT: Env.schema.number.optional(),
-  DB_POOL_IDLE_TIMEOUT: Env.schema.number.optional(),
-  DB_POOL_REAP_INTERVAL: Env.schema.number.optional(),
+  DB_MIGRATION_SINGLE_CONNECTION: Env.schema.boolean.optional(),
 
   /*
   |----------------------------------------------------------
@@ -55,6 +47,10 @@ export default await Env.create(new URL('../', import.meta.url), {
   BREVO_CONTACT_LIST_ID: Env.schema.number(),
   MAIL_FROM_ADDRESS: Env.schema.string({ format: 'email' }),
   MAIL_FROM_NAME: Env.schema.string(),
+  MAIL_MAILER: Env.schema.enum.optional(['brevo', 'smtp'] as const),
+  SMTP_HOST: Env.schema.string.optional(),
+  SMTP_PORT: Env.schema.number.optional(),
+  SMTP_SECURE: Env.schema.boolean.optional(),
   /*
   |----------------------------------------------------------
   | Variables for configuring spotify api
@@ -83,14 +79,17 @@ export default await Env.create(new URL('../', import.meta.url), {
   */
   CRON_API_KEY: Env.schema.string.optional(),
   CRON_ALLOWED_IPS: Env.schema.string.optional(),
+  STAYCONNECT_CONTROL_TOKEN: Env.schema.string.optional(),
   API_KEY: Env.schema.string.optional(),
+  STAYCONNECT_EDITOR_USER_IDS: Env.schema.string.optional(),
+  UPLOAD_PATH: Env.schema.string.optional(),
 
   /*
   |----------------------------------------------------------
   | Variables for @rlanz/bull-queue
   |----------------------------------------------------------
   */
-  QUEUE_REDIS_HOST: Env.schema.string({ format: 'host' }),
+  QUEUE_REDIS_HOST: Env.schema.string(),
   QUEUE_REDIS_PORT: Env.schema.number(),
-  QUEUE_REDIS_PASSWORD: Env.schema.string.optional()
+  QUEUE_REDIS_PASSWORD: Env.schema.string.optional(),
 })

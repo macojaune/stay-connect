@@ -3,7 +3,15 @@ import Category from '#models/category'
 import Feature from '#models/feature'
 import Vote from '#models/vote'
 import string from '@adonisjs/core/helpers/string'
-import { BaseModel, beforeCreate, beforeSave, belongsTo, column, hasMany, manyToMany } from '@adonisjs/lucid/orm'
+import {
+  BaseModel,
+  beforeCreate,
+  beforeSave,
+  belongsTo,
+  column,
+  hasMany,
+  manyToMany,
+} from '@adonisjs/lucid/orm'
 import type { BelongsTo, HasMany, ManyToMany } from '@adonisjs/lucid/types/relations'
 import type { DateTime } from 'luxon'
 import { randomUUID } from 'node:crypto'
@@ -74,6 +82,7 @@ export default class Release extends BaseModel {
     pivotForeignKey: 'release_id',
     relatedKey: 'id',
     pivotRelatedForeignKey: 'category_id',
+    pivotTimestamps: true,
   })
   declare categories: ManyToMany<typeof Category>
 
@@ -94,25 +103,24 @@ export default class Release extends BaseModel {
       return
     }
 
-    if (!release.slug || release.$dirty.title || release.$dirty.artistId) {
+    // Public URLs are shared in emails and pull-ups. Keep an existing slug stable
+    // when the team corrects a title or the primary artist.
+    if (!release.slug) {
       const artistName = release.artistId
         ? await release
-          .related('artist')
-          .query()
-          .where('id', release.artistId)
-          .select('name')
-          .first()
-          .then((artist) => artist?.name)
+            .related('artist')
+            .query()
+            .where('id', release.artistId)
+            .select('name')
+            .first()
+            .then((artist) => artist?.name)
         : null
 
       let featureRecords: Feature[] = []
-      if (release.$preloaded?.features) {
-        featureRecords = release.$preloaded.features
+      if (release.$hasRelated('features')) {
+        featureRecords = release.features
       } else if (release.$isPersisted) {
-        featureRecords = await release
-          .related('features')
-          .query()
-          .preload('artist')
+        featureRecords = await release.related('features').query().preload('artist')
       }
 
       const featureNames = Array.from(
@@ -128,9 +136,7 @@ export default class Release extends BaseModel {
       const baseSlug = (string.slug(baseSlugValue) || 'sortie').toLowerCase()
       let slug = baseSlug
       let attempt = 1
-      while (
-        await Release.query().where('slug', slug).whereNot('id', release.id).first()
-      ) {
+      while (await Release.query().where('slug', slug).whereNot('id', release.id).first()) {
         slug = `${baseSlug}-${attempt++}`
       }
       release.slug = slug

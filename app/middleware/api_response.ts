@@ -11,17 +11,23 @@ export default class ApiResponseMiddleware {
       await next()
 
       // Get the response
-      const response = ctx.response.getBody()
+      const response: unknown = ctx.response.getBody()
+      const contentType = ctx.response.getHeader('content-type')
+      const contentTypes = Array.isArray(contentType) ? contentType : [contentType]
 
       // Skip formatting for non-JSON responses
-      if (!ctx.response.getHeader('content-type')?.includes('application/json')) {
+      if (
+        !contentTypes.some(
+          (value) => typeof value === 'string' && value.includes('application/json')
+        )
+      ) {
         return
       }
 
       // Format successful response
       ctx.response.send({
         status: 'success',
-        data: response
+        data: response,
       })
     } catch (error) {
       // Let the exception handler deal with errors

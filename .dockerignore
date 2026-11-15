@@ -125,8 +125,7 @@ Thumbs.db
 logs
 *.log
 
-# Test files
-tests/
+# Keep tests available to TypeScript: bin/test.ts imports tests/bootstrap.ts.
 *.test.js
 *.spec.js
 

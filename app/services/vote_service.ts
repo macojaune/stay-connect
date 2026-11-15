@@ -1,15 +1,14 @@
 import Vote from '#models/vote'
 import Release from '#models/release'
-import User from '#models/user'
-import { VoteValidator } from '#validators/vote'
+import { voteValidator } from '#validators/vote'
 
 export default class VoteService {
   /**
    * Create a new vote
    */
-  async createVote(data: any, userId: string, releaseId: string) {
-    const validatedData = await VoteValidator.validate(data)
-    
+  async createVote(data: unknown, userId: string, releaseId: string) {
+    const validatedData = await voteValidator.validate(data)
+
     // Check if user already voted
     const existingVote = await Vote.query()
       .where('user_id', userId)
@@ -22,8 +21,9 @@ export default class VoteService {
 
     const vote = await Vote.create({
       ...validatedData,
+      vote: 1,
       userId,
-      releaseId
+      releaseId,
     })
 
     // Update release vote count
@@ -31,9 +31,7 @@ export default class VoteService {
     await release.merge({ voteCount: release.voteCount + 1 }).save()
 
     await vote.load((loader) => {
-      loader
-        .load('user')
-        .load('release')
+      loader.load('user').load('release')
     })
 
     return vote
@@ -42,14 +40,12 @@ export default class VoteService {
   /**
    * Update an existing vote
    */
-  async updateVote(vote: Vote, data: any) {
-    const validatedData = await VoteValidator.validate(data)
+  async updateVote(vote: Vote, data: unknown) {
+    const validatedData = await voteValidator.validate(data)
     await vote.merge(validatedData).save()
 
     await vote.load((loader) => {
-      loader
-        .load('user')
-        .load('release')
+      loader.load('user').load('release')
     })
 
     return vote
@@ -71,11 +67,9 @@ export default class VoteService {
    */
   async getVoteDetails(vote: Vote) {
     await vote.load((loader) => {
-      loader
-        .load('user')
-        .load('release', (releaseQuery) => {
-          releaseQuery.preload('artist')
-        })
+      loader.load('user').load('release', (releaseQuery) => {
+        releaseQuery.preload('artist')
+      })
     })
 
     return vote
@@ -85,9 +79,7 @@ export default class VoteService {
    * Get votes for a specific release
    */
   async getVotesForRelease(releaseId: string) {
-    const votes = await Vote.query()
-      .where('release_id', releaseId)
-      .preload('user')
+    const votes = await Vote.query().where('release_id', releaseId).preload('user')
 
     return votes
   }

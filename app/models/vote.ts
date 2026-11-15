@@ -19,6 +19,15 @@ export default class Vote extends BaseModel {
   @column()
   declare vote: number
 
+  @column()
+  declare comment: string | null
+
+  @column({ columnName: 'user_id' })
+  declare userId: string
+
+  @column({ columnName: 'release_id' })
+  declare releaseId: string
+
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
 
@@ -26,12 +35,10 @@ export default class Vote extends BaseModel {
   declare updatedAt: DateTime
 
   @belongsTo(() => User, {
-    foreignKey: 'user_id',
+    foreignKey: 'userId',
   })
   declare user: BelongsTo<typeof User>
 
-  @belongsTo(() => Release, {
-    foreignKey: 'release_id',
-  })
+  @belongsTo(() => Release, { foreignKey: 'releaseId' })
   declare release: BelongsTo<typeof Release>
 }

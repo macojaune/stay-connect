@@ -1,6 +1,10 @@
 import env from '#start/env'
 import { defineConfig } from '@adonisjs/lucid'
 
+// Lucid 21 uses a session advisory lock but releases that session to the pool.
+// A migration process must retain it and must never replace it after a loss.
+let migrationConnectionCreated = false
+
 const dbConfig = defineConfig({
   connection: 'postgres',
   connections: {
@@ -28,6 +32,26 @@ const dbConfig = defineConfig({
         idleTimeoutMillis: env.get('DB_POOL_IDLE_TIMEOUT', 10000),
         reapIntervalMillis: env.get('DB_POOL_REAP_INTERVAL', 1000),
       },
+      pool: env.get('DB_MIGRATION_SINGLE_CONNECTION', false)
+        ? {
+            min: 1,
+            max: 1,
+            propagateCreateError: true,
+            afterCreate(connection, done) {
+              if (!migrationConnectionCreated) {
+                migrationConnectionCreated = true
+                done(null, connection)
+                return
+              }
+
+              const failure = new Error(
+                'Migration database connection was lost; retry the migration command.'
+              )
+              // Knex does not destroy a connection rejected by afterCreate.
+              connection.end(() => done(failure, connection))
+            },
+          }
+        : undefined,
       migrations: {
         naturalSort: true,
         paths: ['database/migrations'],

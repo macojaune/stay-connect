@@ -11,6 +11,13 @@ import { middleware } from '#start/kernel'
 import router from '@adonisjs/core/services/router'
 const SpotifyArtistsController = () => import('#controllers/spotify_artists_controller')
 const AuthController = () => import('#controllers/auth_controller')
+const ArtistPagesController = () => import('#controllers/artist_pages_controller')
+const ArtistSuggestionsController = () => import('#controllers/artist_suggestions_controller')
+const MemberController = () => import('#controllers/member_controller')
+const TeamReleasesController = () => import('#controllers/team_releases_controller')
+const CoversController = () => import('#controllers/covers_controller')
+const TeamArtistTerritoriesController = () =>
+  import('#controllers/team_artist_territories_controller')
 //healthcheck
 router.get('/health', '#controllers/health_checks_controller')
 
@@ -25,7 +32,11 @@ router
 
 // Web routes
 router.get('/', '#controllers/home_controller.index').as('home')
+router.get('/covers/:name', [CoversController, 'show'])
 router.get('/sorties/:slug', '#controllers/release_pages_controller.show').as('releases.show')
+router.get('/artistes', [ArtistPagesController, 'index'])
+router.post('/artistes/suggestions', [ArtistSuggestionsController, 'store'])
+router.get('/artistes/:id', [ArtistPagesController, 'show'])
 router
   .post('/sorties/:releaseId/avis', '#controllers/votes_controller.store')
   .use(middleware.auth())
@@ -42,10 +53,36 @@ router
     router.post('/login', [AuthController, 'login'])
     router.get('/register', [AuthController, 'showRegister'])
     router.post('/register', [AuthController, 'register'])
+    router.get('/forgot-password', [AuthController, 'showForgotPassword'])
+    router.post('/forgot-password', [AuthController, 'forgotPassword'])
   })
   .use(middleware.guest())
 
 router.post('/logout', [AuthController, 'logout']).use(middleware.auth())
+router.get('/reset-password', [AuthController, 'showResetPassword'])
+router.post('/reset-password', [AuthController, 'resetPassword'])
+
+router
+  .group(() => {
+    router.get('/mon-espace', [MemberController, 'dashboard'])
+    router.get('/mon-compte', [MemberController, 'account'])
+    router.patch('/mon-compte', [MemberController, 'updateAccount'])
+    router.post('/mon-compte/mot-de-passe', [MemberController, 'requestPasswordReset'])
+    router.get('/mon-espace/propositions', [MemberController, 'suggestions'])
+    router.post('/mon-espace/propositions', [MemberController, 'storeSuggestion'])
+  })
+  .use(middleware.auth({ guards: ['web'] }))
+
+router
+  .group(() => {
+    router.get('/equipe/sorties/nouvelle', [TeamReleasesController, 'create'])
+    router.get('/equipe/sorties/:id/modifier', [TeamReleasesController, 'edit'])
+    router.post('/equipe/sorties', [TeamReleasesController, 'store'])
+    router.patch('/equipe/sorties/:id', [TeamReleasesController, 'update'])
+    router.get('/equipe/artistes/:id/territoires', [TeamArtistTerritoriesController, 'edit'])
+    router.put('/equipe/artistes/:id/territoires', [TeamArtistTerritoriesController, 'update'])
+  })
+  .use(middleware.auth({ guards: ['web'] }))
 
 // Newsletter routes
 router.post('/newsletter', '#controllers/home_controller.subscribe')
@@ -104,3 +141,13 @@ router
     //       .use(middleware.auth())
   })
   .prefix('/api')
+
+// Dedicated server-to-server identity. No browser session or catalogue-wide API key.
+router
+  .group(() => {
+    router.get('/artists', '#controllers/control_controller.search')
+    router.post('/operations', '#controllers/control_controller.create')
+    router.get('/operations/:id', '#controllers/control_controller.show')
+  })
+  .prefix('/api/control')
+  .use(middleware.controlAuth())

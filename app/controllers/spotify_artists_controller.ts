@@ -1,6 +1,32 @@
+import { errorDetails } from '#exceptions/error_details'
 import type { HttpContext } from '@adonisjs/core/http'
 import SpotifyService from '#services/spotify_service'
 import logger from '@adonisjs/core/services/logger'
+import vine from '@vinejs/vine'
+
+const searchValidator = vine.compile(
+  vine.object({
+    query: vine.string().trim().minLength(1),
+    limit: vine.number().withoutDecimals().min(1).optional(),
+  })
+)
+
+const createOptions = {
+  description: vine.string().optional(),
+  categories: vine.array(vine.string()).optional(),
+  socials: vine.record(vine.string().url()).optional(),
+}
+const createValidator = vine.compile(vine.object({ spotifyId: vine.string(), ...createOptions }))
+const searchAndCreateValidator = vine.compile(
+  vine.object({
+    query: vine.string().trim().minLength(1),
+    spotifyId: vine.string().optional(),
+    description: createOptions.description.clone(),
+    categories: createOptions.categories.clone(),
+    socials: createOptions.socials.clone(),
+    limit: vine.number().withoutDecimals().min(1).optional(),
+  })
+)
 
 export default class SpotifyArtistsController {
   private spotifyService: SpotifyService
@@ -14,20 +40,10 @@ export default class SpotifyArtistsController {
    * GET /api/spotify/artists/search
    */
   async search({ request, response }: HttpContext) {
+    const { query, limit = 10 } = await request.validateUsing(searchValidator)
+
     try {
-      const { query, limit = 10 } = request.qs()
-
-      if (!query) {
-        return response.badRequest({
-          error: 'Query parameter is required',
-          message: 'Please provide a search query',
-        })
-      }
-
-      const results = await this.spotifyService.searchArtistsFormatted(
-        query,
-        Number.parseInt(limit)
-      )
+      const results = await this.spotifyService.searchArtistsFormatted(query, limit)
 
       return response.json({
         success: true,
@@ -37,11 +53,11 @@ export default class SpotifyArtistsController {
           count: results.length,
         },
       })
-    } catch (error) {
-      logger.error('Spotify artist search failed:', error.message)
+    } catch (error: unknown) {
+      logger.error('Spotify artist search failed:', errorDetails(error).message)
       return response.internalServerError({
         error: 'Search failed',
-        message: error.message,
+        message: errorDetails(error).message,
       })
     }
   }
@@ -50,22 +66,11 @@ export default class SpotifyArtistsController {
    * Create an artist from Spotify data
    * POST /api/spotify/artists/create
    */
-  async create({ request, response, auth }: HttpContext) {
+  async create({ request, response }: HttpContext) {
+    const { spotifyId, description, categories, socials } =
+      await request.validateUsing(createValidator)
+
     try {
-      const { spotifyId, description, categories, socials } = request.only([
-        'spotifyId',
-        'description',
-        'categories',
-        'socials',
-      ])
-
-      if (!spotifyId) {
-        return response.badRequest({
-          error: 'Spotify ID is required',
-          message: 'Please provide a valid Spotify artist ID',
-        })
-      }
-
       // Check if artist already exists
       const existingArtist = await this.spotifyService.findExistingArtistBySpotifyId(spotifyId)
       if (existingArtist) {
@@ -102,11 +107,11 @@ export default class SpotifyArtistsController {
           artist,
         },
       })
-    } catch (error) {
-      logger.error('Failed to create artist from Spotify:', error.message)
+    } catch (error: unknown) {
+      logger.error('Failed to create artist from Spotify:', errorDetails(error).message)
       return response.internalServerError({
         error: 'Artist creation failed',
-        message: error.message,
+        message: errorDetails(error).message,
       })
     }
   }
@@ -115,29 +120,22 @@ export default class SpotifyArtistsController {
    * Search and create artist in one operation
    * POST /api/spotify/artists/search-and-create
    */
-  async searchAndCreate({ request, response, auth }: HttpContext) {
+  async searchAndCreate({ request, response }: HttpContext) {
+    const {
+      query,
+      spotifyId,
+      description,
+      categories,
+      socials,
+      limit = 10,
+    } = await request.validateUsing(searchAndCreateValidator)
+
     try {
-      const {
-        query,
-        spotifyId,
-        description,
-        categories,
-        socials,
-        limit = 10,
-      } = request.only(['query', 'spotifyId', 'description', 'categories', 'socials', 'limit'])
-
-      if (!query) {
-        return response.badRequest({
-          error: 'Query parameter is required',
-          message: 'Please provide a search query',
-        })
-      }
-
       const result = await this.spotifyService.searchAndCreate(query, spotifyId, {
         description,
         categories,
         socials,
-        limit: Number.parseInt(limit),
+        limit,
       })
 
       if (result.error) {
@@ -150,29 +148,27 @@ export default class SpotifyArtistsController {
         })
       }
 
-      const responseData: any = {
+      if (result.createdArtist) {
+        await result.createdArtist.load('categories')
+      }
+
+      return response.json({
         success: true,
+        message: result.createdArtist
+          ? 'Artist found and created successfully'
+          : 'Search completed successfully',
         data: {
           query,
           searchResults: result.searchResults,
           searchCount: result.searchResults.length,
+          ...(result.createdArtist ? { createdArtist: result.createdArtist } : {}),
         },
-      }
-
-      if (result.createdArtist) {
-        await result.createdArtist.load('categories')
-        responseData.data.createdArtist = result.createdArtist
-        responseData.message = 'Artist found and created successfully'
-      } else {
-        responseData.message = 'Search completed successfully'
-      }
-
-      return response.json(responseData)
-    } catch (error) {
-      logger.error('Search and create operation failed:', error.message)
+      })
+    } catch (error: unknown) {
+      logger.error('Search and create operation failed:', errorDetails(error).message)
       return response.internalServerError({
         error: 'Operation failed',
-        message: error.message,
+        message: errorDetails(error).message,
       })
     }
   }
@@ -183,9 +179,9 @@ export default class SpotifyArtistsController {
    */
   async getDetails({ params, response }: HttpContext) {
     try {
-      const { spotifyId } = params
+      const spotifyId: unknown = params.spotifyId
 
-      if (!spotifyId) {
+      if (typeof spotifyId !== 'string' || !spotifyId) {
         return response.badRequest({
           error: 'Spotify ID is required',
           message: 'Please provide a valid Spotify artist ID',
@@ -214,11 +210,11 @@ export default class SpotifyArtistsController {
             : null,
         },
       })
-    } catch (error) {
-      logger.error('Failed to get artist details:', error.message)
+    } catch (error: unknown) {
+      logger.error('Failed to get artist details:', errorDetails(error).message)
       return response.internalServerError({
         error: 'Failed to get artist details',
-        message: error.message,
+        message: errorDetails(error).message,
       })
     }
   }
@@ -229,7 +225,10 @@ export default class SpotifyArtistsController {
    */
   async sync({ params, response }: HttpContext) {
     try {
-      const { id } = params
+      const id: unknown = params.id
+      if (typeof id !== 'string' || !id) {
+        return response.badRequest({ error: 'Artist ID is required' })
+      }
 
       const artist = await this.spotifyService.syncExistingArtist(id)
       await artist.load('categories')
@@ -241,11 +240,11 @@ export default class SpotifyArtistsController {
           artist,
         },
       })
-    } catch (error) {
-      logger.error('Failed to sync artist:', error.message)
+    } catch (error: unknown) {
+      logger.error('Failed to sync artist:', errorDetails(error).message)
       return response.internalServerError({
         error: 'Sync failed',
-        message: error.message,
+        message: errorDetails(error).message,
       })
     }
   }
@@ -256,7 +255,10 @@ export default class SpotifyArtistsController {
    */
   async checkExists({ params, response }: HttpContext) {
     try {
-      const { spotifyId } = params
+      const spotifyId: unknown = params.spotifyId
+      if (typeof spotifyId !== 'string' || !spotifyId) {
+        return response.badRequest({ error: 'Spotify ID is required' })
+      }
 
       const existingArtist = await this.spotifyService.findExistingArtistBySpotifyId(spotifyId)
 
@@ -277,11 +279,11 @@ export default class SpotifyArtistsController {
             : null,
         },
       })
-    } catch (error) {
-      logger.error('Failed to check artist existence:', error.message)
+    } catch (error: unknown) {
+      logger.error('Failed to check artist existence:', errorDetails(error).message)
       return response.internalServerError({
         error: 'Check failed',
-        message: error.message,
+        message: errorDetails(error).message,
       })
     }
   }

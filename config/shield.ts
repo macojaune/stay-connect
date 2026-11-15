@@ -22,6 +22,7 @@ const shieldConfig = defineConfig({
       '/cron/weekly-recap',
       '/cron/health',
       '/api/spotify/artists/create',
+      '/api/control/operations',
     ],
     enableXsrfCookie: true,
     methods: ['POST', 'PUT', 'PATCH', 'DELETE'],

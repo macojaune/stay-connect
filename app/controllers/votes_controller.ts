@@ -1,16 +1,26 @@
 import { HttpContext } from '@adonisjs/core/http'
+import { errors } from '@adonisjs/lucid'
 import Vote from '#models/vote'
 import Release from '#models/release'
 import { voteValidator } from '#validators/vote'
 
 export default class VotesController {
+  private async findPublicRelease(releaseId: unknown) {
+    if (
+      typeof releaseId !== 'string' ||
+      !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(releaseId)
+    ) {
+      throw new errors.E_ROW_NOT_FOUND(Release)
+    }
+    return Release.query().where('id', releaseId).where('is_secret', false).firstOrFail()
+  }
+
   /**
    * Create a new vote
    */
   async store({ params, auth, request, response }: HttpContext) {
-    const releaseId = params.releaseId || params.id
-    const release = await Release.findOrFail(releaseId)
-    const user = auth.user!
+    const release = await this.findPublicRelease(params.releaseId || params.id)
+    const user = auth.use('web').user!
     const payload = await request.validateUsing(voteValidator)
 
     // Check if user already voted
@@ -24,7 +34,8 @@ export default class VotesController {
     }
 
     const data = {
-      vote: payload.vote,
+      vote: 1,
+      comment: payload.comment || null,
       userId: user.id,
       releaseId: release.id,
     }
@@ -45,9 +56,8 @@ export default class VotesController {
    * Update a vote
    */
   async update({ params, auth, request, response }: HttpContext) {
-    const releaseId = params.releaseId || params.id
-    const release = await Release.findOrFail(releaseId)
-    const user = auth.user!
+    const release = await this.findPublicRelease(params.releaseId || params.id)
+    const user = auth.use('web').user!
     const payload = await request.validateUsing(voteValidator)
 
     const vote = await Vote.query()
@@ -57,7 +67,7 @@ export default class VotesController {
 
     await vote
       .merge({
-        vote: payload.vote,
+        comment: payload.comment || null,
       })
       .save()
 
@@ -68,9 +78,8 @@ export default class VotesController {
    * Delete a vote
    */
   async destroy({ params, auth, response }: HttpContext) {
-    const releaseId = params.releaseId || params.id
-    const release = await Release.findOrFail(releaseId)
-    const user = auth.user!
+    const release = await this.findPublicRelease(params.releaseId || params.id)
+    const user = auth.use('web').user!
 
     const vote = await Vote.query()
       .where('user_id', user.id)

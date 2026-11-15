@@ -1,3 +1,4 @@
+import { errorDetails } from '#exceptions/error_details'
 import { BaseCommand, args, flags } from '@adonisjs/core/ace'
 import type { CommandOptions } from '@adonisjs/core/types/ace'
 import SpotifyService from '#services/spotify_service'
@@ -15,7 +16,7 @@ export default class SyncSpotifyArtists extends BaseCommand {
     staysAlive: false,
   }
 
-  @args.string({ description: 'Specific artist ID to sync (optional)' ,required: false})
+  @args.string({ description: 'Specific artist ID to sync (optional)', required: false })
   declare artistId?: string
 
   @flags.boolean({ description: 'Force sync even if recently updated' })
@@ -36,7 +37,7 @@ export default class SyncSpotifyArtists extends BaseCommand {
 
       this.logger.info('Spotify artist sync completed successfully')
     } catch (error) {
-      this.logger.error('Failed to sync Spotify artists: ' + error.message)
+      this.logger.error('Failed to sync Spotify artists: ' + errorDetails(error).message)
       this.exitCode = 1
     }
   }
@@ -117,7 +118,7 @@ export default class SyncSpotifyArtists extends BaseCommand {
           // Rate limiting delay
           await new Promise((resolve) => setTimeout(resolve, 200))
         } catch (error) {
-          this.logger.error(`Failed to sync artist ${artist.name}:  ${error.message}`)
+          this.logger.error(`Failed to sync artist ${artist.name}:  ${errorDetails(error).message}`)
           errors++
         }
       }
